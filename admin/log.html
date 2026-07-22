@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Aktivitätslog</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Aktivitätslog</h1>
+            <div class="topbar-actions">
+                <select class="form-select" id="actionFilter" style="width:auto">
+                    <option value="all">Alle Aktionen</option>
+                    <option value="create">Erstellt</option>
+                    <option value="update">Bearbeitet</option>
+                    <option value="delete">Gelöscht</option>
+                    <option value="login">Logins</option>
+                </select>
+                <select class="form-select" id="entityFilter" style="width:auto">
+                    <option value="all">Alle Bereiche</option>
+                    <option value="news">Aktuelles</option>
+                    <option value="tournament">Turniere</option>
+                    <option value="team">Mannschaften</option>
+                    <option value="termin">Termine</option>
+                    <option value="beach_block">Beach-Sperren</option>
+                    <option value="beach_booking">Beach-Buchungen</option>
+                    <option value="registration">Anmeldungen</option>
+                    <option value="kontaktanfrage">Kontaktanfragen</option>
+                    <option value="mitgliedsantrag">Mitgliedsanträge</option>
+                    <option value="admin">Admin-Konten</option>
+                    <option value="session">Logins</option>
+                </select>
+                <input type="text" class="form-input" id="searchInput" placeholder="Suchen (Wer / Was)..." style="width:220px">
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="width:170px">Zeitpunkt</th>
+                            <th>Wer</th>
+                            <th>Aktion</th>
+                            <th>Bereich</th>
+                            <th>Objekt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="text-align:center;margin-top:8px">
+                <button class="btn btn-ghost" id="moreBtn" style="display:none"><i class="fas fa-chevron-down"></i> Mehr laden</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'log.html', perm: 'log' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var PAGE_SIZE = 100;
+        var offset = 0;
+        var itemsCache = [];
+
+        var ACTION_LABELS = { create: 'Erstellt', update: 'Bearbeitet', delete: 'Gelöscht', login: 'Login', logout: 'Logout' };
+        var ACTION_ICONS = { create: 'fa-plus-circle', update: 'fa-pen', delete: 'fa-trash', login: 'fa-sign-in-alt', logout: 'fa-sign-out-alt' };
+        var ENTITY_LABELS = {
+            news: 'Aktuelles', tournament: 'Turnier', team: 'Mannschaft', termin: 'Termin',
+            beach_block: 'Beach-Sperre', beach_booking: 'Beach-Buchung',
+            registration: 'Anmeldung', kontaktanfrage: 'Kontaktanfrage',
+            mitgliedsantrag: 'Mitgliedsantrag', admin: 'Admin-Konto', session: 'Anmeldung/Session'
+        };
+
+        ['actionFilter', 'entityFilter'].forEach(function (id) {
+            document.getElementById(id).addEventListener('change', function () { reload(); });
+        });
+        var searchTimer = null;
+        document.getElementById('searchInput').addEventListener('input', function () {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(reload, 300);
+        });
+        document.getElementById('moreBtn').addEventListener('click', function () { loadPage(); });
+
+        function reload() {
+            offset = 0;
+            itemsCache = [];
+            document.getElementById('listBody').innerHTML =
+                '<tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>';
+            loadPage();
+        }
+
+        async function loadPage() {
+            var action = document.getElementById('actionFilter').value;
+            var entity = document.getElementById('entityFilter').value;
+            var search = document.getElementById('searchInput').value.trim();
+
+            var q = sb.from('admin_audit_log').select('*')
+                .order('created_at', { ascending: false })
+                .range(offset, offset + PAGE_SIZE - 1);
+
+            if (action !== 'all') q = q.eq('action', action);
+            if (entity !== 'all') q = q.eq('entity', entity);
+            if (search) {
+                q = q.or('user_email.ilike.%' + search + '%,user_name.ilike.%' + search + '%,entity_label.ilike.%' + search + '%');
+            }
+
+            var res = await q;
+            var body = document.getElementById('listBody');
+
+            if (res.error) {
+                body.innerHTML = '<tr><td colspan="5" class="empty-state">Log konnte nicht geladen werden: ' + esc(res.error.message) +
+                    '<br><small>Wurde supabase-migration-v2.sql schon ausgeführt?</small></td></tr>';
+                return;
+            }
+
+            var page = res.data || [];
+            itemsCache = itemsCache.concat(page);
+            offset += page.length;
+            document.getElementById('moreBtn').style.display = page.length === PAGE_SIZE ? '' : 'none';
+
+            if (!itemsCache.length) {
+                body.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-history"></i>Keine Einträge gefunden.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = itemsCache.map(function (l) {
+                return '<tr>' +
+                    '<td style="white-space:nowrap">' + AdminCore.fmtDateTime(l.created_at) + '</td>' +
+                    '<td><strong style="color:#fff">' + esc(l.user_name || '—') + '</strong>' +
+                        (l.user_email ? '<br><small style="color:var(--text-muted)">' + esc(l.user_email) + '</small>' : '') + '</td>' +
+                    '<td><span class="log-action ' + esc(l.action) + '"><i class="fas ' + (ACTION_ICONS[l.action] || 'fa-circle') + '"></i> ' +
+                        (ACTION_LABELS[l.action] || esc(l.action)) + '</span></td>' +
+                    '<td>' + esc(ENTITY_LABELS[l.entity] || l.entity) + '</td>' +
+                    '<td>' + esc(l.entity_label || '—') + '</td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        loadPage();
+    })();
+    </script>
+</body>
+</html>

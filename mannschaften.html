@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Alle Mannschaften des EVV 2000 – Herren, Damen, Jugend und Hobby. Trainingszeiten, Trainer und Ligen auf einen Blick.">
+    <meta name="keywords" content="Volleyball, Erkelenz, EVV2000, Mannschaften, Herren, Damen, Jugend, Hobby, Teams">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta property="og:title" content="Mannschaften | EVV 2000">
+    <meta property="og:description" content="Alle Mannschaften des EVV 2000 – Herren, Damen, Jugend und Hobby.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evv2000-website.vercel.app/mannschaften">
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/herren.jpg">
+    <title>Mannschaften | EVV 2000</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
+                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+            </a>
+            <div class="mode-switch">
+                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
+                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
+                <div class="mode-slider"></div>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
+                <li><a href="events.html" class="nav-link">Events</a></li>
+                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
+                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
+                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
+                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
+                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag">Mannschaften</span>
+            <h1>Unsere Teams</h1>
+            <p>&Uuml;ber 20 Mannschaften in allen Altersklassen &ndash; von ambitioniertem Leistungssport bis hin zu Hobby und Freizeit.</p>
+        </div>
+    </section>
+
+    <!-- Teams Showcase -->
+    <section class="section teams">
+        <div class="container">
+            <div class="teams-showcase">
+                <div class="showcase-card">
+                    <img src="img/herren.jpg" alt="Herren 1 - Aufstieg Verbandsliga" loading="lazy">
+                    <div class="showcase-overlay">
+                        <span class="showcase-badge">Verbandsliga</span>
+                        <h3>Herren</h3>
+                        <p>Aufstieg 2026 gesichert</p>
+                    </div>
+                </div>
+                <div class="showcase-card">
+                    <img src="img/damen.jpg" alt="Damen 1 - Bezirksliga" loading="lazy">
+                    <div class="showcase-overlay">
+                        <span class="showcase-badge">Bezirksliga</span>
+                        <h3>Damen</h3>
+                        <p>Starke Saison 2025/26</p>
+                    </div>
+                </div>
+                <div class="showcase-card">
+                    <img src="img/jugend.jpg" alt="U14 Mixed - Bezirksfinale" loading="lazy">
+                    <div class="showcase-overlay">
+                        <span class="showcase-badge">Oberliga &middot; Bezirksliga</span>
+                        <h3>Jugend</h3>
+                        <p>3. Platz Bezirksfinale U14</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="teams-filter">
+                <button class="filter-btn active" data-filter="all">Alle</button>
+                <button class="filter-btn" data-filter="herren">Herren</button>
+                <button class="filter-btn" data-filter="damen">Damen</button>
+                <button class="filter-btn" data-filter="jugend">Jugend</button>
+                <button class="filter-btn" data-filter="hobby">Hobby</button>
+            </div>
+
+            <!-- Team Cards Grid (statischer Fallback — wird aus Supabase neu gerendert) -->
+            <div class="teams-grid" id="teamsGrid">
+                <!-- Herren -->
+                <a href="mannschaft.html?team=maenner-1" class="team-card team-card-link" data-category="herren">
+                    <div class="team-league">Verbandsliga</div>
+                    <h3>M&auml;nner 1</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Arash</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Mo & Di, 20:00&ndash;22:00</div>
+                    </div>
+                    <div class="team-badge success">Aufstieg 2026!</div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="mannschaft.html?team=maenner-2" class="team-card team-card-link" data-category="herren">
+                    <div class="team-league">Bezirksliga</div>
+                    <h3>M&auml;nner 2</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Alexander Frizler</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Mo & Di, 20:00&ndash;22:00</div>
+                    </div>
+                    <div class="team-badge info">Klassenerhalt</div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+
+                <!-- Damen -->
+                <a href="mannschaft.html?team=frauen-1" class="team-card team-card-link" data-category="damen">
+                    <div class="team-league">Bezirksliga</div>
+                    <h3>Frauen 1</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Rudi Ritz</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Mo & Mi, 20:00&ndash;22:00 / Di 18:30&ndash;20:00</div>
+                    </div>
+                    <div class="team-badge success">Aufstieg 2026!</div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="mannschaft.html?team=frauen-2" class="team-card team-card-link" data-category="damen">
+                    <div class="team-league">Bezirksklasse</div>
+                    <h3>Frauen 2</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Felix Cohnen</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Mo & Mi, 17:00&ndash;18:30</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+
+                <!-- Jugend weiblich -->
+                <a href="mannschaft.html?team=wu20-1" class="team-card team-card-link" data-category="jugend">
+                    <div class="team-league">Oberliga</div>
+                    <h3>wU20 &ndash; 1</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Christian Dicke</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Di & Mi, 18:30&ndash;20:00</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="mannschaft.html?team=wu20-2" class="team-card team-card-link" data-category="jugend">
+                    <div class="team-league">Bezirksliga</div>
+                    <h3>wU20 &ndash; 2</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Rudi Ritz</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Di & Mi, 18:30&ndash;20:00</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="mannschaft.html?team=wu18-1" class="team-card team-card-link" data-category="jugend">
+                    <div class="team-league">Oberliga</div>
+                    <h3>wU18 &ndash; 1</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Rudi Ritz</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Di & Mi, 18:30&ndash;20:00</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="mannschaft.html?team=wu18-2-3" class="team-card team-card-link" data-category="jugend">
+                    <div class="team-league">Bezirksliga</div>
+                    <h3>wU18 &ndash; 2/3</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Denis Grauer / Felix Cohnen</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Di & Mi, 18:30&ndash;20:00</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="mannschaft.html?team=mu20" class="team-card team-card-link" data-category="jugend">
+                    <div class="team-league">Bezirksliga</div>
+                    <h3>mU20</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Phil Joosten</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Di & Mi, 18:30&ndash;20:00</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="mannschaft.html?team=mu16" class="team-card team-card-link" data-category="jugend">
+                    <div class="team-league">Bezirksliga</div>
+                    <h3>mU16</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Arash</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Mi 17:00&ndash;18:30 / Do 18:30&ndash;20:00</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="mannschaft.html?team=u14-mixed" class="team-card team-card-link" data-category="jugend">
+                    <div class="team-league">Bezirksliga</div>
+                    <h3>U14 Mixed</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Arash</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Mo & Mi, 17:00&ndash;18:30</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+
+                <!-- Hobby -->
+                <a href="mannschaft.html?team=hobbyts" class="team-card team-card-link" data-category="hobby">
+                    <div class="team-league">VK A-D-H</div>
+                    <h3>Hobbyts 1 & 2</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: Michael Schaefer / Felix Cohnen</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Mo & Di, 20:00&ndash;22:00</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="mannschaft.html?team=froggs" class="team-card team-card-link" data-category="hobby">
+                    <div class="team-league">Heinsberg-Staffel</div>
+                    <h3>Froggs</h3>
+                    <div class="team-details">
+                        <div class="team-info"><i class="fas fa-user-tie"></i> Trainer: J&uuml;rgen Hennig</div>
+                        <div class="team-info"><i class="fas fa-clock"></i> Mo, 20:00&ndash;22:00</div>
+                    </div>
+                    <span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img">
+                    </div>
+                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Verein</h4>
+                    <ul>
+                        <li><a href="mannschaften.html">Mannschaften</a></li>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="kontakt.html">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Angebote</h4>
+                    <ul>
+                        <li><a href="beachanlage.html">Beachanlage</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="kalender.html">Kalender</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Rechtliches</h4>
+                    <ul>
+                        <li><a href="impressum.html">Impressum</a></li>
+                        <li><a href="datenschutz.html">Datenschutz</a></li>
+                        <li><a href="#">Vereinssatzung</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script>
+    /* Mannschaften aus Supabase laden — statisches Grid bleibt als Fallback stehen */
+    (async function () {
+        function esc(s) {
+            if (s == null) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        try {
+            await ErkaSupabase.init();
+            var sb = ErkaSupabase.client;
+            if (!sb) return; // Demo-Modus -> statischer Inhalt bleibt
+
+            var res = await sb.from('public_teams').select('*');
+            var teams = res.data;
+            if (res.error || !teams || !teams.length) return; // Fallback: statisch
+
+            var grid = document.getElementById('teamsGrid');
+            grid.innerHTML = teams.map(function (t) {
+                var badge = t.badge_text
+                    ? '<div class="team-badge ' + esc(t.badge_type || 'info') + '">' + esc(t.badge_text) + '</div>'
+                    : '';
+                return '<a href="mannschaft.html?team=' + encodeURIComponent(t.slug) + '" class="team-card team-card-link" data-category="' + esc((t.category || '').toLowerCase()) + '">' +
+                    '<div class="team-league">' + esc(t.league || '&nbsp;') + '</div>' +
+                    '<h3>' + esc(t.name) + '</h3>' +
+                    '<div class="team-details">' +
+                        (t.trainer ? '<div class="team-info"><i class="fas fa-user-tie"></i> Trainer: ' + esc(t.trainer) + '</div>' : '') +
+                        (t.training ? '<div class="team-info"><i class="fas fa-clock"></i> ' + esc(t.training) + '</div>' : '') +
+                    '</div>' +
+                    badge +
+                    '<span class="team-card-arrow"><i class="fas fa-arrow-right"></i></span>' +
+                '</a>';
+            }).join('');
+
+            // Fade-in für die neuen Karten + aktiven Filter erneut anwenden
+            var activeFilter = document.querySelector('.filter-btn.active');
+            var filter = activeFilter ? activeFilter.dataset.filter : 'all';
+            grid.querySelectorAll('.team-card').forEach(function (card) {
+                card.classList.add('fade-in', 'visible');
+                if (filter !== 'all' && card.dataset.category !== filter) card.classList.add('hidden');
+            });
+        } catch (e) {
+            console.warn('Teams konnten nicht aus Supabase geladen werden — statischer Inhalt bleibt.', e);
+        }
+    })();
+    </script>
+    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
+</body>
+</html>

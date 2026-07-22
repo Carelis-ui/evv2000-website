@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Aktuelles verwalten</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Aktuelles</h1>
+            <div class="topbar-actions">
+                <button class="btn btn-primary" id="newBtn"><i class="fas fa-plus"></i> Neuer Beitrag</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Bild</th>
+                            <th>Titel</th>
+                            <th>Tag</th>
+                            <th>Datum</th>
+                            <th>Status</th>
+                            <th style="width:100px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Beitrag anlegen / bearbeiten -->
+    <div class="modal" id="editModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="modalTitle">Neuer Beitrag</h3>
+                <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Titel *</label>
+                        <input type="text" class="form-input" id="fTitle" placeholder="z.B. Männer 1 steigen auf!">
+                    </div>
+                    <div class="form-group full">
+                        <label>Inhalt *</label>
+                        <textarea class="form-textarea" id="fContent" placeholder="Der Text des Beitrags..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategorie</label>
+                        <select class="form-select" id="fTag">
+                            <option value="success">Erfolg (grün)</option>
+                            <option value="info" selected>Info (blau)</option>
+                            <option value="warning">Wichtig (orange)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tag-Beschriftung</label>
+                        <input type="text" class="form-input" id="fTagLabel" placeholder="z.B. Aufstieg, Spielbericht">
+                    </div>
+                    <div class="form-group">
+                        <label>Veröffentlichungsdatum</label>
+                        <input type="date" class="form-input" id="fDate">
+                    </div>
+                    <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:10px">
+                        <label class="form-check"><input type="checkbox" id="fPublished" checked> Veröffentlicht</label>
+                    </div>
+                    <div class="form-group full">
+                        <label>Bild (optional)</label>
+                        <div id="imgPicker"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close>Abbrechen</button>
+                <button class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'news.html', perm: 'news' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var editingId = null;
+        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'news');
+
+        document.querySelectorAll('[data-close]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });
+        });
+
+        document.getElementById('newBtn').addEventListener('click', function () { openEditor(null); });
+
+        function openEditor(item) {
+            editingId = item ? item.id : null;
+            document.getElementById('modalTitle').textContent = item ? 'Beitrag bearbeiten' : 'Neuer Beitrag';
+            document.getElementById('fTitle').value = item ? item.title : '';
+            document.getElementById('fContent').value = item ? item.content : '';
+            document.getElementById('fTag').value = item ? (item.tag || 'info') : 'info';
+            document.getElementById('fTagLabel').value = item ? (item.tag_label || '') : '';
+            document.getElementById('fDate').value = item ? (item.published_at || '') : AdminCore.dateStr(new Date());
+            document.getElementById('fPublished').checked = item ? item.is_published !== false : true;
+            picker.setUrl(item ? item.image_url : '');
+            AdminCore.openModal('editModal');
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', async function () {
+            var title = document.getElementById('fTitle').value.trim();
+            var content = document.getElementById('fContent').value.trim();
+            if (!title || !content) {
+                AdminCore.toast('Bitte Titel und Inhalt ausfüllen.', 'error');
+                return;
+            }
+
+            var payload = {
+                title: title,
+                content: content,
+                tag: document.getElementById('fTag').value,
+                tag_label: document.getElementById('fTagLabel').value.trim() || null,
+                published_at: document.getElementById('fDate').value || AdminCore.dateStr(new Date()),
+                is_published: document.getElementById('fPublished').checked,
+                image_url: picker.getUrl() || null
+            };
+
+            var btn = this;
+            btn.disabled = true;
+
+            try {
+                if (editingId) {
+                    var up = await sb.from('news').update(payload).eq('id', editingId);
+                    if (up.error) throw up.error;
+                    await AdminCore.audit('update', 'news', editingId, title, null);
+                    AdminCore.toast('Beitrag aktualisiert.', 'success');
+                } else {
+                    var ins = await sb.from('news').insert(payload).select().single();
+                    if (ins.error) throw ins.error;
+                    await AdminCore.audit('create', 'news', ins.data.id, title, null);
+                    AdminCore.toast('Beitrag erstellt.', 'success');
+                }
+                AdminCore.closeModal('editModal');
+                load();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler beim Speichern: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        window.editItem = function (id) {
+            var item = itemsCache.find(function (n) { return n.id === id; });
+            if (item) openEditor(item);
+        };
+
+        window.deleteItem = async function (id) {
+            var item = itemsCache.find(function (n) { return n.id === id; });
+            if (!confirm('Beitrag "' + (item ? item.title : '') + '" wirklich löschen?')) return;
+            var del = await sb.from('news').delete().eq('id', id);
+            if (del.error) {
+                AdminCore.toast('Fehler beim Löschen: ' + del.error.message, 'error');
+            } else {
+                await AdminCore.audit('delete', 'news', id, item ? item.title : null, null);
+                AdminCore.toast('Beitrag gelöscht.', 'success');
+                load();
+            }
+        };
+
+        var itemsCache = [];
+
+        async function load() {
+            var body = document.getElementById('listBody');
+            var res = await sb.from('news').select('*').order('published_at', { ascending: false });
+            if (res.error) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state">Fehler: ' + esc(res.error.message) + '</td></tr>';
+                return;
+            }
+            itemsCache = res.data || [];
+            if (!itemsCache.length) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-newspaper"></i>Noch keine Beiträge. Lege den ersten an!</td></tr>';
+                return;
+            }
+            body.innerHTML = itemsCache.map(function (n) {
+                var thumb = n.image_url
+                    ? '<img class="table-thumb" src="' + esc(n.image_url) + '" alt="">'
+                    : '<div class="table-thumb-empty"><i class="far fa-image"></i></div>';
+                var tagCls = n.tag === 'success' ? 'success' : n.tag === 'warning' ? 'warning' : 'info';
+                return '<tr>' +
+                    '<td>' + thumb + '</td>' +
+                    '<td><strong style="color:#fff">' + esc(n.title) + '</strong></td>' +
+                    '<td><span class="tag tag-' + tagCls + '">' + esc(n.tag_label || n.tag || '—') + '</span></td>' +
+                    '<td>' + AdminCore.fmtDate(n.published_at) + '</td>' +
+                    '<td>' + (n.is_published !== false
+                        ? '<span class="tag tag-success">Öffentlich</span>'
+                        : '<span class="tag tag-muted">Entwurf</span>') + '</td>' +
+                    '<td>' +
+                        '<button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + n.id + '\')"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + n.id + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        await load();
+
+        // Deep-Link: news.html?edit=<id>
+        var editParam = new URLSearchParams(location.search).get('edit');
+        if (editParam) {
+            var target = itemsCache.find(function (n) { return n.id === editParam; });
+            if (target) openEditor(target);
+        }
+    })();
+    </script>
+</body>
+</html>

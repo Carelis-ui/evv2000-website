@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Anfragen &amp; Anträge</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Anfragen &amp; Anträge</h1>
+            <div class="topbar-actions">
+                <div class="segment" id="tabSwitch">
+                    <button data-tab="kontakt" class="active"><i class="fas fa-envelope"></i> Kontakt <span class="tag tag-cyan" id="badgeKontakt" style="display:none">0</span></button>
+                    <button data-tab="antraege"><i class="fas fa-user-plus"></i> Mitgliedsanträge <span class="tag tag-cyan" id="badgeAntraege" style="display:none">0</span></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- ═══ Tab: Kontaktanfragen ═══ -->
+            <div id="kontaktTab">
+                <div class="table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Eingang</th>
+                                <th>Von</th>
+                                <th>Betreff</th>
+                                <th>Nachricht</th>
+                                <th>Status</th>
+                                <th style="width:150px">Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kontaktBody">
+                            <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ═══ Tab: Mitgliedsanträge ═══ -->
+            <div id="antraegeTab" style="display:none">
+                <div class="table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Eingang</th>
+                                <th>Name</th>
+                                <th>Mitgliedschaft</th>
+                                <th>Mannschaft</th>
+                                <th>Status</th>
+                                <th style="width:150px">Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="antraegeBody">
+                            <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="form-hint"><i class="fas fa-shield-alt"></i> Die IBAN wird aus Datenschutzgründen maskiert angezeigt — im Detail-Fenster lässt sie sich einblenden.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail-Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="detailTitle">Details</h3>
+                <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="detailBody"></div>
+            <div class="modal-foot" id="detailFoot"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'anfragen.html', perm: 'anfragen' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var messages = [];
+        var applications = [];
+
+        var SUBJECT_LABELS = {
+            probetraining: 'Probetraining', mitgliedschaft: 'Mitgliedschaft', mannschaften: 'Mannschaften',
+            beachanlage: 'Beachanlage', sponsoring: 'Sponsoring', turniere: 'Turniere / Events', sonstiges: 'Sonstiges'
+        };
+
+        function statusTag(s) {
+            return s === 'neu' ? '<span class="tag tag-cyan">Neu</span>' :
+                   s === 'gelesen' ? '<span class="tag tag-info">Gelesen</span>' :
+                   s === 'erledigt' ? '<span class="tag tag-success">Erledigt</span>' :
+                   '<span class="tag tag-muted">' + esc(s || '—') + '</span>';
+        }
+
+        function maskIban(iban) {
+            if (!iban) return '—';
+            var clean = String(iban).replace(/\s/g, '');
+            if (clean.length <= 8) return clean;
+            return clean.substring(0, 4) + ' •••• •••• ' + clean.substring(clean.length - 4);
+        }
+
+        /* ── Tabs ── */
+        var switchEl = document.getElementById('tabSwitch');
+        switchEl.querySelectorAll('button').forEach(function (b) {
+            b.addEventListener('click', function () {
+                switchEl.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
+                b.classList.add('active');
+                document.getElementById('kontaktTab').style.display = b.dataset.tab === 'kontakt' ? '' : 'none';
+                document.getElementById('antraegeTab').style.display = b.dataset.tab === 'antraege' ? '' : 'none';
+            });
+        });
+
+        document.querySelectorAll('[data-close]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal('detailModal'); });
+        });
+
+        function updateBadges() {
+            var newMsg = messages.filter(function (m) { return m.status === 'neu'; }).length;
+            var newApp = applications.filter(function (a) { return a.status === 'neu'; }).length;
+            var bk = document.getElementById('badgeKontakt');
+            var ba = document.getElementById('badgeAntraege');
+            bk.textContent = newMsg; bk.style.display = newMsg ? '' : 'none';
+            ba.textContent = newApp; ba.style.display = newApp ? '' : 'none';
+        }
+
+        /* ── Status ändern / löschen (beide Tabellen) ── */
+        window.setStatus = async function (table, id, status) {
+            var res = await sb.from(table).update({ status: status }).eq('id', id);
+            if (res.error) {
+                AdminCore.toast('Fehler: ' + res.error.message, 'error');
+                return;
+            }
+            var label = table === 'contact_messages' ? 'Kontaktanfrage' : 'Mitgliedsantrag';
+            await AdminCore.audit('update', table === 'contact_messages' ? 'kontaktanfrage' : 'mitgliedsantrag',
+                id, label + ' → ' + status, null);
+            AdminCore.closeModal('detailModal');
+            load();
+        };
+
+        window.deleteEntry = async function (table, id, label) {
+            if (!confirm((table === 'contact_messages' ? 'Kontaktanfrage' : 'Mitgliedsantrag') +
+                ' von "' + label + '" wirklich löschen?')) return;
+            var res = await sb.from(table).delete().eq('id', id);
+            if (res.error) {
+                AdminCore.toast('Fehler: ' + res.error.message, 'error');
+                return;
+            }
+            await AdminCore.audit('delete', table === 'contact_messages' ? 'kontaktanfrage' : 'mitgliedsantrag', id, label, null);
+            AdminCore.toast('Gelöscht.', 'success');
+            AdminCore.closeModal('detailModal');
+            load();
+        };
+
+        function row(label, value) {
+            return '<div style="display:flex;gap:12px;padding:7px 0;border-bottom:1px solid var(--border)">' +
+                '<div style="width:180px;flex-shrink:0;color:var(--text-muted);font-size:0.82rem;padding-top:2px">' + label + '</div>' +
+                '<div style="flex:1;font-size:0.9rem">' + (value || '—') + '</div></div>';
+        }
+
+        /* ── Detail: Kontaktanfrage ── */
+        window.showMessage = async function (id) {
+            var m = messages.find(function (x) { return x.id === id; });
+            if (!m) return;
+            document.getElementById('detailTitle').textContent = 'Kontaktanfrage';
+            document.getElementById('detailBody').innerHTML =
+                row('Eingang', AdminCore.fmtDateTime(m.created_at)) +
+                row('Name', esc(m.name)) +
+                row('E-Mail', '<a href="mailto:' + esc(m.email) + '">' + esc(m.email) + '</a>') +
+                row('Betreff', esc(SUBJECT_LABELS[m.subject] || m.subject || '—')) +
+                row('Status', statusTag(m.status)) +
+                '<div style="margin-top:14px;padding:14px;background:var(--navy);border-radius:8px;border:1px solid var(--border);white-space:pre-wrap;font-size:0.9rem">' + esc(m.message) + '</div>';
+            document.getElementById('detailFoot').innerHTML =
+                '<a class="btn btn-ghost" href="mailto:' + esc(m.email) + '?subject=' + encodeURIComponent('Re: Deine Anfrage an den EVV 2000') + '"><i class="fas fa-reply"></i> Antworten</a>' +
+                (m.status !== 'erledigt' ? '<button class="btn btn-primary" onclick="setStatus(\'contact_messages\',\'' + m.id + '\',\'erledigt\')"><i class="fas fa-check"></i> Erledigt</button>' : '') +
+                '<button class="btn btn-danger" onclick="deleteEntry(\'contact_messages\',\'' + m.id + '\',\'' + esc(m.name).replace(/'/g, '') + '\')"><i class="fas fa-trash"></i></button>';
+            AdminCore.openModal('detailModal');
+
+            if (m.status === 'neu') setStatusQuiet('contact_messages', m.id, 'gelesen');
+        };
+
+        /* ── Detail: Mitgliedsantrag ── */
+        window.showApplication = async function (id) {
+            var a = applications.find(function (x) { return x.id === id; });
+            if (!a) return;
+            document.getElementById('detailTitle').textContent = 'Mitgliedsantrag';
+            document.getElementById('detailBody').innerHTML =
+                row('Eingang', AdminCore.fmtDateTime(a.created_at)) +
+                row('Name', esc((a.anrede ? a.anrede + ' ' : '') + a.vorname + ' ' + a.nachname)) +
+                row('Geburtsdatum', AdminCore.fmtDate(a.geburtsdatum)) +
+                row('E-Mail', '<a href="mailto:' + esc(a.email) + '">' + esc(a.email) + '</a>') +
+                row('Telefon', esc(a.telefon)) +
+                row('Adresse', esc([a.strasse, (a.plz || '') + ' ' + (a.ort || '')].filter(Boolean).join(', '))) +
+                row('Mitgliedschaft', esc(a.mitgliedschaft)) +
+                row('Wunsch-Mannschaft', esc(a.mannschaft)) +
+                (a.erziehungsberechtigter ? row('Erziehungsberechtigt', esc(a.erziehungsberechtigter) +
+                    (a.kontakt_erziehungsberechtigter ? ' (' + esc(a.kontakt_erziehungsberechtigter) + ')' : '')) : '') +
+                row('Kontoinhaber', esc(a.kontoinhaber)) +
+                row('IBAN', '<span id="ibanMasked">' + esc(maskIban(a.iban)) +
+                    ' <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="revealIban(\'' + a.id + '\')"><i class="fas fa-eye"></i> anzeigen</button></span>') +
+                row('Zustimmungen', 'Satzung ✓ &nbsp; Datenschutz ✓ &nbsp; SEPA-Mandat ✓') +
+                row('Status', statusTag(a.status));
+            document.getElementById('detailFoot').innerHTML =
+                '<a class="btn btn-ghost" href="mailto:' + esc(a.email) + '?subject=' + encodeURIComponent('Dein Mitgliedsantrag beim EVV 2000') + '"><i class="fas fa-reply"></i> Antworten</a>' +
+                (a.status !== 'erledigt' ? '<button class="btn btn-primary" onclick="setStatus(\'membership_applications\',\'' + a.id + '\',\'erledigt\')"><i class="fas fa-check"></i> Aufgenommen / Erledigt</button>' : '') +
+                '<button class="btn btn-danger" onclick="deleteEntry(\'membership_applications\',\'' + a.id + '\',\'' + esc(a.vorname + ' ' + a.nachname).replace(/'/g, '') + '\')"><i class="fas fa-trash"></i></button>';
+            AdminCore.openModal('detailModal');
+
+            if (a.status === 'neu') setStatusQuiet('membership_applications', a.id, 'gelesen');
+        };
+
+        window.revealIban = function (id) {
+            var a = applications.find(function (x) { return x.id === id; });
+            if (!a) return;
+            var el = document.getElementById('ibanMasked');
+            if (el) el.innerHTML = '<strong style="color:#fff;letter-spacing:1px">' +
+                esc(String(a.iban || '').replace(/(.{4})/g, '$1 ').trim()) + '</strong>';
+        };
+
+        /* Status still aktualisieren (neu -> gelesen beim Öffnen) */
+        async function setStatusQuiet(table, id, status) {
+            var res = await sb.from(table).update({ status: status }).eq('id', id);
+            if (!res.error) {
+                var list = table === 'contact_messages' ? messages : applications;
+                var item = list.find(function (x) { return x.id === id; });
+                if (item) item.status = status;
+                renderAll();
+            }
+        }
+
+        /* ── Rendering ── */
+        function renderKontakt() {
+            var body = document.getElementById('kontaktBody');
+            if (!messages.length) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-inbox"></i>Keine Kontaktanfragen.</td></tr>';
+                return;
+            }
+            body.innerHTML = messages.map(function (m) {
+                var bold = m.status === 'neu' ? 'font-weight:700;color:#fff' : '';
+                return '<tr style="cursor:pointer" onclick="showMessage(\'' + m.id + '\')">' +
+                    '<td style="white-space:nowrap;' + bold + '">' + AdminCore.fmtDateTime(m.created_at) + '</td>' +
+                    '<td><span style="' + bold + '">' + esc(m.name) + '</span><br><small style="color:var(--text-muted)">' + esc(m.email) + '</small></td>' +
+                    '<td>' + esc(SUBJECT_LABELS[m.subject] || m.subject || '—') + '</td>' +
+                    '<td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(m.message) + '</td>' +
+                    '<td>' + statusTag(m.status) + '</td>' +
+                    '<td onclick="event.stopPropagation()">' +
+                        '<button class="action-btn edit" title="Öffnen" onclick="showMessage(\'' + m.id + '\')"><i class="fas fa-envelope-open-text"></i></button>' +
+                        (m.status !== 'erledigt' ? '<button class="action-btn" style="color:var(--success)" title="Als erledigt markieren" onclick="setStatus(\'contact_messages\',\'' + m.id + '\',\'erledigt\')"><i class="fas fa-check"></i></button>' : '') +
+                        '<button class="action-btn delete" title="Löschen" onclick="deleteEntry(\'contact_messages\',\'' + m.id + '\',\'' + esc(m.name).replace(/'/g, '') + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        function renderAntraege() {
+            var body = document.getElementById('antraegeBody');
+            if (!applications.length) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-user-plus"></i>Keine Mitgliedsanträge.</td></tr>';
+                return;
+            }
+            body.innerHTML = applications.map(function (a) {
+                var bold = a.status === 'neu' ? 'font-weight:700;color:#fff' : '';
+                return '<tr style="cursor:pointer" onclick="showApplication(\'' + a.id + '\')">' +
+                    '<td style="white-space:nowrap;' + bold + '">' + AdminCore.fmtDateTime(a.created_at) + '</td>' +
+                    '<td><span style="' + bold + '">' + esc(a.vorname + ' ' + a.nachname) + '</span><br><small style="color:var(--text-muted)">' + esc(a.email) + '</small></td>' +
+                    '<td>' + esc(a.mitgliedschaft || '—') + '</td>' +
+                    '<td>' + esc(a.mannschaft || '—') + '</td>' +
+                    '<td>' + statusTag(a.status) + '</td>' +
+                    '<td onclick="event.stopPropagation()">' +
+                        '<button class="action-btn edit" title="Öffnen" onclick="showApplication(\'' + a.id + '\')"><i class="fas fa-id-card"></i></button>' +
+                        (a.status !== 'erledigt' ? '<button class="action-btn" style="color:var(--success)" title="Als erledigt markieren" onclick="setStatus(\'membership_applications\',\'' + a.id + '\',\'erledigt\')"><i class="fas fa-check"></i></button>' : '') +
+                        '<button class="action-btn delete" title="Löschen" onclick="deleteEntry(\'membership_applications\',\'' + a.id + '\',\'' + esc(a.vorname + ' ' + a.nachname).replace(/'/g, '') + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        function renderAll() {
+            renderKontakt();
+            renderAntraege();
+            updateBadges();
+        }
+
+        async function load() {
+            var results = await Promise.all([
+                sb.from('contact_messages').select('*').order('created_at', { ascending: false }),
+                sb.from('membership_applications').select('*').order('created_at', { ascending: false })
+            ]);
+
+            if (results[0].error || results[1].error) {
+                var msg = (results[0].error || results[1].error).message;
+                var hint = '<tr><td colspan="6" class="empty-state">Fehler: ' + esc(msg) +
+                    '<br><small>Wurde supabase-migration-v3.sql schon ausgeführt?</small></td></tr>';
+                document.getElementById('kontaktBody').innerHTML = hint;
+                document.getElementById('antraegeBody').innerHTML = hint;
+                return;
+            }
+
+            messages = results[0].data || [];
+            applications = results[1].data || [];
+            renderAll();
+        }
+
+        await load();
+    })();
+    </script>
+</body>
+</html>

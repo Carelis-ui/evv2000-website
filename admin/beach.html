@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Beach-Buchungen</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Beach-Buchungen</h1>
+            <div class="topbar-actions">
+                <a href="kalender.html?view=beach" class="btn btn-primary"><i class="fas fa-calendar-alt"></i> Belegungsplan &amp; Sperren</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="stats-grid" style="margin-bottom:24px">
+                <div class="stat-card">
+                    <div class="stat-icon cyan"><i class="fas fa-umbrella-beach"></i></div>
+                    <div class="stat-info"><h3 id="statToday">–</h3><p>Buchungen heute</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-calendar-week"></i></div>
+                    <div class="stat-info"><h3 id="statUpcoming">–</h3><p>Kommende Buchungen</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="fas fa-lock"></i></div>
+                    <div class="stat-info"><h3 id="statBlocks">–</h3><p>Aktive Sperren (Training)</p></div>
+                </div>
+            </div>
+
+            <!-- ═══ Einnahmen-Übersicht ═══ -->
+            <div class="section-header">
+                <h2 class="section-title">Einnahmen</h2>
+                <div class="segment" id="revSwitch">
+                    <button data-mode="monat" class="active"><i class="fas fa-calendar-day"></i> Monatlich</button>
+                    <button data-mode="quartal"><i class="fas fa-calendar-week"></i> Quartalsweise</button>
+                    <button data-mode="jahr"><i class="fas fa-calendar"></i> Jährlich</button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Zeitraum</th>
+                            <th style="width:110px">Buchungen</th>
+                            <th style="width:130px">Bezahlt</th>
+                            <th style="width:130px">Ausstehend</th>
+                            <th style="width:150px">Gesamt</th>
+                            <th>Verlauf</th>
+                        </tr>
+                    </thead>
+                    <tbody id="revBody">
+                        <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="form-hint" style="margin:-20px 0 28px" id="revHint"></p>
+
+            <div class="section-header">
+                <h2 class="section-title">Buchungen</h2>
+                <div style="display:flex;gap:10px;align-items:center">
+                    <input type="date" class="form-input" id="dateFrom" style="width:auto">
+                    <span style="color:var(--text-muted)">bis</span>
+                    <input type="date" class="form-input" id="dateTo" style="width:auto">
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Zeit</th>
+                            <th>Platz</th>
+                            <th>Name</th>
+                            <th>Kontakt</th>
+                            <th>Betrag</th>
+                            <th>Status</th>
+                            <th style="width:110px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsBody">
+                        <tr><td colspan="8" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Platz-Sperren (Training &amp; Co.)</h2>
+                <a href="kalender.html?view=beach" class="section-link">Neue Sperre im Belegungsplan anlegen <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Zeit</th>
+                            <th>Platz</th>
+                            <th>Grund</th>
+                            <th>Angelegt von</th>
+                            <th style="width:70px">Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blocksBody">
+                        <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'beach.html', perm: 'beach' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var SLOT_MIN = 45;
+        var bookingsCache = [];
+        var blocksCache = [];
+
+        var today = AdminCore.dateStr(new Date());
+        var inTwoWeeks = AdminCore.dateStr(new Date(Date.now() + 14 * 864e5));
+        document.getElementById('dateFrom').value = today;
+        document.getElementById('dateTo').value = inTwoWeeks;
+        document.getElementById('dateFrom').addEventListener('change', loadBookings);
+        document.getElementById('dateTo').addEventListener('change', loadBookings);
+
+        function timeRange(startMin, slotCount) {
+            return AdminCore.minToTime(startMin) + ' – ' + AdminCore.minToTime(startMin + SLOT_MIN * (slotCount || 1));
+        }
+
+        window.cancelBooking = async function (id) {
+            var b = bookingsCache.find(function (x) { return x.id === id; });
+            if (!confirm('Buchung von "' + (b ? (b.name || b.email || '') : '') + '" wirklich stornieren?')) return;
+            var up = await sb.from('bookings')
+                .update({ cancelled_at: new Date().toISOString(), pay_status: 'cancelled' })
+                .eq('id', id);
+            if (up.error) {
+                AdminCore.toast('Fehler: ' + up.error.message, 'error');
+            } else {
+                await AdminCore.audit('update', 'beach_booking', id, (b ? (b.name || '') + ' ' : '') + 'storniert', null);
+                AdminCore.toast('Buchung storniert.', 'success');
+                loadBookings();
+            }
+        };
+
+        window.markPaid = async function (id) {
+            var b = bookingsCache.find(function (x) { return x.id === id; });
+            var up = await sb.from('bookings').update({ pay_status: 'paid' }).eq('id', id);
+            if (up.error) {
+                AdminCore.toast('Fehler: ' + up.error.message, 'error');
+            } else {
+                await AdminCore.audit('update', 'beach_booking', id, (b ? (b.name || '') + ' ' : '') + 'als bezahlt markiert', null);
+                AdminCore.toast('Als bezahlt markiert.', 'success');
+                loadBookings();
+            }
+        };
+
+        window.deleteBlock = async function (id) {
+            var bl = blocksCache.find(function (x) { return x.id === id; });
+            if (!confirm('Diese Sperre wirklich aufheben?')) return;
+            var del = await sb.from('beach_blocks').delete().eq('id', id);
+            if (del.error) {
+                AdminCore.toast('Fehler: ' + del.error.message, 'error');
+            } else {
+                await AdminCore.audit('delete', 'beach_block', id,
+                    bl ? (bl.date + ' Platz ' + bl.field + ' ' + timeRange(bl.start_min, bl.slot_count)) : null, null);
+                AdminCore.toast('Sperre aufgehoben.', 'success');
+                loadBlocks();
+            }
+        };
+
+        async function loadBookings() {
+            var body = document.getElementById('bookingsBody');
+            var from = document.getElementById('dateFrom').value || today;
+            var to = document.getElementById('dateTo').value || inTwoWeeks;
+
+            var res = await sb.from('bookings')
+                .select('*')
+                .gte('date', from)
+                .lte('date', to)
+                .order('date', { ascending: true })
+                .order('start_min', { ascending: true });
+
+            if (res.error) {
+                body.innerHTML = '<tr><td colspan="8" class="empty-state">Buchungen konnten nicht geladen werden: ' +
+                    esc(res.error.message) + '</td></tr>';
+                document.getElementById('statToday').textContent = '–';
+                document.getElementById('statUpcoming').textContent = '–';
+                return;
+            }
+
+            bookingsCache = (res.data || []).filter(function (b) { return !b.cancelled_at; });
+
+            document.getElementById('statToday').textContent =
+                bookingsCache.filter(function (b) { return b.date === today; }).length;
+            document.getElementById('statUpcoming').textContent =
+                bookingsCache.filter(function (b) { return b.date >= today; }).length;
+
+            if (!bookingsCache.length) {
+                body.innerHTML = '<tr><td colspan="8" class="empty-state"><i class="fas fa-umbrella-beach"></i>Keine Buchungen im Zeitraum.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = bookingsCache.map(function (b) {
+                var statusTag =
+                    b.pay_status === 'paid' ? '<span class="tag tag-success">Bezahlt</span>' :
+                    b.pay_status === 'reserved' || b.pay_status === 'pending' ? '<span class="tag tag-warning">Vor Ort</span>' :
+                    '<span class="tag tag-muted">' + esc(b.pay_status || '—') + '</span>';
+                return '<tr>' +
+                    '<td>' + AdminCore.fmtDate(b.date) + '</td>' +
+                    '<td>' + timeRange(b.start_min, b.slot_count) + '</td>' +
+                    '<td><span class="tag tag-cyan">Platz ' + esc(b.field) + '</span></td>' +
+                    '<td><strong style="color:#fff">' + esc(b.name || '—') + '</strong></td>' +
+                    '<td><small>' + esc(b.email || '') + (b.phone ? '<br>' + esc(b.phone) : '') + '</small></td>' +
+                    '<td>' + (b.total_cents != null ? AdminCore.euro(b.total_cents) : (b.total != null ? String(b.total).replace('.', ',') + ' €' : '—')) + '</td>' +
+                    '<td>' + statusTag + '</td>' +
+                    '<td>' +
+                        (b.pay_status !== 'paid' ? '<button class="action-btn edit" title="Als bezahlt markieren" onclick="markPaid(\'' + b.id + '\')"><i class="fas fa-check"></i></button>' : '') +
+                        '<button class="action-btn delete" title="Stornieren" onclick="cancelBooking(\'' + b.id + '\')"><i class="fas fa-ban"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        /* ═══════════ EINNAHMEN-ÜBERSICHT ═══════════ */
+        var revMode = 'monat';
+        var revBookings = null;   // alle nicht stornierten Buchungen (einmal geladen)
+        var revHasEstimates = false;
+
+        var SLOT_PRICE = 30, SLOT_PRICE_EVENING = 40, EVENING_START = 18 * 60;
+        var MONTH_SHORT = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+
+        /* Betrag einer Buchung in Cent — nutzt gespeicherte Beträge, sonst
+           Schätzung aus Slot-Anzahl und Tageszeit */
+        function bookingCents(b) {
+            if (b.total_cents != null && !isNaN(b.total_cents)) return Math.round(b.total_cents);
+            if (b.total != null && !isNaN(parseFloat(b.total))) return Math.round(parseFloat(b.total) * 100);
+            // Schätzung: 30 € Standard / 40 € Abendslot ab 18:00
+            revHasEstimates = true;
+            var cents = 0;
+            var count = b.slot_count || 1;
+            var start = b.start_min || 0;
+            for (var i = 0; i < count; i++) {
+                cents += (start + i * 45 >= EVENING_START ? SLOT_PRICE_EVENING : SLOT_PRICE) * 100;
+            }
+            return cents;
+        }
+
+        function periodKey(dateStr) {
+            var y = dateStr.slice(0, 4);
+            var m = parseInt(dateStr.slice(5, 7), 10);
+            if (revMode === 'jahr') return y;
+            if (revMode === 'quartal') return y + '-Q' + Math.ceil(m / 3);
+            return y + '-' + String(m).padStart(2, '0');
+        }
+
+        function periodLabel(key) {
+            if (revMode === 'jahr') return key;
+            if (revMode === 'quartal') return key.replace('-', ' · ');
+            var parts = key.split('-');
+            return MONTH_SHORT[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+        }
+
+        document.querySelectorAll('#revSwitch button').forEach(function (b) {
+            b.addEventListener('click', function () {
+                document.querySelectorAll('#revSwitch button').forEach(function (x) { x.classList.remove('active'); });
+                b.classList.add('active');
+                revMode = b.dataset.mode;
+                renderRevenue();
+            });
+        });
+
+        async function loadRevenue() {
+            var res = await sb.from('bookings').select('*').order('date', { ascending: true });
+            if (res.error) {
+                document.getElementById('revBody').innerHTML =
+                    '<tr><td colspan="6" class="empty-state">Einnahmen konnten nicht geladen werden: ' +
+                    esc(res.error.message) + '</td></tr>';
+                return;
+            }
+            revBookings = (res.data || []).filter(function (b) {
+                return !b.cancelled_at && b.pay_status !== 'cancelled' && b.date;
+            });
+            renderRevenue();
+        }
+
+        function renderRevenue() {
+            if (!revBookings) return;
+            var body = document.getElementById('revBody');
+            revHasEstimates = false;
+
+            if (!revBookings.length) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-euro-sign"></i>Noch keine Buchungen vorhanden.</td></tr>';
+                document.getElementById('revHint').textContent = '';
+                return;
+            }
+
+            // Gruppieren nach Zeitraum
+            var groups = {};
+            revBookings.forEach(function (b) {
+                var key = periodKey(b.date);
+                if (!groups[key]) groups[key] = { count: 0, paid: 0, open: 0 };
+                var cents = bookingCents(b);
+                groups[key].count++;
+                if (b.pay_status === 'paid') groups[key].paid += cents;
+                else groups[key].open += cents;
+            });
+
+            // Neueste zuerst, Anzahl je nach Modus begrenzen
+            var limit = revMode === 'monat' ? 12 : revMode === 'quartal' ? 8 : 100;
+            var keys = Object.keys(groups).sort().reverse().slice(0, limit);
+
+            var maxTotal = 1;
+            keys.forEach(function (k) {
+                maxTotal = Math.max(maxTotal, groups[k].paid + groups[k].open);
+            });
+
+            var sumPaid = 0, sumOpen = 0, sumCount = 0;
+
+            body.innerHTML = keys.map(function (k) {
+                var g = groups[k];
+                var total = g.paid + g.open;
+                sumPaid += g.paid; sumOpen += g.open; sumCount += g.count;
+                var barPaid = Math.round((g.paid / maxTotal) * 100);
+                var barOpen = Math.round((g.open / maxTotal) * 100);
+                return '<tr>' +
+                    '<td><strong style="color:#fff">' + esc(periodLabel(k)) + '</strong></td>' +
+                    '<td>' + g.count + '</td>' +
+                    '<td style="color:var(--success)">' + AdminCore.euro(g.paid) + '</td>' +
+                    '<td style="color:var(--warning)">' + (g.open ? AdminCore.euro(g.open) : '—') + '</td>' +
+                    '<td><strong style="color:#fff">' + AdminCore.euro(total) + '</strong></td>' +
+                    '<td style="min-width:140px">' +
+                        '<div style="display:flex;height:10px;border-radius:5px;overflow:hidden;background:rgba(255,255,255,0.05)">' +
+                            '<div style="width:' + barPaid + '%;background:linear-gradient(90deg,var(--royal),var(--primary))"></div>' +
+                            '<div style="width:' + barOpen + '%;background:rgba(245,158,11,0.55)"></div>' +
+                        '</div>' +
+                    '</td></tr>';
+            }).join('') +
+            '<tr style="border-top:2px solid var(--border)">' +
+                '<td><strong style="color:var(--accent)">Summe</strong></td>' +
+                '<td><strong>' + sumCount + '</strong></td>' +
+                '<td><strong style="color:var(--success)">' + AdminCore.euro(sumPaid) + '</strong></td>' +
+                '<td><strong style="color:var(--warning)">' + (sumOpen ? AdminCore.euro(sumOpen) : '—') + '</strong></td>' +
+                '<td><strong style="color:#fff">' + AdminCore.euro(sumPaid + sumOpen) + '</strong></td>' +
+                '<td></td></tr>';
+
+            document.getElementById('revHint').innerHTML =
+                '<i class="fas fa-info-circle"></i> Stornierte Buchungen sind ausgenommen. ' +
+                '„Ausstehend" = reserviert / Zahlung vor Ort.' +
+                (revHasEstimates ? ' Beträge ohne gespeicherten Preis wurden aus Slot-Anzahl und Uhrzeit geschätzt (30 € / 40 € ab 18 Uhr).' : '');
+        }
+
+        async function loadBlocks() {
+            var body = document.getElementById('blocksBody');
+            var res = await sb.from('beach_blocks')
+                .select('*')
+                .gte('date', today)
+                .order('date', { ascending: true })
+                .order('start_min', { ascending: true });
+
+            if (res.error) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state">Sperren konnten nicht geladen werden: ' +
+                    esc(res.error.message) + '<br><small>Wurde supabase-migration-v2.sql schon ausgeführt?</small></td></tr>';
+                document.getElementById('statBlocks').textContent = '–';
+                return;
+            }
+
+            blocksCache = res.data || [];
+            document.getElementById('statBlocks').textContent = blocksCache.length;
+
+            if (!blocksCache.length) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-lock-open"></i>Keine aktiven Sperren. Sperren legst du im Belegungsplan an.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = blocksCache.map(function (bl) {
+                return '<tr>' +
+                    '<td>' + AdminCore.fmtDate(bl.date) + '</td>' +
+                    '<td>' + timeRange(bl.start_min, bl.slot_count) + '</td>' +
+                    '<td><span class="tag tag-cyan">Platz ' + esc(bl.field) + '</span></td>' +
+                    '<td><span class="tag tag-warning">' + esc(bl.reason || 'Training') + '</span></td>' +
+                    '<td><small>' + esc(bl.created_by_email || '—') + '</small></td>' +
+                    '<td><button class="action-btn delete" title="Sperre aufheben" onclick="deleteBlock(\'' + bl.id + '\')"><i class="fas fa-unlock"></i></button></td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        await Promise.all([loadBookings(), loadBlocks(), loadRevenue()]);
+    })();
+    </script>
+</body>
+</html>

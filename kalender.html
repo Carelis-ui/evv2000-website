@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Der Kalender des EVV 2000 – alle Spiele, Turniere und Events auf einen Blick. Filterbar nach Mannschaft.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta property="og:title" content="Kalender | EVV 2000">
+    <meta property="og:description" content="Alle Spiele, Turniere und Events des EVV 2000 auf einen Blick.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evv2000-website.vercel.app/kalender">
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/hero-bg.jpg">
+    <title>Kalender | EVV 2000</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
+                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+            </a>
+            <div class="mode-switch">
+                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
+                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
+                <div class="mode-slider"></div>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
+                <li><a href="events.html" class="nav-link">Events</a></li>
+                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
+                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
+                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
+                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
+                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag">Kalender</span>
+            <h1>Spiele, Turniere &amp; Events</h1>
+            <p>Alle Termine des EVV 2000 auf einen Blick &ndash; filtere nach Terminart oder Mannschaft.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <!-- Filter -->
+            <div class="kal-filters">
+                <div class="kal-pills" id="typePills">
+                    <button class="kal-pill active" data-type="all">Alle</button>
+                    <button class="kal-pill" data-type="spiel">Spiele</button>
+                    <button class="kal-pill" data-type="turnier">Turniere</button>
+                    <button class="kal-pill" data-type="event">Events</button>
+                </div>
+                <select class="kal-team-select" id="teamSelect">
+                    <option value="all">Alle Mannschaften</option>
+                </select>
+            </div>
+
+            <!-- Monatsnavigation -->
+            <div class="kal-toolbar">
+                <button class="kal-nav-btn" id="kalPrev" aria-label="Vorheriger Monat"><i class="fas fa-chevron-left"></i></button>
+                <div class="kal-month-title" id="kalTitle">–</div>
+                <button class="kal-nav-btn" id="kalNext" aria-label="Nächster Monat"><i class="fas fa-chevron-right"></i></button>
+                <button class="kal-today-btn" id="kalToday">Heute</button>
+            </div>
+
+            <!-- Monatsraster -->
+            <div class="kal-grid" id="kalGrid"></div>
+
+            <div class="kal-legend">
+                <span><i style="background:#3b82f6"></i> Spiel</span>
+                <span><i style="background:#22d3ee"></i> Turnier</span>
+                <span><i style="background:#10b981"></i> Event</span>
+                <span><i style="background:#f59e0b"></i> Training</span>
+            </div>
+
+            <!-- Terminliste -->
+            <div class="section-header" style="text-align:left;margin-bottom:20px">
+                <h2 style="font-size:1.4rem" id="listTitle">Termine</h2>
+            </div>
+            <div class="kal-list" id="kalList">
+                <div class="kal-empty"><i class="fas fa-spinner fa-spin"></i>Kalender wird geladen...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
+                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Verein</h4>
+                    <ul>
+                        <li><a href="mannschaften.html">Mannschaften</a></li>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="kontakt.html">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Angebote</h4>
+                    <ul>
+                        <li><a href="beachanlage.html">Beachanlage</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="kalender.html">Kalender</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Rechtliches</h4>
+                    <ul>
+                        <li><a href="impressum.html">Impressum</a></li>
+                        <li><a href="datenschutz.html">Datenschutz</a></li>
+                        <li><a href="#">Vereinssatzung</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script>
+    (async function () {
+        var MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+        var MONTHS_SHORT = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+        var TYPE_LABEL = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
+
+        var allEvents = [];
+        var teams = [];
+        var cursor = new Date(); cursor.setDate(1);
+        var typeFilter = 'all';
+        var teamFilter = 'all';
+
+        var grid = document.getElementById('kalGrid');
+        var list = document.getElementById('kalList');
+
+        function esc(s) {
+            if (s == null) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function dateStr(d) {
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+
+        function filtered() {
+            return allEvents.filter(function (ev) {
+                if (typeFilter !== 'all' && ev.event_type !== typeFilter) return false;
+                if (teamFilter !== 'all' && ev.team_id !== teamFilter) return false;
+                return true;
+            });
+        }
+
+        /* Termin läuft an diesem Tag? (mehrtägige Turniere) */
+        function onDay(ev, ds) {
+            var end = ev.date_end || ev.date;
+            return ev.date <= ds && ds <= end;
+        }
+
+        function renderCalendar() {
+            var y = cursor.getFullYear(), m = cursor.getMonth();
+            document.getElementById('kalTitle').textContent = MONTHS[m] + ' ' + y;
+
+            var events = filtered();
+            var todayStr = dateStr(new Date());
+            var firstDay = new Date(y, m, 1);
+            var startOffset = (firstDay.getDay() + 6) % 7;
+            var gridStart = new Date(y, m, 1 - startOffset);
+
+            var html = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(function (d) {
+                return '<div class="kal-dow">' + d + '</div>';
+            }).join('');
+
+            for (var i = 0; i < 42; i++) {
+                var d = new Date(gridStart);
+                d.setDate(gridStart.getDate() + i);
+                var ds = dateStr(d);
+                var inMonth = d.getMonth() === m;
+                var dayEvents = events.filter(function (ev) { return onDay(ev, ds); });
+
+                var chips = '';
+                dayEvents.slice(0, 3).forEach(function (ev) {
+                    chips += '<div class="kal-chip ' + esc(ev.event_type || 'event') + '" title="' + esc(ev.title) + '">' + esc(ev.title) + '</div>';
+                });
+                if (dayEvents.length > 3) chips += '<div class="kal-more">+' + (dayEvents.length - 3) + '</div>';
+
+                html += '<div class="kal-day' + (inMonth ? '' : ' other') + (ds === todayStr ? ' today' : '') +
+                    (dayEvents.length ? ' has-events' : '') + '" data-date="' + ds + '">' +
+                    '<div class="kal-day-num">' + d.getDate() + '</div>' + chips + '</div>';
+            }
+            grid.innerHTML = html;
+
+            grid.querySelectorAll('.kal-day.has-events').forEach(function (day) {
+                day.addEventListener('click', function () {
+                    var target = document.getElementById('day-' + day.dataset.date);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        target.classList.add('highlight');
+                        setTimeout(function () { target.classList.remove('highlight'); }, 2000);
+                    }
+                });
+            });
+        }
+
+        function renderList() {
+            var y = cursor.getFullYear(), m = cursor.getMonth();
+            var monthStart = dateStr(new Date(y, m, 1));
+            var monthEnd = dateStr(new Date(y, m + 1, 0));
+            document.getElementById('listTitle').textContent = 'Termine im ' + MONTHS[m];
+
+            var events = filtered().filter(function (ev) {
+                var end = ev.date_end || ev.date;
+                return ev.date <= monthEnd && end >= monthStart;
+            }).sort(function (a, b) {
+                return a.date < b.date ? -1 : a.date > b.date ? 1 : (a.time_start || '99') < (b.time_start || '99') ? -1 : 1;
+            });
+
+            if (!events.length) {
+                list.innerHTML = '<div class="kal-empty"><i class="far fa-calendar"></i>Keine Termine in diesem Monat' +
+                    (typeFilter !== 'all' || teamFilter !== 'all' ? ' (mit den gewählten Filtern)' : '') + '.</div>';
+                return;
+            }
+
+            list.innerHTML = events.map(function (ev) {
+                var d = new Date(ev.date + 'T00:00:00');
+                var dateLabel = '<span class="kd-day">' + d.getDate() + '</span><span class="kd-month">' + MONTHS_SHORT[d.getMonth()] + '</span>';
+
+                var meta = [];
+                if (ev.date_end && ev.date_end !== ev.date) {
+                    var de = new Date(ev.date_end + 'T00:00:00');
+                    meta.push('<span><i class="far fa-calendar"></i>bis ' + de.getDate() + '. ' + MONTHS_SHORT[de.getMonth()] + '</span>');
+                }
+                if (ev.time_start) meta.push('<span><i class="far fa-clock"></i>' + esc(ev.time_start) + (ev.time_end ? ' – ' + esc(ev.time_end) : '') + ' Uhr</span>');
+                if (ev.location) meta.push('<span><i class="fas fa-map-marker-alt"></i>' + esc(ev.location) + '</span>');
+                if (ev.opponent) meta.push('<span><i class="fas fa-volleyball-ball"></i>' + (ev.is_home ? 'Heim gegen ' : 'Auswärts gegen ') + esc(ev.opponent) + '</span>');
+
+                var badges = '<span class="kal-badge ' + esc(ev.event_type || 'event') + '">' + (TYPE_LABEL[ev.event_type] || esc(ev.event_type)) + '</span>';
+                if (ev.team_name) badges += '<span class="kal-badge team">' + esc(ev.team_name) + '</span>';
+
+                var titleHtml = esc(ev.title);
+                if (ev.tournament_id) {
+                    titleHtml = '<a href="turnier.html?id=' + esc(ev.tournament_id) + '" style="color:var(--white)">' + esc(ev.title) +
+                        ' <i class="fas fa-arrow-right" style="font-size:0.7rem;color:var(--accent)"></i></a>';
+                }
+
+                return '<div class="kal-item" id="day-' + esc(ev.date) + '">' +
+                    '<div class="kal-item-date">' + dateLabel + '</div>' +
+                    '<div class="kal-item-body">' +
+                        '<div class="kal-item-title">' + titleHtml + '</div>' +
+                        '<div class="kal-item-meta">' + meta.join('') + '</div>' +
+                        (ev.description ? '<p style="font-size:0.85rem;color:var(--gray-500);margin-top:8px">' + esc(ev.description).substring(0, 200) + '</p>' : '') +
+                    '</div>' +
+                    '<div class="kal-item-badges">' + badges + '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function render() {
+            renderCalendar();
+            renderList();
+        }
+
+        /* Navigation */
+        document.getElementById('kalPrev').addEventListener('click', function () {
+            cursor.setMonth(cursor.getMonth() - 1); render();
+        });
+        document.getElementById('kalNext').addEventListener('click', function () {
+            cursor.setMonth(cursor.getMonth() + 1); render();
+        });
+        document.getElementById('kalToday').addEventListener('click', function () {
+            cursor = new Date(); cursor.setDate(1); render();
+        });
+
+        /* Filter */
+        document.querySelectorAll('#typePills .kal-pill').forEach(function (p) {
+            p.addEventListener('click', function () {
+                document.querySelectorAll('#typePills .kal-pill').forEach(function (x) { x.classList.remove('active'); });
+                p.classList.add('active');
+                typeFilter = p.dataset.type;
+                render();
+            });
+        });
+        document.getElementById('teamSelect').addEventListener('change', function () {
+            teamFilter = this.value;
+            render();
+        });
+
+        /* Daten laden */
+        try {
+            await ErkaSupabase.init();
+            var sb = ErkaSupabase.client;
+            if (!sb) throw new Error('offline');
+
+            var results = await Promise.all([
+                sb.from('public_calendar').select('*'),
+                sb.from('public_teams').select('id, name, category')
+            ]);
+
+            allEvents = results[0].data || [];
+            teams = results[1].data || [];
+
+            /* Team-Filter dynamisch befüllen — aktualisiert sich automatisch,
+               sobald im Admin-Panel Mannschaften angelegt werden */
+            var sel = document.getElementById('teamSelect');
+            var groups = { herren: [], damen: [], jugend: [], hobby: [] };
+            teams.forEach(function (t) {
+                var cat = (t.category || 'herren').toLowerCase();
+                (groups[cat] = groups[cat] || []).push(t);
+            });
+            var groupLabels = { herren: 'Herren', damen: 'Damen', jugend: 'Jugend', hobby: 'Hobby' };
+            Object.keys(groups).forEach(function (cat) {
+                if (!groups[cat].length) return;
+                var og = document.createElement('optgroup');
+                og.label = groupLabels[cat] || cat;
+                groups[cat].forEach(function (t) {
+                    var opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.textContent = t.name;
+                    og.appendChild(opt);
+                });
+                sel.appendChild(og);
+            });
+
+            render();
+        } catch (e) {
+            console.error('Kalender load error:', e);
+            list.innerHTML = '<div class="kal-empty"><i class="far fa-calendar"></i>Der Kalender konnte nicht geladen werden. Bitte versuche es sp&auml;ter erneut.</div>';
+            grid.innerHTML = '';
+        }
+    })();
+    </script>
+    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Mannschaften verwalten</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Mannschaften</h1>
+            <div class="topbar-actions">
+                <button class="btn btn-primary" id="newBtn"><i class="fas fa-plus"></i> Neue Mannschaft</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="filter-pills" id="catFilter" style="margin-bottom:20px">
+                <button class="filter-pill active" data-cat="all">Alle</button>
+                <button class="filter-pill" data-cat="herren">Herren</button>
+                <button class="filter-pill" data-cat="damen">Damen</button>
+                <button class="filter-pill" data-cat="jugend">Jugend</button>
+                <button class="filter-pill" data-cat="hobby">Hobby</button>
+            </div>
+
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Bild</th>
+                            <th>Name</th>
+                            <th>Kategorie</th>
+                            <th>Liga</th>
+                            <th>Trainer</th>
+                            <th>Training</th>
+                            <th>Status</th>
+                            <th style="width:100px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="8" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Mannschaft anlegen / bearbeiten -->
+    <div class="modal" id="editModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="modalTitle">Neue Mannschaft</h3>
+                <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" class="form-input" id="fName" placeholder="z.B. Männer 1">
+                    </div>
+                    <div class="form-group">
+                        <label>Kategorie</label>
+                        <select class="form-select" id="fCategory">
+                            <option value="herren">Herren</option>
+                            <option value="damen">Damen</option>
+                            <option value="jugend">Jugend</option>
+                            <option value="hobby">Hobby</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Liga</label>
+                        <input type="text" class="form-input" id="fLeague" placeholder="z.B. Verbandsliga">
+                    </div>
+                    <div class="form-group">
+                        <label>Trainer</label>
+                        <input type="text" class="form-input" id="fTrainer" placeholder="Name des Trainers">
+                    </div>
+                    <div class="form-group">
+                        <label>Trainingszeiten</label>
+                        <input type="text" class="form-input" id="fTraining" placeholder="z.B. Mo & Di, 20:00–22:00">
+                    </div>
+                    <div class="form-group">
+                        <label>Halle</label>
+                        <input type="text" class="form-input" id="fHalle" placeholder="Sporthalle Erkelenz">
+                    </div>
+                    <div class="form-group">
+                        <label>Badge-Text (optional)</label>
+                        <input type="text" class="form-input" id="fBadgeText" placeholder="z.B. Aufstieg 2026!">
+                    </div>
+                    <div class="form-group">
+                        <label>Badge-Farbe</label>
+                        <select class="form-select" id="fBadgeType">
+                            <option value="">Keine</option>
+                            <option value="success">Grün (Erfolg)</option>
+                            <option value="info">Blau (Info)</option>
+                            <option value="warning">Orange (Wichtig)</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Beschreibung</label>
+                        <textarea class="form-textarea" id="fDesc" placeholder="Kurzer Text über die Mannschaft..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Ansprechpartner (Name)</label>
+                        <input type="text" class="form-input" id="fMvName" placeholder="Mannschaftsverantwortlicher">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon</label>
+                        <input type="text" class="form-input" id="fMvPhone" placeholder="0151 ...">
+                    </div>
+                    <div class="form-group">
+                        <label>E-Mail</label>
+                        <input type="email" class="form-input" id="fMvEmail" placeholder="team@evv2000.de">
+                    </div>
+                    <div class="form-group">
+                        <label>Sortierung (klein = weiter oben)</label>
+                        <input type="number" class="form-input" id="fSort" value="0">
+                    </div>
+                    <div class="form-group full">
+                        <label>Kader — eine Zeile pro Person: <em>Name | Position | Nummer</em></label>
+                        <textarea class="form-textarea" id="fPlayers" placeholder="Max Mustermann | Außenangreifer | 7&#10;Tom Beispiel | Libero | 12&#10;Anna Trainer | Trainerin |"></textarea>
+                        <div class="form-hint">Nummer leer lassen für Trainer/Betreuer.</div>
+                    </div>
+                    <div class="form-group full" style="display:flex;gap:24px">
+                        <label class="form-check"><input type="checkbox" id="fPublished" checked> Veröffentlicht</label>
+                    </div>
+                    <div class="form-group full">
+                        <label>Teambild (optional)</label>
+                        <div id="imgPicker"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close>Abbrechen</button>
+                <button class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'teams.html', perm: 'teams' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var editingId = null;
+        var itemsCache = [];
+        var activeCat = 'all';
+        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'teams');
+
+        var CAT_LABELS = { herren: 'Herren', damen: 'Damen', jugend: 'Jugend', hobby: 'Hobby' };
+        var CAT_TAGS = { herren: 'tag-blue', damen: 'tag-cyan', jugend: 'tag-success', hobby: 'tag-warning' };
+
+        document.querySelectorAll('[data-close]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });
+        });
+
+        document.getElementById('newBtn').addEventListener('click', function () { openEditor(null); });
+
+        document.querySelectorAll('#catFilter .filter-pill').forEach(function (p) {
+            p.addEventListener('click', function () {
+                document.querySelectorAll('#catFilter .filter-pill').forEach(function (x) { x.classList.remove('active'); });
+                p.classList.add('active');
+                activeCat = p.dataset.cat;
+                render();
+            });
+        });
+
+        function val(id) { return document.getElementById(id).value; }
+        function setVal(id, v) { document.getElementById(id).value = v == null ? '' : v; }
+
+        function slugify(name) {
+            return name.toLowerCase()
+                .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        function playersToText(players) {
+            if (!players || !players.length) return '';
+            return players.map(function (p) {
+                return [p.name || '', p.role || '', p.number == null ? '' : p.number].join(' | ');
+            }).join('\n');
+        }
+
+        function textToPlayers(text) {
+            return text.split('\n')
+                .map(function (line) { return line.trim(); })
+                .filter(Boolean)
+                .map(function (line) {
+                    var parts = line.split('|').map(function (s) { return s.trim(); });
+                    var num = parts[2] !== undefined && parts[2] !== '' ? parseInt(parts[2], 10) : null;
+                    return { name: parts[0] || '', role: parts[1] || '', number: isNaN(num) ? null : num };
+                })
+                .filter(function (p) { return p.name; });
+        }
+
+        function openEditor(item) {
+            editingId = item ? item.id : null;
+            document.getElementById('modalTitle').textContent = item ? 'Mannschaft bearbeiten' : 'Neue Mannschaft';
+            setVal('fName', item && item.name);
+            setVal('fCategory', item ? (item.category || 'herren') : 'herren');
+            setVal('fLeague', item && item.league);
+            setVal('fTrainer', item && item.trainer);
+            setVal('fTraining', item && item.training);
+            setVal('fHalle', item ? item.halle : 'Sporthalle Erkelenz');
+            setVal('fBadgeText', item && item.badge_text);
+            setVal('fBadgeType', item ? (item.badge_type || '') : '');
+            setVal('fDesc', item && item.description);
+            setVal('fMvName', item && item.mv_name);
+            setVal('fMvPhone', item && item.mv_phone);
+            setVal('fMvEmail', item && item.mv_email);
+            setVal('fSort', item ? (item.sort_order || 0) : (itemsCache.length + 1) * 10);
+            setVal('fPlayers', item ? playersToText(item.players) : '');
+            document.getElementById('fPublished').checked = item ? item.is_published !== false : true;
+            picker.setUrl(item ? item.image_url : '');
+            AdminCore.openModal('editModal');
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', async function () {
+            var name = val('fName').trim();
+            if (!name) {
+                AdminCore.toast('Bitte einen Namen eingeben.', 'error');
+                return;
+            }
+
+            var payload = {
+                name: name,
+                category: val('fCategory'),
+                league: val('fLeague').trim() || null,
+                trainer: val('fTrainer').trim() || null,
+                training: val('fTraining').trim() || null,
+                halle: val('fHalle').trim() || null,
+                badge_text: val('fBadgeText').trim() || null,
+                badge_type: val('fBadgeType') || null,
+                description: val('fDesc').trim() || null,
+                mv_name: val('fMvName').trim() || null,
+                mv_phone: val('fMvPhone').trim() || null,
+                mv_email: val('fMvEmail').trim() || null,
+                sort_order: parseInt(val('fSort'), 10) || 0,
+                players: textToPlayers(val('fPlayers')),
+                is_published: document.getElementById('fPublished').checked,
+                image_url: picker.getUrl() || null
+            };
+
+            var btn = this;
+            btn.disabled = true;
+
+            try {
+                if (editingId) {
+                    var up = await sb.from('teams').update(payload).eq('id', editingId);
+                    if (up.error) throw up.error;
+                    await AdminCore.audit('update', 'team', editingId, name, null);
+                    AdminCore.toast('Mannschaft aktualisiert.', 'success');
+                } else {
+                    payload.slug = slugify(name);
+                    // Slug eindeutig machen, falls schon vergeben
+                    var exists = itemsCache.some(function (t) { return t.slug === payload.slug; });
+                    if (exists) payload.slug += '-' + Math.random().toString(36).slice(2, 5);
+                    var ins = await sb.from('teams').insert(payload).select().single();
+                    if (ins.error) throw ins.error;
+                    await AdminCore.audit('create', 'team', ins.data.id, name, null);
+                    AdminCore.toast('Mannschaft erstellt.', 'success');
+                }
+                AdminCore.closeModal('editModal');
+                load();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler beim Speichern: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        window.editItem = function (id) {
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (item) openEditor(item);
+        };
+
+        window.deleteItem = async function (id) {
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (!confirm('Mannschaft "' + (item ? item.name : '') + '" wirklich löschen?')) return;
+            var del = await sb.from('teams').delete().eq('id', id);
+            if (del.error) {
+                AdminCore.toast('Fehler beim Löschen: ' + del.error.message, 'error');
+            } else {
+                await AdminCore.audit('delete', 'team', id, item ? item.name : null, null);
+                AdminCore.toast('Mannschaft gelöscht.', 'success');
+                load();
+            }
+        };
+
+        function render() {
+            var body = document.getElementById('listBody');
+            var items = activeCat === 'all'
+                ? itemsCache
+                : itemsCache.filter(function (t) { return (t.category || '').toLowerCase() === activeCat; });
+
+            if (!items.length) {
+                body.innerHTML = '<tr><td colspan="8" class="empty-state"><i class="fas fa-users"></i>Keine Mannschaften in dieser Kategorie.</td></tr>';
+                return;
+            }
+            body.innerHTML = items.map(function (t) {
+                var thumb = t.image_url
+                    ? '<img class="table-thumb" src="' + esc(t.image_url.indexOf('http') === 0 ? t.image_url : '../' + t.image_url) + '" alt="">'
+                    : '<div class="table-thumb-empty"><i class="far fa-image"></i></div>';
+                var cat = (t.category || '').toLowerCase();
+                return '<tr>' +
+                    '<td>' + thumb + '</td>' +
+                    '<td><strong style="color:#fff">' + esc(t.name) + '</strong>' +
+                        (t.badge_text ? ' <span class="tag tag-' + (t.badge_type || 'info') + '">' + esc(t.badge_text) + '</span>' : '') + '</td>' +
+                    '<td><span class="tag ' + (CAT_TAGS[cat] || 'tag-muted') + '">' + (CAT_LABELS[cat] || esc(t.category)) + '</span></td>' +
+                    '<td>' + esc(t.league || '—') + '</td>' +
+                    '<td>' + esc(t.trainer || '—') + '</td>' +
+                    '<td style="font-size:0.8rem">' + esc(t.training || '—') + '</td>' +
+                    '<td>' + (t.is_published !== false
+                        ? '<span class="tag tag-success">Öffentlich</span>'
+                        : '<span class="tag tag-muted">Entwurf</span>') + '</td>' +
+                    '<td>' +
+                        '<button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + t.id + '\')"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + t.id + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        async function load() {
+            var body = document.getElementById('listBody');
+            var res = await sb.from('teams').select('*').order('sort_order', { ascending: true });
+            if (res.error) {
+                body.innerHTML = '<tr><td colspan="8" class="empty-state">Fehler: ' + esc(res.error.message) +
+                    '<br><small>Wurde die Migration supabase-migration-v2.sql schon ausgeführt?</small></td></tr>';
+                return;
+            }
+            itemsCache = res.data || [];
+            render();
+        }
+
+        await load();
+    })();
+    </script>
+</body>
+</html>

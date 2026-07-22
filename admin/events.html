@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Turniere & Events verwalten</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Turniere &amp; Events</h1>
+            <div class="topbar-actions">
+                <button class="btn btn-primary" id="newBtn"><i class="fas fa-plus"></i> Neues Turnier / Event</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Bild</th>
+                            <th>Name</th>
+                            <th>Typ</th>
+                            <th>Datum</th>
+                            <th>Anmeldungen</th>
+                            <th>Status</th>
+                            <th style="width:100px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="7" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Turnier anlegen / bearbeiten -->
+    <div class="modal" id="editModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="modalTitle">Neues Turnier / Event</h3>
+                <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Name *</label>
+                        <input type="text" class="form-input" id="fName" placeholder="z.B. Midsommar-Cup">
+                    </div>
+                    <div class="form-group full">
+                        <label>Beschreibung</label>
+                        <textarea class="form-textarea" id="fDesc" placeholder="Worum geht es bei dem Turnier/Event?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Typ</label>
+                        <select class="form-select" id="fType">
+                            <option value="indoor">Halle</option>
+                            <option value="beach">Beach</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ort</label>
+                        <input type="text" class="form-input" id="fLocation" placeholder="Erkelenz">
+                    </div>
+                    <div class="form-group">
+                        <label>Datum (Start) *</label>
+                        <input type="date" class="form-input" id="fDateStart">
+                    </div>
+                    <div class="form-group">
+                        <label>Datum (Ende)</label>
+                        <input type="date" class="form-input" id="fDateEnd">
+                    </div>
+                    <div class="form-group">
+                        <label>Uhrzeit von</label>
+                        <input type="time" class="form-input" id="fTimeStart">
+                    </div>
+                    <div class="form-group">
+                        <label>Uhrzeit bis</label>
+                        <input type="time" class="form-input" id="fTimeEnd">
+                    </div>
+                    <div class="form-group">
+                        <label>Max. Teams</label>
+                        <input type="number" class="form-input" id="fMaxTeams" min="0" placeholder="leer = unbegrenzt">
+                    </div>
+                    <div class="form-group">
+                        <label>Startgebühr (€)</label>
+                        <input type="number" class="form-input" id="fFee" min="0" step="0.01" placeholder="0 = kostenlos">
+                    </div>
+                    <div class="form-group">
+                        <label>Anmeldeschluss</label>
+                        <input type="date" class="form-input" id="fDeadline">
+                    </div>
+                    <div class="form-group">
+                        <label>WVV-Link (optional)</label>
+                        <input type="url" class="form-input" id="fWvvLink" placeholder="https://...">
+                    </div>
+                    <div class="form-group full" style="display:flex;gap:24px;flex-wrap:wrap">
+                        <label class="form-check"><input type="checkbox" id="fTrophy"> Wanderpokal</label>
+                        <label class="form-check"><input type="checkbox" id="fWvv"> Offizielles WVV-Turnier</label>
+                        <label class="form-check"><input type="checkbox" id="fRegOpen"> Anmeldung offen</label>
+                        <label class="form-check"><input type="checkbox" id="fPublished" checked> Veröffentlicht</label>
+                    </div>
+                    <div class="form-group full">
+                        <label>Bild (optional)</label>
+                        <div id="imgPicker"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close>Abbrechen</button>
+                <button class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'events.html', perm: 'events' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var editingId = null;
+        var itemsCache = [];
+        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'events');
+
+        document.querySelectorAll('[data-close]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });
+        });
+
+        document.getElementById('newBtn').addEventListener('click', function () { openEditor(null); });
+
+        function val(id) { return document.getElementById(id).value; }
+        function setVal(id, v) { document.getElementById(id).value = v == null ? '' : v; }
+        function checked(id) { return document.getElementById(id).checked; }
+        function setChecked(id, v) { document.getElementById(id).checked = !!v; }
+
+        function openEditor(item) {
+            editingId = item ? item.id : null;
+            document.getElementById('modalTitle').textContent = item ? 'Turnier / Event bearbeiten' : 'Neues Turnier / Event';
+            setVal('fName', item && item.name);
+            setVal('fDesc', item && item.description);
+            setVal('fType', item ? (item.type || 'indoor') : 'indoor');
+            setVal('fLocation', item ? item.location : 'Erkelenz');
+            setVal('fDateStart', item && item.date_start);
+            setVal('fDateEnd', item && item.date_end);
+            setVal('fTimeStart', item && item.time_start);
+            setVal('fTimeEnd', item && item.time_end);
+            setVal('fMaxTeams', item && item.max_teams);
+            setVal('fFee', item && item.entry_fee_cents != null ? (item.entry_fee_cents / 100) : '');
+            setVal('fDeadline', item && item.registration_deadline);
+            setVal('fWvvLink', item && item.wvv_link);
+            setChecked('fTrophy', item && item.has_trophy);
+            setChecked('fWvv', item && item.is_wvv);
+            setChecked('fRegOpen', item && item.registration_open);
+            setChecked('fPublished', item ? item.is_published !== false : true);
+            picker.setUrl(item ? item.image_url : '');
+            AdminCore.openModal('editModal');
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', async function () {
+            var name = val('fName').trim();
+            var dateStart = val('fDateStart');
+            if (!name || !dateStart) {
+                AdminCore.toast('Bitte mindestens Name und Startdatum ausfüllen.', 'error');
+                return;
+            }
+
+            var feeEuro = parseFloat(val('fFee'));
+            var payload = {
+                name: name,
+                description: val('fDesc').trim() || null,
+                type: val('fType'),
+                location: val('fLocation').trim() || null,
+                date_start: dateStart,
+                date_end: val('fDateEnd') || null,
+                time_start: val('fTimeStart') || null,
+                time_end: val('fTimeEnd') || null,
+                max_teams: val('fMaxTeams') ? parseInt(val('fMaxTeams'), 10) : null,
+                entry_fee_cents: isNaN(feeEuro) ? 0 : Math.round(feeEuro * 100),
+                registration_deadline: val('fDeadline') || null,
+                wvv_link: val('fWvvLink').trim() || null,
+                has_trophy: checked('fTrophy'),
+                is_wvv: checked('fWvv'),
+                registration_open: checked('fRegOpen'),
+                is_published: checked('fPublished'),
+                image_url: picker.getUrl() || null
+            };
+
+            var btn = this;
+            btn.disabled = true;
+
+            try {
+                if (editingId) {
+                    var up = await sb.from('tournaments').update(payload).eq('id', editingId);
+                    if (up.error) throw up.error;
+                    await AdminCore.audit('update', 'tournament', editingId, name, null);
+                    AdminCore.toast('Gespeichert.', 'success');
+                } else {
+                    var ins = await sb.from('tournaments').insert(payload).select().single();
+                    if (ins.error) throw ins.error;
+                    await AdminCore.audit('create', 'tournament', ins.data.id, name, null);
+                    AdminCore.toast('Turnier/Event erstellt.', 'success');
+                }
+                AdminCore.closeModal('editModal');
+                load();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler beim Speichern: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        window.editItem = function (id) {
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (item) openEditor(item);
+        };
+
+        window.deleteItem = async function (id) {
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (!confirm('Turnier "' + (item ? item.name : '') + '" wirklich löschen?\nAuch alle zugehörigen Anmeldungen werden gelöscht.')) return;
+            var del = await sb.from('tournaments').delete().eq('id', id);
+            if (del.error) {
+                AdminCore.toast('Fehler beim Löschen: ' + del.error.message, 'error');
+            } else {
+                await AdminCore.audit('delete', 'tournament', id, item ? item.name : null, null);
+                AdminCore.toast('Gelöscht.', 'success');
+                load();
+            }
+        };
+
+        async function load() {
+            var body = document.getElementById('listBody');
+            var res = await sb.from('tournaments')
+                .select('*, tournament_registrations(count)')
+                .order('date_start', { ascending: true });
+            if (res.error) {
+                body.innerHTML = '<tr><td colspan="7" class="empty-state">Fehler: ' + esc(res.error.message) + '</td></tr>';
+                return;
+            }
+            itemsCache = res.data || [];
+            if (!itemsCache.length) {
+                body.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-trophy"></i>Noch keine Turniere. Lege das erste an!</td></tr>';
+                return;
+            }
+            body.innerHTML = itemsCache.map(function (t) {
+                var thumb = t.image_url
+                    ? '<img class="table-thumb" src="' + esc(t.image_url) + '" alt="">'
+                    : '<div class="table-thumb-empty"><i class="far fa-image"></i></div>';
+                var regCount = (t.tournament_registrations && t.tournament_registrations[0] && t.tournament_registrations[0].count) || 0;
+                var dateLabel = AdminCore.fmtDate(t.date_start) + (t.date_end && t.date_end !== t.date_start ? ' – ' + AdminCore.fmtDate(t.date_end) : '');
+                return '<tr>' +
+                    '<td>' + thumb + '</td>' +
+                    '<td><strong style="color:#fff">' + esc(t.name) + '</strong></td>' +
+                    '<td><span class="tag ' + (t.type === 'beach' ? 'tag-cyan' : 'tag-blue') + '">' + (t.type === 'beach' ? 'Beach' : 'Halle') + '</span></td>' +
+                    '<td>' + dateLabel + '</td>' +
+                    '<td>' + regCount + (t.max_teams ? ' / ' + t.max_teams : '') +
+                        (t.registration_open ? ' <span class="tag tag-success">offen</span>' : '') + '</td>' +
+                    '<td>' + (t.is_published !== false
+                        ? '<span class="tag tag-success">Öffentlich</span>'
+                        : '<span class="tag tag-muted">Entwurf</span>') + '</td>' +
+                    '<td>' +
+                        '<button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + t.id + '\')"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + t.id + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        await load();
+    })();
+    </script>
+</body>
+</html>

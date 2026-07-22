@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Kalender</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Kalender</h1>
+            <div class="topbar-actions">
+                <div class="segment" id="viewSwitch">
+                    <button data-view="termine" class="active"><i class="fas fa-calendar-alt"></i> Termine</button>
+                    <button data-view="beach"><i class="fas fa-umbrella-beach"></i> Beachplätze</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- ═══ Ansicht: TERMINE ═══ -->
+            <div id="termineView">
+                <div class="cal-toolbar">
+                    <div class="cal-nav">
+                        <button class="cal-nav-btn" id="calPrev"><i class="fas fa-chevron-left"></i></button>
+                        <div class="cal-title" id="calTitle">–</div>
+                        <button class="cal-nav-btn" id="calNext"><i class="fas fa-chevron-right"></i></button>
+                        <button class="btn btn-ghost btn-sm" id="calToday">Heute</button>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap">
+                        <button class="btn btn-ghost" id="csvImportBtn"><i class="fas fa-file-csv"></i> CSV-Import</button>
+                        <button class="btn btn-primary" id="newEventBtn"><i class="fas fa-plus"></i> Neuer Termin</button>
+                    </div>
+                </div>
+                <div class="cal-grid" id="calGrid"></div>
+                <p class="form-hint" style="margin-top:12px">
+                    <i class="fas fa-info-circle"></i>
+                    Klicke auf einen Tag, um einen Termin anzulegen — oder auf einen Termin, um ihn zu bearbeiten.
+                    Turniere (<span style="color:var(--accent)">cyan</span>) werden unter „Turniere &amp; Events" gepflegt.
+                </p>
+            </div>
+
+            <!-- ═══ Ansicht: BEACHPLÄTZE ═══ -->
+            <div id="beachView" style="display:none">
+                <div class="cal-toolbar">
+                    <div class="cal-nav">
+                        <button class="cal-nav-btn" id="beachPrev"><i class="fas fa-chevron-left"></i></button>
+                        <div class="cal-title" id="beachTitle">–</div>
+                        <button class="cal-nav-btn" id="beachNext"><i class="fas fa-chevron-right"></i></button>
+                        <button class="btn btn-ghost btn-sm" id="beachToday">Heute</button>
+                        <input type="date" class="form-input" id="beachDate" style="width:auto">
+                    </div>
+                    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:0.78rem;color:var(--text-muted)">
+                        <span><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:rgba(16,185,129,0.35);margin-right:5px"></span>Frei</span>
+                        <span><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:rgba(59,130,246,0.5);margin-right:5px"></span>Gebucht</span>
+                        <span><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:rgba(245,158,11,0.5);margin-right:5px"></span>Gesperrt / Training</span>
+                    </div>
+                </div>
+                <div class="beach-matrix">
+                    <div class="bm-grid">
+                        <div class="bm-head">
+                            <div>Zeit</div><div>Platz 1</div><div>Platz 2</div><div>Platz 3</div><div>Platz 4</div>
+                        </div>
+                        <div id="bmBody"></div>
+                    </div>
+                </div>
+                <p class="form-hint" style="margin-top:12px">
+                    <i class="fas fa-info-circle"></i>
+                    Klicke auf einen freien Slot, um ihn für Training zu sperren (kostenlos) — oder auf eine Sperre, um sie aufzuheben.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Termin anlegen / bearbeiten -->
+    <div class="modal" id="eventModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="eventModalTitle">Neuer Termin</h3>
+                <button class="modal-close" data-close="eventModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Titel *</label>
+                        <input type="text" class="form-input" id="eTitle" placeholder="z.B. Heimspiel gegen SV Neuss">
+                    </div>
+                    <div class="form-group">
+                        <label>Typ</label>
+                        <select class="form-select" id="eType">
+                            <option value="spiel">Spiel</option>
+                            <option value="event">Event</option>
+                            <option value="training">Training</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mannschaft</label>
+                        <select class="form-select" id="eTeam">
+                            <option value="">— Keine —</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Datum *</label>
+                        <input type="date" class="form-input" id="eDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Datum (Ende, optional)</label>
+                        <input type="date" class="form-input" id="eDateEnd">
+                    </div>
+                    <div class="form-group">
+                        <label>Uhrzeit von</label>
+                        <input type="time" class="form-input" id="eTimeStart">
+                    </div>
+                    <div class="form-group">
+                        <label>Uhrzeit bis</label>
+                        <input type="time" class="form-input" id="eTimeEnd">
+                    </div>
+                    <div class="form-group">
+                        <label>Ort</label>
+                        <input type="text" class="form-input" id="eLocation" placeholder="z.B. Sporthalle Erkelenz">
+                    </div>
+                    <div class="form-group" id="eOpponentWrap">
+                        <label>Gegner (bei Spielen)</label>
+                        <input type="text" class="form-input" id="eOpponent" placeholder="z.B. SV Neuss">
+                    </div>
+                    <div class="form-group full">
+                        <label>Beschreibung</label>
+                        <textarea class="form-textarea" id="eDesc" style="min-height:70px"></textarea>
+                    </div>
+                    <div class="form-group full" style="display:flex;gap:24px;flex-wrap:wrap">
+                        <label class="form-check"><input type="checkbox" id="eHome"> Heimspiel / bei uns</label>
+                        <label class="form-check"><input type="checkbox" id="ePublished" checked> Öffentlich im Kalender</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot" style="justify-content:space-between">
+                <button class="btn btn-danger" id="eventDeleteBtn" style="display:none"><i class="fas fa-trash"></i> Löschen</button>
+                <div style="display:flex;gap:10px">
+                    <button class="btn btn-ghost" data-close="eventModal">Abbrechen</button>
+                    <button class="btn btn-primary" id="eventSaveBtn"><i class="fas fa-save"></i> Speichern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: CSV-Import -->
+    <div class="modal" id="csvModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3>Termine per CSV importieren</h3>
+                <button class="modal-close" data-close="csvModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:0.87rem;color:var(--text-muted);margin-bottom:14px">
+                    Lade eine CSV-Datei hoch (z.B. aus Excel: „Speichern unter → CSV").
+                    Pflichtspalten: <strong style="color:#fff">Datum</strong> und <strong style="color:#fff">Titel</strong> —
+                    optional: Typ, Mannschaft, Von, Bis, Ort, Gegner, Heim, Beschreibung, Enddatum.
+                    Trennzeichen (<code>;</code> oder <code>,</code>) wird automatisch erkannt.
+                </p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+                    <button class="btn btn-ghost btn-sm" id="csvTemplateBtn"><i class="fas fa-download"></i> Vorlage herunterladen</button>
+                    <label class="btn btn-primary btn-sm" style="cursor:pointer">
+                        <i class="fas fa-folder-open"></i> CSV-Datei wählen
+                        <input type="file" id="csvFile" accept=".csv,.txt" style="display:none">
+                    </label>
+                </div>
+                <div id="csvPreviewWrap" style="display:none">
+                    <div id="csvSummary" style="font-size:0.85rem;margin-bottom:10px"></div>
+                    <div class="table-wrap" style="max-height:320px;overflow-y:auto;margin-bottom:0">
+                        <table class="admin-table">
+                            <thead><tr><th></th><th>Datum</th><th>Titel</th><th>Typ</th><th>Mannschaft</th><th>Zeit</th><th>Hinweis</th></tr></thead>
+                            <tbody id="csvPreviewBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close="csvModal">Abbrechen</button>
+                <button class="btn btn-primary" id="csvConfirmBtn" disabled><i class="fas fa-file-import"></i> Importieren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Beach-Slot sperren -->
+    <div class="modal" id="blockModal">
+        <div class="modal-box modal-sm">
+            <div class="modal-head">
+                <h3>Platz sperren</h3>
+                <button class="modal-close" data-close="blockModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:16px" id="blockInfo"></p>
+                <div class="form-group">
+                    <label>Grund (intern — öffentlich wird nur „Training" angezeigt)</label>
+                    <input type="text" class="form-input" id="bReason" value="Training" placeholder="z.B. Training Herren 1">
+                </div>
+                <div class="form-group">
+                    <label>Dauer</label>
+                    <select class="form-select" id="bSlots">
+                        <option value="1">1 Slot (45 Min)</option>
+                        <option value="2" selected>2 Slots (1:30 Std)</option>
+                        <option value="3">3 Slots (2:15 Std)</option>
+                        <option value="4">4 Slots (3:00 Std)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Plätze</label>
+                    <div style="display:flex;gap:14px;flex-wrap:wrap">
+                        <label class="form-check"><input type="checkbox" class="bField" value="1"> Platz 1</label>
+                        <label class="form-check"><input type="checkbox" class="bField" value="2"> Platz 2</label>
+                        <label class="form-check"><input type="checkbox" class="bField" value="3"> Platz 3</label>
+                        <label class="form-check"><input type="checkbox" class="bField" value="4"> Platz 4</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Wiederholen</label>
+                    <select class="form-select" id="bRepeat">
+                        <option value="1">Nur dieser Termin</option>
+                        <option value="4">Wöchentlich, 4 Wochen</option>
+                        <option value="8">Wöchentlich, 8 Wochen</option>
+                        <option value="12">Wöchentlich, 12 Wochen</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close="blockModal">Abbrechen</button>
+                <button class="btn btn-primary" id="blockSaveBtn"><i class="fas fa-lock"></i> Sperren</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'kalender.html', perm: ['kalender', 'beach'] });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var canTermine = AdminCore.can('kalender');
+        var canBeach = AdminCore.can('beach');
+
+        /* ══════════ View-Umschalter ══════════ */
+        var currentView = 'termine';
+        var switchEl = document.getElementById('viewSwitch');
+
+        function setView(v) {
+            if (v === 'termine' && !canTermine) v = 'beach';
+            if (v === 'beach' && !canBeach) v = 'termine';
+            currentView = v;
+            document.getElementById('termineView').style.display = v === 'termine' ? '' : 'none';
+            document.getElementById('beachView').style.display = v === 'beach' ? '' : 'none';
+            switchEl.querySelectorAll('button').forEach(function (b) {
+                b.classList.toggle('active', b.dataset.view === v);
+            });
+            if (v === 'beach') renderMatrix();
+        }
+
+        switchEl.querySelectorAll('button').forEach(function (b) {
+            b.addEventListener('click', function () { setView(b.dataset.view); });
+            if (b.dataset.view === 'termine' && !canTermine) b.disabled = true;
+            if (b.dataset.view === 'beach' && !canBeach) b.disabled = true;
+        });
+
+        document.querySelectorAll('[data-close]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal(b.dataset.close); });
+        });
+
+        /* ══════════ TERMINE (Monatsansicht) ══════════ */
+        var calCursor = new Date();
+        calCursor.setDate(1);
+        var eventsCache = [];   // calendar_events (alle, auch Entwürfe)
+        var tournamentsCache = []; // tournaments (readonly Chips)
+        var teamsCache = [];
+        var editingEventId = null;
+        var MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+        var TYPE_LABEL = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
+
+        async function loadTeams() {
+            var res = await sb.from('teams').select('id, name').order('sort_order');
+            teamsCache = res.data || [];
+            var sel = document.getElementById('eTeam');
+            sel.innerHTML = '<option value="">— Keine —</option>' + teamsCache.map(function (t) {
+                return '<option value="' + t.id + '">' + esc(t.name) + '</option>';
+            }).join('');
+        }
+
+        async function loadEvents() {
+            var y = calCursor.getFullYear(), m = calCursor.getMonth();
+            var from = AdminCore.dateStr(new Date(y, m, -7));
+            var to = AdminCore.dateStr(new Date(y, m + 1, 14));
+            var evRes = await sb.from('calendar_events').select('*, teams(name)')
+                .gte('date', from).lte('date', to).order('date');
+            eventsCache = evRes.data || [];
+            var tRes = await sb.from('tournaments').select('id, name, date_start, date_end, type')
+                .gte('date_start', from).lte('date_start', to);
+            tournamentsCache = tRes.data || [];
+        }
+
+        function renderCalendar() {
+            var y = calCursor.getFullYear(), m = calCursor.getMonth();
+            document.getElementById('calTitle').textContent = MONTHS[m] + ' ' + y;
+
+            var grid = document.getElementById('calGrid');
+            var todayStr = AdminCore.dateStr(new Date());
+
+            var firstDay = new Date(y, m, 1);
+            var startOffset = (firstDay.getDay() + 6) % 7; // Montag = 0
+            var gridStart = new Date(y, m, 1 - startOffset);
+
+            var html = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(function (d) {
+                return '<div class="cal-dow">' + d + '</div>';
+            }).join('');
+
+            for (var i = 0; i < 42; i++) {
+                var d = new Date(gridStart);
+                d.setDate(gridStart.getDate() + i);
+                var ds = AdminCore.dateStr(d);
+                var inMonth = d.getMonth() === m;
+                var isToday = ds === todayStr;
+
+                var dayEvents = eventsCache.filter(function (ev) { return ev.date === ds; });
+                var dayTournaments = tournamentsCache.filter(function (t) { return t.date_start === ds; });
+
+                var chips = '';
+                var shown = 0;
+                dayTournaments.forEach(function (t) {
+                    if (shown < 3) {
+                        chips += '<div class="cal-chip turnier" data-tournament="' + t.id + '" title="' + esc(t.name) + ' (Turnier)"><i class="fas fa-trophy" style="font-size:0.55rem"></i> ' + esc(t.name) + '</div>';
+                        shown++;
+                    }
+                });
+                dayEvents.forEach(function (ev) {
+                    if (shown < 3) {
+                        var label = (ev.time_start ? ev.time_start + ' ' : '') + ev.title;
+                        var draft = ev.is_published === false ? ' style="opacity:0.55"' : '';
+                        chips += '<div class="cal-chip ' + esc(ev.event_type || 'event') + '" data-event="' + ev.id + '" title="' + esc(ev.title) + (ev.is_published === false ? ' (Entwurf)' : '') + '"' + draft + '>' + esc(label) + '</div>';
+                        shown++;
+                    }
+                });
+                var rest = dayEvents.length + dayTournaments.length - shown;
+                if (rest > 0) chips += '<div class="cal-more">+' + rest + ' weitere</div>';
+
+                html += '<div class="cal-day' + (inMonth ? '' : ' other') + (isToday ? ' today' : '') + (canTermine ? ' clickable' : '') + '" data-date="' + ds + '">' +
+                    '<div class="cal-day-num">' + d.getDate() + '</div>' + chips + '</div>';
+            }
+            grid.innerHTML = html;
+
+            grid.querySelectorAll('.cal-chip[data-event]').forEach(function (chip) {
+                chip.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (!canTermine) return;
+                    var ev = eventsCache.find(function (x) { return x.id === chip.dataset.event; });
+                    if (ev) openEventEditor(ev, null);
+                });
+            });
+            grid.querySelectorAll('.cal-chip[data-tournament]').forEach(function (chip) {
+                chip.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (AdminCore.can('events')) window.location.href = 'events.html';
+                });
+            });
+            if (canTermine) {
+                grid.querySelectorAll('.cal-day').forEach(function (day) {
+                    day.addEventListener('click', function () {
+                        openEventEditor(null, day.dataset.date);
+                    });
+                });
+            }
+        }
+
+        async function refreshCalendar() {
+            await loadEvents();
+            renderCalendar();
+        }
+
+        document.getElementById('calPrev').addEventListener('click', function () {
+            calCursor.setMonth(calCursor.getMonth() - 1); refreshCalendar();
+        });
+        document.getElementById('calNext').addEventListener('click', function () {
+            calCursor.setMonth(calCursor.getMonth() + 1); refreshCalendar();
+        });
+        document.getElementById('calToday').addEventListener('click', function () {
+            calCursor = new Date(); calCursor.setDate(1); refreshCalendar();
+        });
+        document.getElementById('newEventBtn').addEventListener('click', function () {
+            if (!canTermine) { AdminCore.toast('Keine Berechtigung für Termine.', 'error'); return; }
+            openEventEditor(null, AdminCore.dateStr(new Date()));
+        });
+
+        function openEventEditor(ev, presetDate) {
+            editingEventId = ev ? ev.id : null;
+            document.getElementById('eventModalTitle').textContent = ev ? 'Termin bearbeiten' : 'Neuer Termin';
+            document.getElementById('eTitle').value = ev ? ev.title : '';
+            document.getElementById('eType').value = ev ? (ev.event_type || 'spiel') : 'spiel';
+            document.getElementById('eTeam').value = ev ? (ev.team_id || '') : '';
+            document.getElementById('eDate').value = ev ? ev.date : (presetDate || '');
+            document.getElementById('eDateEnd').value = ev ? (ev.date_end || '') : '';
+            document.getElementById('eTimeStart').value = ev ? (ev.time_start || '') : '';
+            document.getElementById('eTimeEnd').value = ev ? (ev.time_end || '') : '';
+            document.getElementById('eLocation').value = ev ? (ev.location || '') : '';
+            document.getElementById('eOpponent').value = ev ? (ev.opponent || '') : '';
+            document.getElementById('eDesc').value = ev ? (ev.description || '') : '';
+            document.getElementById('eHome').checked = ev ? !!ev.is_home : false;
+            document.getElementById('ePublished').checked = ev ? ev.is_published !== false : true;
+            document.getElementById('eventDeleteBtn').style.display = ev ? '' : 'none';
+            AdminCore.openModal('eventModal');
+        }
+
+        document.getElementById('eventSaveBtn').addEventListener('click', async function () {
+            var title = document.getElementById('eTitle').value.trim();
+            var date = document.getElementById('eDate').value;
+            if (!title || !date) {
+                AdminCore.toast('Bitte Titel und Datum angeben.', 'error');
+                return;
+            }
+            var payload = {
+                title: title,
+                event_type: document.getElementById('eType').value,
+                team_id: document.getElementById('eTeam').value || null,
+                date: date,
+                date_end: document.getElementById('eDateEnd').value || null,
+                time_start: document.getElementById('eTimeStart').value || null,
+                time_end: document.getElementById('eTimeEnd').value || null,
+                location: document.getElementById('eLocation').value.trim() || null,
+                opponent: document.getElementById('eOpponent').value.trim() || null,
+                description: document.getElementById('eDesc').value.trim() || null,
+                is_home: document.getElementById('eHome').checked,
+                is_published: document.getElementById('ePublished').checked
+            };
+            var btn = this;
+            btn.disabled = true;
+            try {
+                if (editingEventId) {
+                    var up = await sb.from('calendar_events').update(payload).eq('id', editingEventId);
+                    if (up.error) throw up.error;
+                    await AdminCore.audit('update', 'termin', editingEventId, title, { date: date });
+                    AdminCore.toast('Termin aktualisiert.', 'success');
+                } else {
+                    var ins = await sb.from('calendar_events').insert(payload).select().single();
+                    if (ins.error) throw ins.error;
+                    await AdminCore.audit('create', 'termin', ins.data.id, title, { date: date });
+                    AdminCore.toast('Termin erstellt.', 'success');
+                }
+                AdminCore.closeModal('eventModal');
+                refreshCalendar();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('eventDeleteBtn').addEventListener('click', async function () {
+            if (!editingEventId) return;
+            var ev = eventsCache.find(function (x) { return x.id === editingEventId; });
+            if (!confirm('Termin "' + (ev ? ev.title : '') + '" wirklich löschen?')) return;
+            var del = await sb.from('calendar_events').delete().eq('id', editingEventId);
+            if (del.error) {
+                AdminCore.toast('Fehler: ' + del.error.message, 'error');
+            } else {
+                await AdminCore.audit('delete', 'termin', editingEventId, ev ? ev.title : null, null);
+                AdminCore.toast('Termin gelöscht.', 'success');
+                AdminCore.closeModal('eventModal');
+                refreshCalendar();
+            }
+        });
+
+        /* ══════════ BEACHPLÄTZE (Tagesmatrix + Sperren) ══════════ */
+        var SLOT_MIN = 45;
+        var OPEN_START = 9 * 60, OPEN_END = 22 * 60;
+        var beachDate = new Date();
+        var pendingBlock = null; // { date, startMin, field }
+
+        function slotStarts() {
+            var arr = [];
+            for (var t = OPEN_START; t + SLOT_MIN <= OPEN_END; t += SLOT_MIN) arr.push(t);
+            return arr;
+        }
+
+        async function fetchDay(ds) {
+            var bookingsP = sb.from('public_slots').select('date, field, start_min, slot_count').eq('date', ds);
+            var blocksP = sb.from('beach_blocks').select('*').eq('date', ds);
+            var results = await Promise.all([bookingsP, blocksP]);
+            return {
+                bookings: results[0].data || [],
+                blocks: results[1].data || []
+            };
+        }
+
+        function overlaps(list, field, startMin) {
+            return list.find(function (b) {
+                if (b.field !== field) return false;
+                var end = b.start_min + SLOT_MIN * (b.slot_count || 1);
+                return startMin >= b.start_min && startMin < end;
+            });
+        }
+
+        async function renderMatrix() {
+            var ds = AdminCore.dateStr(beachDate);
+            document.getElementById('beachDate').value = ds;
+            var isToday = ds === AdminCore.dateStr(new Date());
+            document.getElementById('beachTitle').textContent =
+                (isToday ? 'Heute · ' : '') +
+                beachDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+
+            var body = document.getElementById('bmBody');
+            body.innerHTML = '<div style="padding:30px;text-align:center"><div class="spinner sm" style="margin:0 auto"></div></div>';
+
+            var day;
+            try {
+                day = await fetchDay(ds);
+            } catch (e) {
+                body.innerHTML = '<div class="empty-state">Belegung konnte nicht geladen werden.</div>';
+                return;
+            }
+
+            var now = new Date();
+            var html = slotStarts().map(function (startMin) {
+                var row = '<div class="bm-row"><div class="bm-time">' + AdminCore.minToTime(startMin) +
+                    '<small style="margin-left:3px">–' + AdminCore.minToTime(startMin + SLOT_MIN) + '</small></div>';
+                for (var field = 1; field <= 4; field++) {
+                    var slotDT = new Date(ds + 'T00:00:00');
+                    slotDT.setMinutes(startMin + SLOT_MIN);
+                    var past = slotDT < now;
+                    var block = overlaps(day.blocks, field, startMin);
+                    var booking = !block && overlaps(day.bookings, field, startMin);
+
+                    if (block) {
+                        row += '<div class="bm-cell blocked" data-block="' + block.id + '" title="Sperre aufheben: ' + esc(block.reason || 'Training') + '">' +
+                            '<i class="fas fa-lock" style="font-size:0.6rem"></i> ' + esc(block.reason || 'Training') + '</div>';
+                    } else if (booking) {
+                        row += '<div class="bm-cell busy" title="Gebuchter Slot">Gebucht</div>';
+                    } else if (past) {
+                        row += '<div class="bm-cell past">vorbei</div>';
+                    } else {
+                        row += '<div class="bm-cell free" data-field="' + field + '" data-start="' + startMin + '" title="Für Training sperren">Frei<small>sperren</small></div>';
+                    }
+                }
+                return row + '</div>';
+            }).join('');
+
+            body.innerHTML = html;
+
+            body.querySelectorAll('.bm-cell.free').forEach(function (cell) {
+                cell.addEventListener('click', function () {
+                    openBlockModal(ds, parseInt(cell.dataset.start, 10), parseInt(cell.dataset.field, 10));
+                });
+            });
+            body.querySelectorAll('.bm-cell.blocked').forEach(function (cell) {
+                cell.addEventListener('click', async function () {
+                    var block = day.blocks.find(function (b) { return b.id === cell.dataset.block; });
+                    if (!block) return;
+                    if (!confirm('Sperre "' + (block.reason || 'Training') + '" (Platz ' + block.field + ', ' +
+                        AdminCore.minToTime(block.start_min) + ') aufheben?')) return;
+                    var del = await sb.from('beach_blocks').delete().eq('id', block.id);
+                    if (del.error) {
+                        AdminCore.toast('Fehler: ' + del.error.message, 'error');
+                    } else {
+                        await AdminCore.audit('delete', 'beach_block', block.id,
+                            ds + ' Platz ' + block.field + ' ' + AdminCore.minToTime(block.start_min), null);
+                        AdminCore.toast('Sperre aufgehoben.', 'success');
+                        renderMatrix();
+                    }
+                });
+            });
+        }
+
+        function openBlockModal(ds, startMin, field) {
+            pendingBlock = { date: ds, startMin: startMin, field: field };
+            document.getElementById('blockInfo').innerHTML =
+                '<strong style="color:#fff">' + new Date(ds + 'T00:00:00').toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) +
+                '</strong> · ab ' + AdminCore.minToTime(startMin) + ' Uhr';
+            document.querySelectorAll('.bField').forEach(function (cb) {
+                cb.checked = parseInt(cb.value, 10) === field;
+            });
+            document.getElementById('bReason').value = 'Training';
+            document.getElementById('bSlots').value = '2';
+            document.getElementById('bRepeat').value = '1';
+            AdminCore.openModal('blockModal');
+        }
+
+        document.getElementById('blockSaveBtn').addEventListener('click', async function () {
+            if (!pendingBlock) return;
+            var reason = document.getElementById('bReason').value.trim() || 'Training';
+            var slotCount = parseInt(document.getElementById('bSlots').value, 10) || 1;
+            var weeks = parseInt(document.getElementById('bRepeat').value, 10) || 1;
+            var fields = Array.prototype.slice.call(document.querySelectorAll('.bField:checked'))
+                .map(function (cb) { return parseInt(cb.value, 10); });
+
+            if (!fields.length) {
+                AdminCore.toast('Bitte mindestens einen Platz wählen.', 'error');
+                return;
+            }
+            // Ende darf 22:00 nicht überschreiten
+            if (pendingBlock.startMin + slotCount * SLOT_MIN > OPEN_END) {
+                AdminCore.toast('Die Sperre würde über 22:00 Uhr hinausgehen. Kürzere Dauer wählen.', 'error');
+                return;
+            }
+
+            var btn = this;
+            btn.disabled = true;
+
+            try {
+                var rows = [];
+                var conflicts = [];
+                for (var w = 0; w < weeks; w++) {
+                    var d = new Date(pendingBlock.date + 'T00:00:00');
+                    d.setDate(d.getDate() + w * 7);
+                    var ds = AdminCore.dateStr(d);
+                    var day = await fetchDay(ds);
+                    fields.forEach(function (field) {
+                        // Konflikt-Check gegen Buchungen und bestehende Sperren
+                        var conflict = false;
+                        for (var s = 0; s < slotCount; s++) {
+                            var t = pendingBlock.startMin + s * SLOT_MIN;
+                            if (overlaps(day.bookings, field, t) || overlaps(day.blocks, field, t)) { conflict = true; break; }
+                        }
+                        if (conflict) {
+                            conflicts.push(AdminCore.fmtDate(ds) + ' Platz ' + field);
+                        } else {
+                            rows.push({
+                                date: ds,
+                                field: field,
+                                start_min: pendingBlock.startMin,
+                                slot_count: slotCount,
+                                reason: reason,
+                                block_type: 'training',
+                                created_by: AdminCore.user.id,
+                                created_by_email: AdminCore.user.email
+                            });
+                        }
+                    });
+                }
+
+                if (conflicts.length && !rows.length) {
+                    AdminCore.toast('Alle gewählten Slots sind bereits belegt oder gesperrt.', 'error');
+                    return;
+                }
+                if (conflicts.length) {
+                    if (!confirm('Folgende Slots sind bereits belegt und werden übersprungen:\n' +
+                        conflicts.join('\n') + '\n\nRestliche ' + rows.length + ' Sperren trotzdem anlegen?')) return;
+                }
+
+                var ins = await sb.from('beach_blocks').insert(rows).select();
+                if (ins.error) throw ins.error;
+
+                await AdminCore.audit('create', 'beach_block', null,
+                    reason + ' · ' + rows.length + ' Slot-Sperre(n) ab ' + AdminCore.fmtDate(pendingBlock.date) +
+                    ' ' + AdminCore.minToTime(pendingBlock.startMin),
+                    { fields: fields, slots: slotCount, weeks: weeks });
+
+                AdminCore.toast(rows.length + ' Sperre(n) angelegt.', 'success');
+                AdminCore.closeModal('blockModal');
+                renderMatrix();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('beachPrev').addEventListener('click', function () {
+            beachDate.setDate(beachDate.getDate() - 1); renderMatrix();
+        });
+        document.getElementById('beachNext').addEventListener('click', function () {
+            beachDate.setDate(beachDate.getDate() + 1); renderMatrix();
+        });
+        document.getElementById('beachToday').addEventListener('click', function () {
+            beachDate = new Date(); renderMatrix();
+        });
+        document.getElementById('beachDate').addEventListener('change', function () {
+            var v = this.value;
+            if (v) { beachDate = new Date(v + 'T00:00:00'); renderMatrix(); }
+        });
+
+        /* ══════════ CSV-IMPORT ══════════ */
+        var csvRows = [];   // validierte, importierbare Termine
+
+        document.getElementById('csvImportBtn').addEventListener('click', function () {
+            if (!canTermine) { AdminCore.toast('Keine Berechtigung für Termine.', 'error'); return; }
+            csvRows = [];
+            document.getElementById('csvFile').value = '';
+            document.getElementById('csvPreviewWrap').style.display = 'none';
+            document.getElementById('csvConfirmBtn').disabled = true;
+            AdminCore.openModal('csvModal');
+        });
+
+        document.getElementById('csvTemplateBtn').addEventListener('click', function () {
+            var tpl = 'Datum;Titel;Typ;Mannschaft;Von;Bis;Ort;Gegner;Heim;Beschreibung;Enddatum\n' +
+                '14.09.2026;Heimspiel gegen SV Neuss;Spiel;Männer 1;19:30;22:00;Sporthalle Erkelenz;SV Neuss;ja;;\n' +
+                '21.09.2026;Auswärtsspiel bei TuS Wickrath;Spiel;Frauen 1;18:00;;Wickrath;TuS Wickrath;nein;;\n' +
+                '03.10.2026;Vereinsfest;Event;;15:00;22:00;Beachanlage Erkelenz;;;Alle Mitglieder willkommen!;\n';
+            var blob = new Blob(['﻿' + tpl], { type: 'text/csv;charset=utf-8' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'termine-vorlage.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        });
+
+        /* CSV-Text in Zeilen/Zellen zerlegen (mit Anführungszeichen-Support) */
+        function parseCSV(text) {
+            text = text.replace(/^﻿/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            var firstLine = text.split('\n')[0] || '';
+            var delim = (firstLine.split(';').length >= firstLine.split(',').length) ? ';' : ',';
+
+            var rows = [], row = [], cell = '', inQuotes = false;
+            for (var i = 0; i < text.length; i++) {
+                var c = text[i];
+                if (inQuotes) {
+                    if (c === '"') {
+                        if (text[i + 1] === '"') { cell += '"'; i++; }
+                        else inQuotes = false;
+                    } else cell += c;
+                } else if (c === '"') {
+                    inQuotes = true;
+                } else if (c === delim) {
+                    row.push(cell); cell = '';
+                } else if (c === '\n') {
+                    row.push(cell); cell = '';
+                    if (row.some(function (x) { return x.trim() !== ''; })) rows.push(row);
+                    row = [];
+                } else cell += c;
+            }
+            row.push(cell);
+            if (row.some(function (x) { return x.trim() !== ''; })) rows.push(row);
+            return rows;
+        }
+
+        function normHeader(h) {
+            return h.toLowerCase().trim()
+                .replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss')
+                .replace(/[^a-z]/g, '');
+        }
+
+        var HEADER_KEYS = {
+            datum: 'date', tag: 'date',
+            titel: 'title', termin: 'title', name: 'title', bezeichnung: 'title',
+            typ: 'type', art: 'type', kategorie: 'type',
+            mannschaft: 'team', team: 'team',
+            von: 'time_start', zeitvon: 'time_start', start: 'time_start', uhrzeit: 'time_start', beginn: 'time_start',
+            bis: 'time_end', zeitbis: 'time_end', ende: 'time_end',
+            ort: 'location', halle: 'location', location: 'location', spielort: 'location',
+            gegner: 'opponent',
+            heim: 'is_home', heimspiel: 'is_home',
+            beschreibung: 'description', info: 'description', notiz: 'description', bemerkung: 'description',
+            enddatum: 'date_end', datumende: 'date_end', bisdatum: 'date_end'
+        };
+
+        function parseGermanDate(s) {
+            s = (s || '').trim();
+            if (!s) return null;
+            var m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);                 // 2026-09-14
+            if (m) return m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0');
+            m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);                 // 14.09.2026 / 14.9.26
+            if (m) {
+                var y = m[3].length === 2 ? '20' + m[3] : m[3];
+                return y + '-' + m[2].padStart(2, '0') + '-' + m[1].padStart(2, '0');
+            }
+            return null;
+        }
+
+        function parseTime(s) {
+            s = (s || '').trim();
+            if (!s) return null;
+            var m = s.match(/^(\d{1,2})[:.](\d{2})/);
+            if (!m) return null;
+            var h = parseInt(m[1], 10);
+            if (h > 23) return null;
+            return String(h).padStart(2, '0') + ':' + m[2];
+        }
+
+        function normType(s, hasOpponent) {
+            s = (s || '').toLowerCase().trim();
+            if (['spiel', 'match', 'punktspiel', 'liga'].indexOf(s) !== -1) return 'spiel';
+            if (['turnier', 'cup'].indexOf(s) !== -1) return 'turnier';
+            if (['training', 'probetraining'].indexOf(s) !== -1) return 'training';
+            if (['event', 'fest', 'veranstaltung', 'sonstiges'].indexOf(s) !== -1) return 'event';
+            return hasOpponent ? 'spiel' : (s ? 'event' : 'event');
+        }
+
+        function parseBool(s) {
+            s = (s || '').toLowerCase().trim();
+            if (['ja', 'j', 'x', 'true', '1', 'heim'].indexOf(s) !== -1) return true;
+            if (['nein', 'n', 'false', '0', 'auswarts', 'auswärts', 'ausw.'].indexOf(s) !== -1) return false;
+            return null;
+        }
+
+        function findTeamId(name) {
+            name = (name || '').toLowerCase().trim();
+            if (!name) return { id: null, warn: null };
+            var hit = teamsCache.find(function (t) { return t.name.toLowerCase().trim() === name; });
+            if (hit) return { id: hit.id, warn: null };
+            return { id: null, warn: 'Mannschaft „' + name + '" nicht gefunden' };
+        }
+
+        function processCsv(text) {
+            var rows = parseCSV(text);
+            if (rows.length < 2) {
+                AdminCore.toast('Die Datei enthält keine Datenzeilen.', 'error');
+                return;
+            }
+
+            var headers = rows[0].map(function (h) { return HEADER_KEYS[normHeader(h)] || null; });
+            if (headers.indexOf('date') === -1 || headers.indexOf('title') === -1) {
+                AdminCore.toast('Spalten „Datum" und „Titel" wurden nicht gefunden. Nutze am besten die Vorlage.', 'error');
+                return;
+            }
+
+            csvRows = [];
+            var previewHtml = '';
+            var okCount = 0, errCount = 0;
+
+            rows.slice(1).forEach(function (cells) {
+                var rec = {};
+                headers.forEach(function (key, i) {
+                    if (key && cells[i] !== undefined) rec[key] = cells[i].trim();
+                });
+
+                var date = parseGermanDate(rec.date);
+                var title = (rec.title || '').trim();
+                var problems = [];
+                if (!date) problems.push('Datum ungültig');
+                if (!title) problems.push('Titel fehlt');
+
+                var teamRes = findTeamId(rec.team);
+                if (teamRes.warn) problems.push(teamRes.warn);
+
+                var typ = normType(rec.type, !!(rec.opponent || '').trim());
+                var valid = !!(date && title);
+
+                if (valid) {
+                    okCount++;
+                    csvRows.push({
+                        title: title,
+                        event_type: typ,
+                        team_id: teamRes.id,
+                        date: date,
+                        date_end: parseGermanDate(rec.date_end),
+                        time_start: parseTime(rec.time_start),
+                        time_end: parseTime(rec.time_end),
+                        location: (rec.location || '').trim() || null,
+                        opponent: (rec.opponent || '').trim() || null,
+                        is_home: parseBool(rec.is_home),
+                        description: (rec.description || '').trim() || null,
+                        is_published: true
+                    });
+                } else {
+                    errCount++;
+                }
+
+                var typLabels = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
+                previewHtml += '<tr' + (valid ? '' : ' style="opacity:0.5"') + '>' +
+                    '<td>' + (valid
+                        ? '<i class="fas fa-check-circle" style="color:var(--success)"></i>'
+                        : '<i class="fas fa-times-circle" style="color:var(--danger)"></i>') + '</td>' +
+                    '<td>' + (date ? AdminCore.fmtDate(date) : esc(rec.date || '—')) + '</td>' +
+                    '<td>' + esc(title || '—') + '</td>' +
+                    '<td>' + (typLabels[typ] || esc(typ)) + '</td>' +
+                    '<td>' + esc(rec.team || '—') + (teamRes.id ? ' <i class="fas fa-link" style="font-size:0.6rem;color:var(--accent)"></i>' : '') + '</td>' +
+                    '<td>' + (parseTime(rec.time_start) || '—') + (parseTime(rec.time_end) ? '–' + parseTime(rec.time_end) : '') + '</td>' +
+                    '<td style="font-size:0.75rem;color:var(--warning)">' + esc(problems.join(', ')) + '</td>' +
+                    '</tr>';
+            });
+
+            document.getElementById('csvPreviewBody').innerHTML = previewHtml;
+            document.getElementById('csvSummary').innerHTML =
+                '<span class="tag tag-success">' + okCount + ' importierbar</span> ' +
+                (errCount ? '<span class="tag tag-danger" style="margin-left:6px">' + errCount + ' fehlerhaft (werden übersprungen)</span>' : '');
+            document.getElementById('csvPreviewWrap').style.display = '';
+            document.getElementById('csvConfirmBtn').disabled = okCount === 0;
+        }
+
+        document.getElementById('csvFile').addEventListener('change', function () {
+            var file = this.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function () {
+                var text = reader.result;
+                // Excel speichert CSV oft als Windows-1252 — bei kaputten Umlauten neu einlesen
+                if (text.indexOf('�') !== -1) {
+                    var r2 = new FileReader();
+                    r2.onload = function () { processCsv(r2.result); };
+                    r2.readAsText(file, 'windows-1252');
+                } else {
+                    processCsv(text);
+                }
+            };
+            reader.readAsText(file, 'utf-8');
+        });
+
+        document.getElementById('csvConfirmBtn').addEventListener('click', async function () {
+            if (!csvRows.length) return;
+            var btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importiere...';
+            try {
+                var ins = await sb.from('calendar_events').insert(csvRows).select();
+                if (ins.error) throw ins.error;
+                await AdminCore.audit('create', 'termin', null,
+                    'CSV-Import: ' + csvRows.length + ' Termine', { anzahl: csvRows.length });
+                AdminCore.toast(csvRows.length + ' Termine importiert.', 'success');
+                AdminCore.closeModal('csvModal');
+                refreshCalendar();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Import fehlgeschlagen: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-file-import"></i> Importieren';
+            }
+        });
+
+        /* ══════════ Init ══════════ */
+        await loadTeams();
+        await refreshCalendar();
+
+        var startView = new URLSearchParams(location.search).get('view');
+        setView(startView === 'beach' ? 'beach' : (canTermine ? 'termine' : 'beach'));
+    })();
+    </script>
+</body>
+</html>

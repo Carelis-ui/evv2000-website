@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="100" cy="100" r="95"/>
+    </clipPath>
+  </defs>
+  <!-- Outer ring -->
+  <circle cx="100" cy="100" r="97" fill="none" stroke="#2a3a5c" stroke-width="4"/>
+  <!-- Background -->
+  <circle cx="100" cy="100" r="95" fill="#1a2744"/>
+  <!-- Inner ring -->
+  <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <!-- Volleyball shape (simplified) -->
+  <g opacity="0.12" clip-path="url(#circleClip)">
+    <circle cx="100" cy="105" r="52" fill="none" stroke="white" stroke-width="2.5"/>
+    <path d="M 52 82 Q 100 60 148 82" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M 52 128 Q 100 150 148 128" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M 78 55 Q 90 105 78 155" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M 122 55 Q 110 105 122 155" fill="none" stroke="white" stroke-width="2"/>
+  </g>
+  <!-- Curved text top: "Erkelenzer-Volleyball-Verein 2000 e.V." -->
+  <defs>
+    <path id="topArc" d="M 30,100 a 70,70 0 0,1 140,0"/>
+  </defs>
+  <text font-family="Montserrat, Arial, sans-serif" font-size="9.5" font-weight="600" fill="white" letter-spacing="1.5">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">Erkelenzer-Volleyball-Verein 2000 e.V.</textPath>
+  </text>
+  <!-- Main text "EVV 2000" -->
+  <text x="100" y="108" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="36" font-weight="900" fill="white" letter-spacing="2">EVV</text>
+  <text x="100" y="142" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="30" font-weight="900" fill="white" letter-spacing="4">2000</text>
+</svg>

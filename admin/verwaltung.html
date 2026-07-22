@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Admin-Verwaltung</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Verwaltung</h1>
+            <div class="topbar-actions">
+                <button class="btn btn-primary" id="newBtn"><i class="fas fa-user-plus"></i> Neues Admin-Konto</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>E-Mail</th>
+                            <th>Rolle</th>
+                            <th>Berechtigungen</th>
+                            <th>Status</th>
+                            <th style="width:130px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-wrap" style="padding:20px 24px">
+                <h3 style="font-size:0.95rem;margin-bottom:10px"><i class="fas fa-info-circle" style="color:var(--accent)"></i> Hinweise</h3>
+                <ul style="font-size:0.85rem;color:var(--text-muted);line-height:1.8;padding-left:20px">
+                    <li>Neue Konten können sich sofort mit E-Mail + Passwort anmelden. Falls in Supabase die E-Mail-Bestätigung aktiviert ist, muss zuerst der Link in der Bestätigungs-Mail geklickt werden.</li>
+                    <li><strong>Rollen</strong> sind Vorlagen und setzen die Berechtigungen; danach lassen sich einzelne Häkchen frei anpassen.</li>
+                    <li><strong>Trainer</strong> können den Kalender pflegen und Beachplätze kostenlos für Training sperren.</li>
+                    <li>Passwort vergessen? Über den Schlüssel-Button eine Passwort-Reset-Mail schicken.</li>
+                    <li>Beim Löschen wird nur der Admin-Zugriff entfernt; das Login-Konto bleibt in Supabase bestehen (ohne Rechte).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Konto anlegen / bearbeiten -->
+    <div class="modal" id="editModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="modalTitle">Neues Admin-Konto</h3>
+                <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" class="form-input" id="fName" placeholder="Vor- und Nachname">
+                    </div>
+                    <div class="form-group">
+                        <label>E-Mail *</label>
+                        <input type="email" class="form-input" id="fEmail" placeholder="name@evv2000.de">
+                    </div>
+                    <div class="form-group" id="passwordWrap">
+                        <label>Passwort * (min. 8 Zeichen)</label>
+                        <input type="text" class="form-input" id="fPassword" placeholder="Startpasswort" autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label>Rolle</label>
+                        <select class="form-select" id="fRole"></select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Berechtigungen</label>
+                        <div class="perm-grid" id="permGrid"></div>
+                        <div class="form-hint">Superadmins haben automatisch alle Rechte inkl. Verwaltung.</div>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-check"><input type="checkbox" id="fActive" checked> Konto aktiv</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close>Abbrechen</button>
+                <button class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'verwaltung.html', superadmin: true });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var itemsCache = [];
+        var editingId = null;
+
+        /* Rollen-Select + Permission-Grid aufbauen */
+        var roleSel = document.getElementById('fRole');
+        roleSel.innerHTML = Object.keys(AdminCore.ROLES).map(function (key) {
+            return '<option value="' + key + '">' + AdminCore.ROLES[key].label + '</option>';
+        }).join('');
+
+        var permGrid = document.getElementById('permGrid');
+        permGrid.innerHTML = AdminCore.PERMISSIONS.map(function (p) {
+            return '<label class="perm-item"><input type="checkbox" class="permCb" value="' + p.key + '">' +
+                '<i class="fas ' + p.icon + '"></i> ' + p.label + '</label>';
+        }).join('');
+
+        function setPerms(perms) {
+            document.querySelectorAll('.permCb').forEach(function (cb) {
+                cb.checked = perms.indexOf(cb.value) !== -1;
+            });
+        }
+
+        function getPerms() {
+            return Array.prototype.slice.call(document.querySelectorAll('.permCb:checked'))
+                .map(function (cb) { return cb.value; });
+        }
+
+        function updatePermGridState() {
+            var isSuper = roleSel.value === 'superadmin';
+            document.querySelectorAll('.permCb').forEach(function (cb) {
+                cb.disabled = isSuper;
+                if (isSuper) cb.checked = true;
+            });
+        }
+
+        roleSel.addEventListener('change', function () {
+            var preset = AdminCore.ROLES[roleSel.value];
+            if (preset && roleSel.value !== 'custom') setPerms(preset.perms);
+            updatePermGridState();
+        });
+
+        document.querySelectorAll('[data-close]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });
+        });
+
+        document.getElementById('newBtn').addEventListener('click', function () { openEditor(null); });
+
+        function openEditor(item) {
+            editingId = item ? item.id : null;
+            document.getElementById('modalTitle').textContent = item ? 'Konto bearbeiten' : 'Neues Admin-Konto';
+            document.getElementById('fName').value = item ? (item.name || '') : '';
+            document.getElementById('fEmail').value = item ? item.email : '';
+            document.getElementById('fEmail').disabled = !!item;
+            document.getElementById('passwordWrap').style.display = item ? 'none' : '';
+            document.getElementById('fPassword').value = '';
+            roleSel.value = item ? (item.role || 'admin') : 'trainer';
+            setPerms(item ? (item.permissions || []) : AdminCore.ROLES[roleSel.value].perms);
+            updatePermGridState();
+            document.getElementById('fActive').checked = item ? item.is_active !== false : true;
+            AdminCore.openModal('editModal');
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', async function () {
+            var name = document.getElementById('fName').value.trim();
+            var email = document.getElementById('fEmail').value.trim().toLowerCase();
+            var password = document.getElementById('fPassword').value;
+            var role = roleSel.value;
+            var perms = role === 'superadmin' ? [] : getPerms();
+            var isActive = document.getElementById('fActive').checked;
+
+            if (!name || !email) {
+                AdminCore.toast('Bitte Name und E-Mail ausfüllen.', 'error');
+                return;
+            }
+
+            var btn = this;
+            btn.disabled = true;
+
+            try {
+                if (editingId) {
+                    /* ── Bearbeiten ── */
+                    var item = itemsCache.find(function (a) { return a.id === editingId; });
+                    var isSelf = item && AdminCore.admin && item.id === AdminCore.admin.id;
+                    if (isSelf && (role !== 'superadmin' || !isActive)) {
+                        AdminCore.toast('Du kannst dein eigenes Superadmin-Konto nicht herabstufen oder deaktivieren.', 'error');
+                        return;
+                    }
+                    var up = await sb.from('admins').update({
+                        name: name, role: role, permissions: perms, is_active: isActive
+                    }).eq('id', editingId);
+                    if (up.error) throw up.error;
+                    await AdminCore.audit('update', 'admin', editingId, name + ' (' + email + ')',
+                        { role: role, permissions: perms, is_active: isActive });
+                    AdminCore.toast('Konto aktualisiert.', 'success');
+                } else {
+                    /* ── Neu anlegen: Auth-User über Zweit-Client + admins-Eintrag ── */
+                    if (!password || password.length < 8) {
+                        AdminCore.toast('Bitte ein Passwort mit mindestens 8 Zeichen vergeben.', 'error');
+                        return;
+                    }
+                    var cfg = window.ErkaConfig || {};
+                    if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) throw new Error('Supabase-Konfiguration fehlt.');
+
+                    var tempClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+                        auth: { persistSession: false, autoRefreshToken: false, storageKey: 'evv-admin-create' }
+                    });
+
+                    var signRes = await tempClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: { data: { name: name } }
+                    });
+                    if (signRes.error) {
+                        if ((signRes.error.message || '').match(/already|registered/i)) {
+                            throw new Error('Für diese E-Mail existiert bereits ein Login-Konto. Bitte andere E-Mail verwenden oder das bestehende Konto in Supabase prüfen.');
+                        }
+                        throw signRes.error;
+                    }
+                    var newUser = signRes.data.user;
+                    if (!newUser || !newUser.id) throw new Error('Konto konnte nicht angelegt werden.');
+                    // Bereits registrierte E-Mails liefern bei aktivierter Bestätigung ein User-Objekt ohne Identities
+                    if (newUser.identities && newUser.identities.length === 0) {
+                        throw new Error('Für diese E-Mail existiert bereits ein Login-Konto.');
+                    }
+
+                    var ins = await sb.from('admins').insert({
+                        user_id: newUser.id,
+                        email: email,
+                        name: name,
+                        role: role,
+                        permissions: perms,
+                        is_active: isActive
+                    }).select().single();
+                    if (ins.error) throw ins.error;
+
+                    await AdminCore.audit('create', 'admin', ins.data.id, name + ' (' + email + ')',
+                        { role: role, permissions: perms });
+                    AdminCore.toast('Konto angelegt. ' + name + ' kann sich jetzt anmelden' +
+                        ' (ggf. zuerst E-Mail bestätigen).', 'success');
+                }
+                AdminCore.closeModal('editModal');
+                load();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        window.editItem = function (id) {
+            var item = itemsCache.find(function (a) { return a.id === id; });
+            if (item) openEditor(item);
+        };
+
+        window.toggleActive = async function (id) {
+            var item = itemsCache.find(function (a) { return a.id === id; });
+            if (!item) return;
+            if (AdminCore.admin && item.id === AdminCore.admin.id) {
+                AdminCore.toast('Du kannst dein eigenes Konto nicht deaktivieren.', 'error');
+                return;
+            }
+            var newState = item.is_active === false;
+            var up = await sb.from('admins').update({ is_active: newState }).eq('id', id);
+            if (up.error) {
+                AdminCore.toast('Fehler: ' + up.error.message, 'error');
+            } else {
+                await AdminCore.audit('update', 'admin', id,
+                    (item.name || item.email) + (newState ? ' aktiviert' : ' deaktiviert'), null);
+                AdminCore.toast(newState ? 'Konto aktiviert.' : 'Konto deaktiviert.', 'success');
+                load();
+            }
+        };
+
+        window.resetPassword = async function (id) {
+            var item = itemsCache.find(function (a) { return a.id === id; });
+            if (!item) return;
+            if (!confirm('Passwort-Reset-Mail an ' + item.email + ' senden?')) return;
+            var redirect = window.location.origin + window.location.pathname.replace('verwaltung.html', 'login.html');
+            var res = await sb.auth.resetPasswordForEmail(item.email, { redirectTo: redirect });
+            if (res.error) {
+                AdminCore.toast('Fehler: ' + res.error.message, 'error');
+            } else {
+                AdminCore.toast('Reset-Mail an ' + item.email + ' gesendet.', 'success');
+            }
+        };
+
+        window.deleteItem = async function (id) {
+            var item = itemsCache.find(function (a) { return a.id === id; });
+            if (!item) return;
+            if (AdminCore.admin && item.id === AdminCore.admin.id) {
+                AdminCore.toast('Du kannst dein eigenes Konto nicht löschen.', 'error');
+                return;
+            }
+            if (!confirm('Admin-Zugriff für "' + (item.name || item.email) + '" wirklich entfernen?')) return;
+            var del = await sb.from('admins').delete().eq('id', id);
+            if (del.error) {
+                AdminCore.toast('Fehler: ' + del.error.message, 'error');
+            } else {
+                await AdminCore.audit('delete', 'admin', id, item.name ? item.name + ' (' + item.email + ')' : item.email, null);
+                AdminCore.toast('Admin-Zugriff entfernt.', 'success');
+                load();
+            }
+        };
+
+        var permLabels = {};
+        AdminCore.PERMISSIONS.forEach(function (p) { permLabels[p.key] = p.label; });
+
+        async function load() {
+            var body = document.getElementById('listBody');
+            var res = await sb.from('admins').select('*').order('created_at', { ascending: true });
+            if (res.error) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state">Fehler: ' + esc(res.error.message) + '</td></tr>';
+                return;
+            }
+            itemsCache = res.data || [];
+            if (!itemsCache.length) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-user-shield"></i>Keine Admin-Konten gefunden.</td></tr>';
+                return;
+            }
+            body.innerHTML = itemsCache.map(function (a) {
+                var isSelf = AdminCore.admin && a.id === AdminCore.admin.id;
+                var permChips = a.role === 'superadmin'
+                    ? '<span class="tag tag-royal">Alle Rechte</span>'
+                    : (a.permissions || []).map(function (p) {
+                        return '<span class="tag tag-muted" style="margin:1px">' + esc(permLabels[p] || p) + '</span>';
+                    }).join(' ') || '<span style="color:var(--text-muted)">—</span>';
+                return '<tr' + (a.is_active === false ? ' style="opacity:0.5"' : '') + '>' +
+                    '<td><strong style="color:#fff">' + esc(a.name || '—') + '</strong>' + (isSelf ? ' <span class="tag tag-cyan">Du</span>' : '') + '</td>' +
+                    '<td>' + esc(a.email) + '</td>' +
+                    '<td><span class="tag ' + (a.role === 'superadmin' ? 'tag-royal' : a.role === 'trainer' ? 'tag-warning' : 'tag-blue') + '">' +
+                        esc(AdminCore.roleLabel(a.role)) + '</span></td>' +
+                    '<td style="max-width:280px">' + permChips + '</td>' +
+                    '<td>' + (a.is_active !== false
+                        ? '<span class="tag tag-success">Aktiv</span>'
+                        : '<span class="tag tag-danger">Deaktiviert</span>') + '</td>' +
+                    '<td>' +
+                        '<button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + a.id + '\')"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn" style="color:var(--info)" title="Passwort-Reset-Mail" onclick="resetPassword(\'' + a.id + '\')"><i class="fas fa-key"></i></button>' +
+                        (!isSelf ? '<button class="action-btn" style="color:var(--warning)" title="' + (a.is_active !== false ? 'Deaktivieren' : 'Aktivieren') + '" onclick="toggleActive(\'' + a.id + '\')"><i class="fas fa-power-off"></i></button>' : '') +
+                        (!isSelf ? '<button class="action-btn delete" title="Admin-Zugriff entfernen" onclick="deleteItem(\'' + a.id + '\')"><i class="fas fa-trash"></i></button>' : '') +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        await load();
+    })();
+    </script>
+</body>
+</html>

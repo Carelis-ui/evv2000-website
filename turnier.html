@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turnier | EVV 2000</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .turnier-hero {
+            padding: 120px 0 40px;
+            background: var(--dark-surface);
+            border-bottom: 1px solid var(--border);
+        }
+        .turnier-hero h1 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            margin-bottom: 12px;
+        }
+        .turnier-type-badge {
+            display: inline-block;
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 5px 16px;
+            border-radius: 50px;
+            margin-bottom: 16px;
+        }
+        .turnier-type-badge.beach {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+        .turnier-type-badge.indoor {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--info);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+
+        .turnier-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            padding: 48px 0 80px;
+        }
+
+        .turnier-details {
+            background: var(--dark-card);
+            border-radius: var(--radius-lg);
+            padding: 36px;
+            border: 1px solid var(--border);
+        }
+        .turnier-details h2 {
+            font-size: 1.3rem;
+            margin-bottom: 24px;
+            color: var(--white);
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-row i {
+            color: var(--primary);
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+        .detail-row .detail-label {
+            font-size: 0.78rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            font-family: var(--font-heading);
+        }
+        .detail-row .detail-value {
+            color: var(--white);
+            font-size: 0.95rem;
+        }
+
+        .detail-description {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .trophy-badge, .wvv-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 16px;
+            margin-right: 8px;
+        }
+        .trophy-badge {
+            background: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+        .wvv-badge {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--info);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .wvv-badge:hover {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--info);
+        }
+
+        .teams-counter {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: var(--radius);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        .teams-counter .counter-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .teams-counter .counter-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .teams-counter .counter-text {
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            color: var(--gray-400);
+            white-space: nowrap;
+        }
+        .teams-counter .counter-text strong {
+            color: var(--white);
+        }
+
+        .fee-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .fee-amount {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .fee-label {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+        }
+
+        /* Registration form */
+        .turnier-form-card {
+            background: var(--dark-card);
+            border-radius: var(--radius-lg);
+            padding: 36px;
+            border: 1px solid var(--border);
+        }
+        .turnier-form-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: var(--white);
+        }
+        .turnier-form-card .form-subtitle {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .form-group label .required {
+            color: #ef4444;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--dark-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--white);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--gray-500);
+        }
+
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: var(--dark-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .payment-option:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .payment-option.selected {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .payment-option input[type="radio"] {
+            accent-color: var(--primary);
+            width: 18px;
+            height: 18px;
+        }
+        .payment-option .pay-label {
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+        .payment-option .pay-desc {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: var(--dark);
+            border: none;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-submit:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-message {
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+        .form-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .form-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .closed-notice {
+            text-align: center;
+            padding: 48px 24px;
+        }
+        .closed-notice i {
+            font-size: 2.5rem;
+            color: var(--gray-500);
+            margin-bottom: 16px;
+        }
+        .closed-notice h3 {
+            font-size: 1.2rem;
+            color: var(--gray-400);
+            margin-bottom: 8px;
+        }
+        .closed-notice p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .not-found {
+            text-align: center;
+            padding: 120px 24px 80px;
+        }
+        .not-found i {
+            font-size: 3rem;
+            color: var(--gray-500);
+            margin-bottom: 20px;
+        }
+        .not-found h2 {
+            font-size: 1.5rem;
+            color: var(--gray-400);
+            margin-bottom: 12px;
+        }
+        .not-found p {
+            color: var(--gray-500);
+            margin-bottom: 24px;
+        }
+        .not-found a {
+            color: var(--primary);
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 120px 24px 80px;
+            color: var(--gray-500);
+        }
+        .loading-state i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .deadline-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.15);
+            border-radius: var(--radius);
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: #f59e0b;
+        }
+
+        @media (max-width: 768px) {
+            .turnier-layout {
+                grid-template-columns: 1fr;
+            }
+            .turnier-hero {
+                padding: 100px 0 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
+                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+            </a>
+            <div class="mode-switch">
+                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
+                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
+                <div class="mode-slider"></div>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
+                <li><a href="events.html" class="nav-link">Events</a></li>
+                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
+                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
+                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
+                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
+                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-state">
+        <i class="fas fa-spinner"></i>
+        <p>Turnier wird geladen...</p>
+    </div>
+
+    <!-- Not Found State -->
+    <div id="notFoundState" class="not-found" style="display:none">
+        <i class="fas fa-search"></i>
+        <h2>Turnier nicht gefunden</h2>
+        <p>Das angeforderte Turnier existiert nicht oder wurde entfernt.</p>
+        <a href="events.html"><i class="fas fa-arrow-left"></i> Zur&uuml;ck zu Events</a>
+    </div>
+
+    <!-- Tournament Content (hidden until loaded) -->
+    <div id="turnierContent" style="display:none">
+        <!-- Hero -->
+        <section class="turnier-hero">
+            <div class="container">
+                <span class="turnier-type-badge" id="typeBadge"></span>
+                <h1 id="turnierName"></h1>
+            </div>
+        </section>
+
+        <!-- Layout -->
+        <section class="section">
+            <div class="container">
+                <div class="turnier-layout">
+                    <!-- Left: Details -->
+                    <div class="turnier-details">
+                        <h2><i class="fas fa-info-circle" style="color:var(--primary);margin-right:8px"></i>Turnierdetails</h2>
+
+                        <div class="detail-row">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div>
+                                <div class="detail-label">Datum</div>
+                                <div class="detail-value" id="detailDate"></div>
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <div class="detail-label">Uhrzeit</div>
+                                <div class="detail-value" id="detailTime"></div>
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <div class="detail-label">Ort</div>
+                                <div class="detail-value" id="detailLocation"></div>
+                            </div>
+                        </div>
+
+                        <div id="imageBlock" style="display:none;margin-bottom:20px">
+                            <img id="turnierImage" src="" alt="" style="width:100%;max-height:340px;object-fit:cover;border-radius:var(--radius-lg);border:1px solid var(--border)">
+                        </div>
+
+                        <div id="descriptionBlock" class="detail-description" style="display:none"></div>
+
+                        <div id="badgesBlock" style="padding-top:8px"></div>
+
+                        <div id="teamsCounterBlock" style="display:none">
+                            <div class="teams-counter">
+                                <div class="counter-text"><strong id="teamsCount">0</strong> / <span id="teamsMax">0</span> Teams</div>
+                                <div class="counter-bar">
+                                    <div class="counter-fill" id="teamsFill" style="width:0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="feeBlock" style="display:none">
+                            <div class="fee-display">
+                                <span class="fee-amount" id="feeAmount"></span>
+                                <span class="fee-label">pro Team</span>
+                            </div>
+                        </div>
+
+                        <div id="deadlineBlock" style="display:none">
+                            <div class="deadline-info">
+                                <i class="fas fa-hourglass-half"></i>
+                                <span id="deadlineText"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Registration Form -->
+                    <div id="formColumn">
+                        <!-- Filled by JS: either form or closed notice -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
+                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Verein</h4>
+                    <ul>
+                        <li><a href="mannschaften.html">Mannschaften</a></li>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="kontakt.html">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Angebote</h4>
+                    <ul>
+                        <li><a href="beachanlage.html">Beachanlage</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="kalender.html">Kalender</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Rechtliches</h4>
+                    <ul>
+                        <li><a href="#">Impressum</a></li>
+                        <li><a href="#">Datenschutz</a></li>
+                        <li><a href="#">Vereinssatzung</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script>
+    (async function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tournamentId = urlParams.get('id');
+        const paymentStatus = urlParams.get('payment');
+        const regId = urlParams.get('reg');
+
+        if (!tournamentId) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('notFoundState').style.display = 'block';
+            return;
+        }
+
+        // Wait for Supabase
+        await ErkaSupabase.init();
+        const sb = ErkaSupabase.client;
+
+        if (!sb) {
+            document.getElementById('loadingState').innerHTML =
+                '<i class="fas fa-exclamation-triangle" style="animation:none;color:#f59e0b"></i>' +
+                '<p>Daten konnten nicht geladen werden. Bitte versuche es sp&auml;ter erneut.</p>';
+            return;
+        }
+
+        // Load tournament
+        const { data: tournament, error } = await sb
+            .from('public_tournaments')
+            .select('*')
+            .eq('id', tournamentId)
+            .single();
+
+        if (error || !tournament) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('notFoundState').style.display = 'block';
+            return;
+        }
+
+        // Load registration count (via public RPC function)
+        const { data: countData } = await sb
+            .rpc('get_registration_count', { tid: tournamentId });
+
+        const currentCount = countData || 0;
+
+        // --- Populate the page ---
+        document.title = tournament.name + ' | EVV 2000';
+
+        // Type badge
+        const typeBadge = document.getElementById('typeBadge');
+        const isBeach = (tournament.type || '').toLowerCase() === 'beach';
+        typeBadge.className = 'turnier-type-badge ' + (isBeach ? 'beach' : 'indoor');
+        typeBadge.textContent = isBeach ? 'Beach' : 'Indoor';
+
+        // Name
+        document.getElementById('turnierName').textContent = tournament.name;
+
+        // Date
+        const dateObj = new Date(tournament.date_start);
+        const dayNames = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+        const monthNames = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+        function fmtDate(d) {
+            return dayNames[d.getUTCDay()] + ', ' + d.getUTCDate() + '. ' + monthNames[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+        }
+        let dateText = fmtDate(dateObj);
+        if (tournament.date_end && tournament.date_end !== tournament.date_start) {
+            dateText += ' – ' + fmtDate(new Date(tournament.date_end));
+        }
+        document.getElementById('detailDate').textContent = dateText;
+
+        // Time
+        const timeEl = document.getElementById('detailTime');
+        if (tournament.time_start && tournament.time_end) {
+            timeEl.textContent = tournament.time_start.slice(0,5) + ' – ' + tournament.time_end.slice(0,5) + ' Uhr';
+        } else if (tournament.time_start) {
+            timeEl.textContent = 'ab ' + tournament.time_start.slice(0,5) + ' Uhr';
+        } else {
+            timeEl.textContent = 'Wird noch bekannt gegeben';
+        }
+
+        // Location
+        document.getElementById('detailLocation').textContent = tournament.location || 'Wird noch bekannt gegeben';
+
+        // Image
+        if (tournament.image_url) {
+            const imgBlock = document.getElementById('imageBlock');
+            const img = document.getElementById('turnierImage');
+            img.src = tournament.image_url;
+            img.alt = tournament.name;
+            imgBlock.style.display = 'block';
+        }
+
+        // Description
+        if (tournament.description) {
+            const descBlock = document.getElementById('descriptionBlock');
+            descBlock.style.display = 'block';
+            descBlock.textContent = tournament.description;
+        }
+
+        // Badges (trophy, WVV)
+        const badgesBlock = document.getElementById('badgesBlock');
+        let badgesHTML = '';
+        if (tournament.has_trophy) {
+            badgesHTML += '<span class="trophy-badge"><i class="fas fa-trophy"></i> Wanderpokal</span>';
+        }
+        if (tournament.is_wvv && tournament.wvv_link) {
+            badgesHTML += '<a href="' + tournament.wvv_link + '" target="_blank" rel="noopener" class="wvv-badge"><i class="fas fa-external-link-alt"></i> WVV-Turnier</a>';
+        } else if (tournament.is_wvv) {
+            badgesHTML += '<span class="wvv-badge"><i class="fas fa-check-circle"></i> WVV-Turnier</span>';
+        }
+        badgesBlock.innerHTML = badgesHTML;
+
+        // Teams counter
+        if (tournament.max_teams) {
+            const counterBlock = document.getElementById('teamsCounterBlock');
+            counterBlock.style.display = 'block';
+            document.getElementById('teamsCount').textContent = currentCount;
+            document.getElementById('teamsMax').textContent = tournament.max_teams;
+            const pct = Math.min(100, Math.round((currentCount / tournament.max_teams) * 100));
+            document.getElementById('teamsFill').style.width = pct + '%';
+        }
+
+        // Entry fee
+        const fee = tournament.entry_fee_cents || 0;
+        if (fee > 0) {
+            document.getElementById('feeBlock').style.display = 'block';
+            document.getElementById('feeAmount').textContent = (fee / 100).toFixed(2).replace('.', ',') + ' €';
+        }
+
+        // Deadline
+        if (tournament.registration_deadline) {
+            const dlDate = new Date(tournament.registration_deadline);
+            const deadlineBlock = document.getElementById('deadlineBlock');
+            deadlineBlock.style.display = 'block';
+            document.getElementById('deadlineText').textContent =
+                'Anmeldeschluss: ' + dayNames[dlDate.getUTCDay()] + ', ' + dlDate.getUTCDate() + '. ' + monthNames[dlDate.getUTCMonth()] + ' ' + dlDate.getUTCFullYear();
+        }
+
+        // --- Registration form or closed notice ---
+        const formColumn = document.getElementById('formColumn');
+        const isFull = tournament.max_teams && currentCount >= tournament.max_teams;
+        const isOpen = tournament.registration_open && !isFull;
+
+        if (!isOpen) {
+            formColumn.innerHTML =
+                '<div class="turnier-form-card">' +
+                    '<div class="closed-notice">' +
+                        '<i class="fas fa-lock"></i>' +
+                        '<h3>Anmeldung geschlossen</h3>' +
+                        '<p>' + (isFull ? 'Die maximale Teamanzahl wurde erreicht.' : 'Die Anmeldung für dieses Turnier ist derzeit nicht geöffnet.') + '</p>' +
+                    '</div>' +
+                '</div>';
+        } else {
+            let paymentHTML = '';
+            if (fee > 0) {
+                paymentHTML =
+                    '<div class="form-group">' +
+                        '<label>Bezahlung</label>' +
+                        '<div class="payment-options">' +
+                            '<label class="payment-option selected" id="payStripe" onclick="selectPayment(\'stripe\')">' +
+                                '<input type="radio" name="payMethod" value="stripe" checked>' +
+                                '<div>' +
+                                    '<div class="pay-label"><i class="fas fa-credit-card"></i> Online bezahlen</div>' +
+                                    '<div class="pay-desc">Karte, PayPal, Klarna, SEPA &ndash; via Stripe</div>' +
+                                '</div>' +
+                            '</label>' +
+                            '<label class="payment-option" id="payOnsite" onclick="selectPayment(\'onsite\')">' +
+                                '<input type="radio" name="payMethod" value="onsite">' +
+                                '<div>' +
+                                    '<div class="pay-label"><i class="fas fa-money-bill-wave"></i> Vor Ort bezahlen</div>' +
+                                    '<div class="pay-desc">Bar am Turniertag</div>' +
+                                '</div>' +
+                            '</label>' +
+                        '</div>' +
+                    '</div>';
+            }
+
+            const btnText = fee > 0 ? 'Anmelden &amp; bezahlen' : 'Jetzt anmelden';
+            const btnIcon = fee > 0 ? 'fa-lock' : 'fa-paper-plane';
+
+            formColumn.innerHTML =
+                '<div class="turnier-form-card">' +
+                    '<h2>Anmeldung</h2>' +
+                    '<p class="form-subtitle">Melde dein Team für dieses Turnier an.</p>' +
+                    '<form id="regForm" onsubmit="submitRegistration(event)">' +
+                        '<div class="form-group">' +
+                            '<label>Teamname <span class="required">*</span></label>' +
+                            '<input type="text" id="teamName" required placeholder="z.B. Sandstorm">' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                            '<label>Kontaktperson <span class="required">*</span></label>' +
+                            '<input type="text" id="contactName" required placeholder="Vor- und Nachname">' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                            '<label>E-Mail <span class="required">*</span></label>' +
+                            '<input type="email" id="contactEmail" required placeholder="team@example.de">' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                            '<label>Telefon</label>' +
+                            '<input type="tel" id="contactPhone" placeholder="0170 1234567">' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                            '<label>Anzahl Spieler</label>' +
+                            '<input type="number" id="playerCount" value="4" min="1" max="20">' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                            '<label>Spielernamen <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.75rem">(optional, ein Name pro Zeile)</span></label>' +
+                            '<textarea id="playerNames" placeholder="Max Mustermann&#10;Anna Beispiel&#10;..."></textarea>' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                            '<label>Anmerkungen <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.75rem">(optional)</span></label>' +
+                            '<textarea id="notes" placeholder="Besondere Wünsche, Hinweise etc."></textarea>' +
+                        '</div>' +
+                        paymentHTML +
+                        '<button type="submit" class="btn-submit" id="submitBtn">' +
+                            '<i class="fas ' + btnIcon + '"></i> ' + btnText +
+                        '</button>' +
+                        '<div id="formMessage" style="display:none"></div>' +
+                    '</form>' +
+                '</div>';
+        }
+
+        // Handle payment return status
+        if (paymentStatus === 'success' && regId) {
+            // Update pay_status to paid
+            await sb.from('tournament_registrations')
+                .update({ pay_status: 'paid' })
+                .eq('id', regId);
+
+            formColumn.innerHTML =
+                '<div class="turnier-form-card">' +
+                    '<div class="closed-notice">' +
+                        '<i class="fas fa-check-circle" style="color:var(--success)"></i>' +
+                        '<h3 style="color:var(--success)">Zahlung erfolgreich!</h3>' +
+                        '<p>Deine Anmeldung ist bestätigt. Du erhältst eine Bestätigungs-E-Mail.</p>' +
+                    '</div>' +
+                '</div>';
+        } else if (paymentStatus === 'cancelled' && regId) {
+            formColumn.innerHTML =
+                '<div class="turnier-form-card">' +
+                    '<div class="closed-notice">' +
+                        '<i class="fas fa-times-circle" style="color:#ef4444"></i>' +
+                        '<h3 style="color:#ef4444">Zahlung abgebrochen</h3>' +
+                        '<p>Die Zahlung wurde abgebrochen. Deine Anmeldung ist gespeichert &ndash; du kannst die Zahlung später erneut versuchen oder vor Ort bezahlen.</p>' +
+                    '</div>' +
+                '</div>';
+        }
+
+        // Show content
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('turnierContent').style.display = 'block';
+
+        // --- Store tournament data for form submission ---
+        window._tournament = tournament;
+        window._fee = fee;
+    })();
+
+    // Payment option selection
+    function selectPayment(method) {
+        document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
+        if (method === 'stripe') {
+            document.getElementById('payStripe').classList.add('selected');
+            document.querySelector('#payStripe input').checked = true;
+        } else {
+            document.getElementById('payOnsite').classList.add('selected');
+            document.querySelector('#payOnsite input').checked = true;
+        }
+    }
+
+    // Form submission
+    async function submitRegistration(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('submitBtn');
+        const msgEl = document.getElementById('formMessage');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Wird gesendet...';
+        msgEl.style.display = 'none';
+
+        try {
+            const sb = ErkaSupabase.client;
+            const tournament = window._tournament;
+            const fee = window._fee;
+
+            const teamName = document.getElementById('teamName').value.trim();
+            const contactName = document.getElementById('contactName').value.trim();
+            const contactEmail = document.getElementById('contactEmail').value.trim();
+            const contactPhone = document.getElementById('contactPhone').value.trim();
+            const playerCount = parseInt(document.getElementById('playerCount').value) || 4;
+            const playerNames = document.getElementById('playerNames').value.trim();
+            const notes = document.getElementById('notes').value.trim();
+
+            // Payment method
+            const payRadio = document.querySelector('input[name="payMethod"]:checked');
+            const payMethod = payRadio ? payRadio.value : (fee > 0 ? 'stripe' : 'free');
+
+            // Determine pay_status
+            let payStatus = 'paid'; // free
+            if (fee > 0) {
+                payStatus = payMethod === 'onsite' ? 'pending' : 'pending'; // stripe will be updated after checkout
+            }
+
+            // Insert registration
+            const regData = {
+                tournament_id: tournament.id,
+                team_name: teamName,
+                contact_name: contactName,
+                contact_email: contactEmail,
+                contact_phone: contactPhone || null,
+                player_count: playerCount,
+                players_info: playerNames || null,
+                notes: notes || null,
+                pay_method: payMethod === 'free' ? null : payMethod,
+                pay_status: payStatus,
+                total_cents: fee
+            };
+
+            const { data: reg, error: regError } = await sb
+                .from('tournament_registrations')
+                .insert(regData)
+                .select()
+                .single();
+
+            if (regError) throw regError;
+
+            // If Stripe payment
+            if (payMethod === 'stripe' && fee > 0) {
+                const checkoutRes = await fetch(window.ERKA_API_BASE + '/api/create-tournament-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        registrationId: reg.id,
+                        tournamentId: tournament.id,
+                        tournamentName: tournament.name,
+                        teamName: teamName,
+                        contactEmail: contactEmail,
+                        totalCents: fee,
+                        returnUrl: window.location.origin
+                    })
+                });
+
+                const checkoutData = await checkoutRes.json();
+                if (!checkoutRes.ok) throw new Error(checkoutData.error || 'Checkout-Fehler');
+
+                // Redirect to Stripe
+                window.location.href = checkoutData.url;
+                return;
+            }
+
+            // Success (free or onsite payment)
+            msgEl.className = 'form-message success';
+            msgEl.innerHTML = '<i class="fas fa-check-circle"></i> ' +
+                (payMethod === 'onsite'
+                    ? 'Anmeldung erfolgreich! Bitte bezahle die Startgebühr am Turniertag vor Ort.'
+                    : 'Anmeldung erfolgreich! Wir freuen uns auf euer Team.');
+            msgEl.style.display = 'block';
+
+            // Disable form
+            document.getElementById('regForm').querySelectorAll('input, textarea, button').forEach(el => el.disabled = true);
+            btn.innerHTML = '<i class="fas fa-check"></i> Angemeldet';
+
+        } catch (err) {
+            console.error('Registration error:', err);
+            msgEl.className = 'form-message error';
+            msgEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Fehler: ' + (err.message || 'Unbekannter Fehler. Bitte versuche es erneut.');
+            msgEl.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Jetzt anmelden';
+        }
+    }
+    </script>
+</body>
+</html>

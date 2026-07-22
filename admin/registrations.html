@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Anmeldungen</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Anmeldungen</h1>
+            <div class="topbar-actions">
+                <select class="form-select" id="tournamentFilter" style="width:auto;min-width:220px">
+                    <option value="all">Alle Turniere</option>
+                </select>
+                <button class="btn btn-ghost" id="csvBtn"><i class="fas fa-file-csv"></i> CSV Export</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="stats-grid" style="margin-bottom:24px">
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-clipboard-list"></i></div>
+                    <div class="stat-info"><h3 id="statTotal">–</h3><p>Anmeldungen gesamt</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info"><h3 id="statPaid">–</h3><p>Bezahlt</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="stat-info"><h3 id="statPending">–</h3><p>Ausstehend</p></div>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Team</th>
+                            <th>Turnier</th>
+                            <th>Kontakt</th>
+                            <th>Spieler</th>
+                            <th>Betrag</th>
+                            <th>Status</th>
+                            <th style="width:130px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="7" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'registrations.html', perm: ['registrations', 'events'] });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var itemsCache = [];
+        var filterTid = 'all';
+
+        /* Turnier-Filter befüllen */
+        var tRes = await sb.from('tournaments').select('id, name').order('date_start', { ascending: false });
+        var filterSel = document.getElementById('tournamentFilter');
+        (tRes.data || []).forEach(function (t) {
+            var opt = document.createElement('option');
+            opt.value = t.id;
+            opt.textContent = t.name;
+            filterSel.appendChild(opt);
+        });
+        filterSel.addEventListener('change', function () {
+            filterTid = filterSel.value;
+            render();
+        });
+
+        window.setStatus = async function (id, status) {
+            var item = itemsCache.find(function (r) { return r.id === id; });
+            var up = await sb.from('tournament_registrations').update({ pay_status: status }).eq('id', id);
+            if (up.error) {
+                AdminCore.toast('Fehler: ' + up.error.message, 'error');
+            } else {
+                await AdminCore.audit('update', 'registration', id,
+                    (item ? item.team_name : '') + ' → ' + status, { pay_status: status });
+                AdminCore.toast('Status aktualisiert.', 'success');
+                load();
+            }
+        };
+
+        window.deleteItem = async function (id) {
+            var item = itemsCache.find(function (r) { return r.id === id; });
+            if (!confirm('Anmeldung von "' + (item ? item.team_name : '') + '" wirklich löschen?')) return;
+            var del = await sb.from('tournament_registrations').delete().eq('id', id);
+            if (del.error) {
+                AdminCore.toast('Fehler: ' + del.error.message, 'error');
+            } else {
+                await AdminCore.audit('delete', 'registration', id, item ? item.team_name : null, null);
+                AdminCore.toast('Anmeldung gelöscht.', 'success');
+                load();
+            }
+        };
+
+        document.getElementById('csvBtn').addEventListener('click', function () {
+            var rows = visibleItems();
+            var head = ['Team', 'Turnier', 'Kontakt', 'E-Mail', 'Telefon', 'Spieler', 'Betrag', 'Status', 'Datum'];
+            var csv = [head.join(';')].concat(rows.map(function (r) {
+                return [
+                    r.team_name, (r.tournaments && r.tournaments.name) || '', r.contact_name, r.contact_email,
+                    r.contact_phone || '', r.player_count || '', ((r.total_cents || 0) / 100).toFixed(2).replace('.', ','),
+                    r.pay_status, AdminCore.fmtDate(r.created_at)
+                ].map(function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }).join(';');
+            })).join('\n');
+            var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'anmeldungen.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        });
+
+        function visibleItems() {
+            return filterTid === 'all'
+                ? itemsCache
+                : itemsCache.filter(function (r) { return r.tournament_id === filterTid; });
+        }
+
+        function render() {
+            var body = document.getElementById('listBody');
+            var items = visibleItems();
+
+            document.getElementById('statTotal').textContent = items.length;
+            document.getElementById('statPaid').textContent = items.filter(function (r) { return r.pay_status === 'paid'; }).length;
+            document.getElementById('statPending').textContent = items.filter(function (r) { return r.pay_status === 'pending'; }).length;
+
+            if (!items.length) {
+                body.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-clipboard-list"></i>Keine Anmeldungen vorhanden.</td></tr>';
+                return;
+            }
+            body.innerHTML = items.map(function (r) {
+                var statusTag =
+                    r.pay_status === 'paid' ? '<span class="tag tag-success">Bezahlt</span>' :
+                    r.pay_status === 'pending' ? '<span class="tag tag-warning">Ausstehend</span>' :
+                    r.pay_status === 'cancelled' ? '<span class="tag tag-danger">Storniert</span>' :
+                    '<span class="tag tag-muted">' + esc(r.pay_status || '—') + '</span>';
+                return '<tr>' +
+                    '<td><strong style="color:#fff">' + esc(r.team_name || '—') + '</strong></td>' +
+                    '<td>' + esc((r.tournaments && r.tournaments.name) || '—') + '</td>' +
+                    '<td>' + esc(r.contact_name || '—') + '<br><small style="color:var(--text-muted)">' + esc(r.contact_email || '') + '</small></td>' +
+                    '<td>' + (r.player_count || '—') + '</td>' +
+                    '<td>' + AdminCore.euro(r.total_cents) + '</td>' +
+                    '<td>' + statusTag + '</td>' +
+                    '<td>' +
+                        (r.pay_status !== 'paid' ? '<button class="action-btn edit" title="Als bezahlt markieren" onclick="setStatus(\'' + r.id + '\',\'paid\')"><i class="fas fa-check"></i></button>' : '') +
+                        (r.pay_status !== 'cancelled' ? '<button class="action-btn" style="color:var(--warning)" title="Stornieren" onclick="setStatus(\'' + r.id + '\',\'cancelled\')"><i class="fas fa-ban"></i></button>' : '') +
+                        '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + r.id + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        async function load() {
+            var res = await sb.from('tournament_registrations')
+                .select('*, tournaments(name)')
+                .order('created_at', { ascending: false });
+            if (res.error) {
+                document.getElementById('listBody').innerHTML =
+                    '<tr><td colspan="7" class="empty-state">Fehler: ' + esc(res.error.message) + '</td></tr>';
+                return;
+            }
+            itemsCache = res.data || [];
+            render();
+        }
+
+        await load();
+    })();
+    </script>
+</body>
+</html>

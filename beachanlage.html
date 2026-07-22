@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ERKA Beach – 4 Beachvolleyball-Felder in Erkelenz. Online buchen ab 30€, Firmen-Events, Geburtstage, Turniere. Duschen, B&auml;lle & mehr inklusive.">
+    <meta name="keywords" content="Beachvolleyball, Erkelenz, EVV2000, Beachanlage, Buchung, Platz mieten, Firmen-Event, Geburtstag, Turnier">
+    <title>ERKA Beach | Beachvolleyball in Erkelenz</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta property="og:title" content="ERKA Beach – 4 Beachvolleyball-Felder in Erkelenz">
+    <meta property="og:description" content="Online buchen ab 30&euro;. Firmen-Events, Geburtstage, Turniere. Duschen & B&auml;lle vor Ort.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evv2000-website.vercel.app/beachanlage">
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/beach-bg.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
+                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+            </a>
+            <div class="mode-switch">
+                <a href="index.html" class="mode-btn" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
+                <a href="beachanlage.html" class="mode-btn mode-active" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
+                <div class="mode-slider"></div>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#preise" class="nav-link">Preise</a></li>
+                <li><a href="#belegung" class="nav-link">Buchen</a></li>
+                <li><a href="#angebote" class="nav-link">Angebote</a></li>
+                <li><a href="events.html" class="nav-link">Turniere</a></li>
+                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
+                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO BANNER -->
+    <section class="beach-hero" id="beach-hero">
+        <div class="beach-hero-bg">
+            <img src="img/beach-bg.jpg" alt="ERKA Beach Erkelenz">
+        </div>
+        <div class="beach-hero-overlay"></div>
+        <div class="beach-hero-content">
+            <span class="beach-hero-badge"><i class="fas fa-fire"></i> Saison 2025 ge&ouml;ffnet</span>
+            <h1>ERKA Beach</h1>
+            <p class="beach-hero-sub">4 Beachvolleyball-Felder &middot; Mitten in Erkelenz</p>
+            <p class="beach-hero-desc">Buche deinen Platz in 30 Sekunden. Duschen, B&auml;lle und Chill-Bereich vor Ort. F&uuml;r Mitglieder kostenlos.</p>
+            <div class="beach-hero-ctas">
+                <a href="#belegung" class="btn btn-primary btn-lg"><i class="fas fa-calendar-check"></i> Jetzt Platz buchen</a>
+                <a href="#preise" class="btn btn-outline btn-lg">Preise ansehen</a>
+            </div>
+            <div class="beach-hero-stats">
+                <div class="beach-hero-stat">
+                    <strong>4</strong><span>Felder</span>
+                </div>
+                <div class="beach-hero-stat">
+                    <strong>12</strong><span>Slots / Feld</span>
+                </div>
+                <div class="beach-hero-stat">
+                    <strong>30&euro;</strong><span>ab / Slot</span>
+                </div>
+                <div class="beach-hero-stat">
+                    <strong>50+</strong><span>B&auml;lle</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WAS WIR BIETEN -->
+    <section class="section" id="ausstattung">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Unsere Anlage</span>
+                <h2>Alles was du brauchst</h2>
+                <p class="section-description">Keine Extras n&ouml;tig &ndash; komm einfach vorbei und spiel los.</p>
+            </div>
+            <div class="beach-usp-grid">
+                <div class="beach-usp-card">
+                    <div class="beach-usp-icon"><i class="fas fa-volleyball-ball"></i></div>
+                    <h3>4 Profi-Felder</h3>
+                    <p>Turniersand, offizielle Ma&szlig;e, gepflegte Netze &ndash; alles auf Wettkampfniveau.</p>
+                </div>
+                <div class="beach-usp-card">
+                    <div class="beach-usp-icon"><i class="fas fa-shower"></i></div>
+                    <h3>Duschen vor Ort</h3>
+                    <p>2 Dusch-Container direkt an den Feldern. Nach dem Spiel frisch nach Hause.</p>
+                </div>
+                <div class="beach-usp-card">
+                    <div class="beach-usp-icon"><i class="fas fa-volleyball-ball"></i></div>
+                    <h3>50+ B&auml;lle</h3>
+                    <p>&Uuml;ber 50 Beachvolleyb&auml;lle zum Ausleihen &ndash; du brauchst nichts mitbringen.</p>
+                </div>
+                <div class="beach-usp-card">
+                    <div class="beach-usp-icon"><i class="fas fa-umbrella-beach"></i></div>
+                    <h3>Chill-Area</h3>
+                    <p>&Uuml;berdachter Bereich mit B&auml;nken, Tischen, K&uuml;hlschrank und Theke.</p>
+                </div>
+                <div class="beach-usp-card">
+                    <div class="beach-usp-icon"><i class="fas fa-tree"></i></div>
+                    <h3>Gro&szlig;e Rasenfl&auml;che</h3>
+                    <p>Perfekt zum Grillen, Chillen oder f&uuml;r Kids-Programm bei Events.</p>
+                </div>
+                <div class="beach-usp-card">
+                    <div class="beach-usp-icon"><i class="fas fa-clock"></i></div>
+                    <h3>T&auml;glich ab 9 Uhr</h3>
+                    <p>Slots ab 9:00 bis 22:00 Uhr buchbar &ndash; den ganzen Tag.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PREISE -->
+    <section class="section" id="preise" style="padding-top: 40px;">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Preise</span>
+                <h2>Transparent &amp; fair</h2>
+                <p class="section-description">Alle Preise pro Feld. Ball-Ausleihe optional f&uuml;r 5&euro;.</p>
+            </div>
+            <div class="beach-pricing-grid">
+                <div class="beach-price-card">
+                    <div class="beach-price-icon"><i class="fas fa-user"></i></div>
+                    <div class="beach-price-name">Standard-Slot</div>
+                    <div class="beach-price-time">9:00 &ndash; 17:45 Uhr</div>
+                    <div class="beach-price-amount">30<span>&euro;</span></div>
+                    <div class="beach-price-detail">pro Feld &middot; 45 Min</div>
+                    <a href="#belegung" class="btn btn-outline">Slot buchen</a>
+                </div>
+                <div class="beach-price-card beach-price-highlight">
+                    <div class="beach-price-badge">Prime Time</div>
+                    <div class="beach-price-icon"><i class="fas fa-moon"></i></div>
+                    <div class="beach-price-name">Abend-Slot</div>
+                    <div class="beach-price-time">18:00 &ndash; 22:00 Uhr</div>
+                    <div class="beach-price-amount">40<span>&euro;</span></div>
+                    <div class="beach-price-detail">pro Feld &middot; 45 Min</div>
+                    <a href="#belegung" class="btn btn-primary">Slot buchen</a>
+                </div>
+                <div class="beach-price-card">
+                    <div class="beach-price-icon"><i class="fas fa-ticket-alt"></i></div>
+                    <div class="beach-price-name">10er-Karte</div>
+                    <div class="beach-price-time">Alle Zeiten &middot; flexibel</div>
+                    <div class="beach-price-amount">250<span>&euro;</span></div>
+                    <div class="beach-price-detail">10 Slots &middot; spare 25%</div>
+                    <a href="mailto:beach@evv2000.de?subject=10er-Karte%20Anfrage" class="btn btn-outline">Anfragen</a>
+                </div>
+                <div class="beach-price-card">
+                    <div class="beach-price-icon"><i class="fas fa-medal"></i></div>
+                    <div class="beach-price-name">Vereinsmitglieder</div>
+                    <div class="beach-price-time">Au&szlig;erhalb der Trainingszeiten</div>
+                    <div class="beach-price-amount beach-price-free">Gratis</div>
+                    <div class="beach-price-detail">1,5 Stunden / Tag inklusive</div>
+                    <a href="mitgliedschaft.html" class="btn btn-outline">Mitglied werden</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIVE BOOKING MATRIX -->
+    <section class="section" id="booking-section" style="padding-top: 40px;">
+        <div class="container">
+            <div class="evv-booking" id="belegung">
+                <div class="evv-booking-header">
+                    <div class="evv-booking-left">
+                        <span class="evv-booking-badge"><span class="evv-live-dot"></span> LIVE-BELEGUNG</span>
+                        <h3>Alle Slots auf einen Blick</h3>
+                        <p>4 Felder &middot; Slots ab 9:00 Uhr &middot; 45 Min pro Slot &middot; Klick auf einen freien Slot.</p>
+                    </div>
+                    <div class="evv-date-nav">
+                        <button class="evv-date-btn" id="bmPrev" aria-label="Vorheriger Tag">&lsaquo;</button>
+                        <button class="evv-date-today" id="bmToday">Heute</button>
+                        <div class="evv-date-label" id="bmDate">Heute</div>
+                        <button class="evv-date-btn" id="bmNext" aria-label="N&auml;chster Tag">&rsaquo;</button>
+                    </div>
+                </div>
+
+                <div class="bm-wrap">
+                    <div class="bm-head">
+                        <div class="bm-time-col">Zeit</div>
+                        <div class="bm-field-head">Platz 1</div>
+                        <div class="bm-field-head">Platz 2</div>
+                        <div class="bm-field-head">Platz 3</div>
+                        <div class="bm-field-head">Platz 4</div>
+                    </div>
+                    <div class="bm-body" id="bmBody"><!-- dynamisch via JS --></div>
+                </div>
+
+                <div class="evv-legend">
+                    <span class="evv-leg"><span class="evv-leg-chip evv-leg-free"></span> Frei</span>
+                    <span class="evv-leg"><span class="evv-leg-chip evv-leg-busy"></span> Belegt</span>
+                    <span class="evv-leg"><span class="evv-leg-chip evv-leg-past"></span> Vorbei</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ANGEBOTE -->
+    <section class="section" id="angebote">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Angebote</span>
+                <h2>F&uuml;r jeden Anlass</h2>
+                <p class="section-description">Ob mit Freunden, Kollegen oder der ganzen Familie &ndash; wir haben das passende Paket.</p>
+            </div>
+            <div class="angebote-grid">
+                <div class="angebot-card">
+                    <div class="angebot-icon"><i class="fas fa-users"></i></div>
+                    <h3>Freizeit &amp; Freunde</h3>
+                    <p>Einen Platz buchen, Freunde einladen und losspielen. 45-Min-Slots f&uuml;r bis zu 8 Spieler. B&auml;lle vor Ort, Duschen inklusive.</p>
+                    <a href="#belegung" class="angebot-link">Platz buchen <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="angebot-card angebot-highlight">
+                    <div class="angebot-badge">Beliebt</div>
+                    <div class="angebot-icon"><i class="fas fa-briefcase"></i></div>
+                    <h3>Firmen-Events</h3>
+                    <p>Das perfekte Teamevent! Bis zu 4 Felder f&uuml;r bis zu 32 Personen. Gro&szlig;e Rasenfl&auml;che zum Grillen, &uuml;berdachter Bereich mit Theke. Ab 300&euro;.</p>
+                    <a href="mailto:beach@evv2000.de?subject=Firmen-Event%20Anfrage" class="angebot-link">Angebot anfragen <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="angebot-card">
+                    <div class="angebot-icon"><i class="fas fa-birthday-cake"></i></div>
+                    <h3>Geburtstage &amp; Feiern</h3>
+                    <p>Feiert euren Geburtstag im Sand! Perfekt f&uuml;r Kindergeburtstage, JGA oder Privatfeiern. Felder + Chill-Area + Rasenfl&auml;che. Ab 180&euro;.</p>
+                    <a href="mailto:beach@evv2000.de?subject=Geburtstag%20/%20Feier%20Anfrage" class="angebot-link">Jetzt anfragen <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="angebot-card">
+                    <div class="angebot-icon"><i class="fas fa-child"></i></div>
+                    <h3>Family Days</h3>
+                    <p>Beachvolleyball, Kinderspiele, Grillen &amp; Chillen &ndash; Spa&szlig; f&uuml;r die ganze Familie. Termine werden &uuml;ber Instagram angek&uuml;ndigt!</p>
+                    <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" class="angebot-link">Auf Instagram folgen <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="angebot-card">
+                    <div class="angebot-icon"><i class="fas fa-school"></i></div>
+                    <h3>Schulen &amp; Gruppen</h3>
+                    <p>Ideal f&uuml;r Schul-AGs, Klassenausfl&uuml;ge oder Vereinsgruppen. Vormittags- und Sondertermine auf Anfrage m&ouml;glich.</p>
+                    <a href="mailto:beach@evv2000.de?subject=Schul-Anfrage" class="angebot-link">Termin anfragen <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="angebot-card">
+                    <div class="angebot-icon"><i class="fas fa-trophy"></i></div>
+                    <h3>Turniere</h3>
+                    <p>Von C- bis A-Turnieren &ndash; wir veranstalten regelm&auml;&szlig;ig Beachturniere f&uuml;r alle Level. Meldet euch jetzt an!</p>
+                    <a href="events.html" class="angebot-link">Zu den Events <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="section" style="padding: 40px 0 80px;">
+        <div class="container">
+            <div class="beach-cta-banner">
+                <div class="beach-cta-content">
+                    <h2>Bereit f&uuml;r Sand zwischen den Zehen?</h2>
+                    <p>Buch dir jetzt deinen Platz &ndash; oder schreib uns f&uuml;r dein individuelles Event.</p>
+                    <div class="beach-cta-buttons">
+                        <a href="#belegung" class="btn btn-primary btn-lg"><i class="fas fa-calendar-check"></i> Platz buchen</a>
+                        <a href="mailto:beach@evv2000.de" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> Event anfragen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slot Buchungs-Modal -->
+    <div class="slot-modal" id="slotModal" aria-hidden="true">
+        <div class="slot-modal-inner">
+            <button class="slot-close" id="slotClose" aria-label="Schlie&szlig;en">&times;</button>
+            <div class="slot-modal-head">
+                <span class="sm-eyebrow"><span class="evv-live-dot"></span> DEINE BUCHUNG</span>
+                <h2 id="smTitle">Platz 1 &middot; 18:00 Uhr</h2>
+                <p id="smSub">Mittwoch, 23. April &middot; 45 Min &middot; 30 &euro;</p>
+            </div>
+            <div class="slot-modal-body">
+                <div class="sm-dur">
+                    <label class="sm-dur-label">Dauer &middot; Endzeit</label>
+                    <div class="sm-dur-grid">
+                        <label class="sm-dur-chip">
+                            <input type="radio" name="smSlots" value="1" checked>
+                            <span><strong>45&nbsp;Min</strong><small>30 &euro;</small></span>
+                        </label>
+                        <label class="sm-dur-chip">
+                            <input type="radio" name="smSlots" value="2">
+                            <span><strong>90&nbsp;Min</strong><small>60 &euro;</small></span>
+                        </label>
+                        <label class="sm-dur-chip">
+                            <input type="radio" name="smSlots" value="3">
+                            <span><strong>2&frac14;&nbsp;Std</strong><small>90 &euro;</small></span>
+                        </label>
+                        <label class="sm-dur-chip">
+                            <input type="radio" name="smSlots" value="4">
+                            <span><strong>3&nbsp;Std</strong><small>120 &euro;</small></span>
+                        </label>
+                    </div>
+                </div>
+                <details class="sm-change">
+                    <summary>Anderen Slot w&auml;hlen</summary>
+                    <div class="sm-change-grid">
+                        <div class="sm-control">
+                            <label>Datum</label>
+                            <input type="date" id="smDate">
+                        </div>
+                        <div class="sm-control">
+                            <label>Platz</label>
+                            <select id="smField">
+                                <option value="1">Platz 1</option>
+                                <option value="2">Platz 2</option>
+                                <option value="3">Platz 3</option>
+                                <option value="4">Platz 4</option>
+                            </select>
+                        </div>
+                        <div class="sm-control">
+                            <label>Startzeit</label>
+                            <select id="smStart"></select>
+                        </div>
+                    </div>
+                </details>
+                <div class="sm-form">
+                    <div class="sm-form-row">
+                        <div class="sm-control">
+                            <label for="smName">Name *</label>
+                            <input type="text" id="smName" placeholder="Max Mustermann" required>
+                        </div>
+                        <div class="sm-control">
+                            <label for="smEmail">E-Mail *</label>
+                            <input type="email" id="smEmail" placeholder="du@mail.de" required>
+                        </div>
+                    </div>
+                    <div class="sm-form-row">
+                        <div class="sm-control">
+                            <label for="smPhone">Telefon</label>
+                            <input type="tel" id="smPhone" placeholder="+49 ...">
+                        </div>
+                        <div class="sm-control">
+                            <label for="smPlayers">Spieler</label>
+                            <select id="smPlayers">
+                                <option value="2">2 (1vs1)</option>
+                                <option value="4" selected>4 (2vs2)</option>
+                                <option value="6">6 (3vs3)</option>
+                                <option value="8">8 (4vs4)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="sm-ball">
+                    <label class="sm-ball-option">
+                        <input type="checkbox" id="smBall">
+                        <div class="sm-ball-box">
+                            <span class="sm-ball-icon"><i class="fas fa-volleyball-ball"></i></span>
+                            <div class="sm-ball-info">
+                                <strong>Ball leihen</strong>
+                                <small>Offizieller Beachvolleyball</small>
+                            </div>
+                            <span class="sm-ball-price">+5&nbsp;&euro;</span>
+                        </div>
+                    </label>
+                </div>
+                <div class="sm-pay sm-pay-3">
+                    <label class="sm-pay-option">
+                        <input type="radio" name="smPayMethod" value="stripe" checked>
+                        <div class="sm-pay-box">
+                            <span class="sm-pay-icon"><i class="fab fa-paypal"></i></span>
+                            <div>
+                                <strong>PayPal</strong>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="sm-pay-option">
+                        <input type="radio" name="smPayMethod" value="stripe">
+                        <div class="sm-pay-box">
+                            <span class="sm-pay-icon"><i class="fab fa-apple-pay"></i></span>
+                            <div>
+                                <strong>Apple Pay</strong>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="sm-pay-option">
+                        <input type="radio" name="smPayMethod" value="onsite">
+                        <div class="sm-pay-box">
+                            <span class="sm-pay-icon"><i class="fas fa-money-bill-wave"></i></span>
+                            <div>
+                                <strong>Vor Ort</strong>
+                                <small>Bar beim Check-in</small>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <div class="sm-total">
+                    <div class="sm-total-row">
+                        <span>Platz &amp; Zeit</span>
+                        <strong id="smTotalSlot">&ndash;</strong>
+                    </div>
+                    <div class="sm-total-row sm-total-big">
+                        <span>Gesamt</span>
+                        <strong id="smTotalPrice">30,00 &euro;</strong>
+                    </div>
+                    <button class="btn btn-primary btn-lg" id="smConfirm">
+                        <span id="smConfirmText">Jetzt bezahlen &middot; 30 &euro;</span>
+                    </button>
+                    <p class="sm-note">Stornierung bis 24h vorher kostenfrei &middot; Best&auml;tigung per E-Mail</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="evv-toast" id="evvToast"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
+                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Verein</h4>
+                    <ul>
+                        <li><a href="mannschaften.html">Mannschaften</a></li>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="kontakt.html">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Angebote</h4>
+                    <ul>
+                        <li><a href="beachanlage.html">Beachanlage</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="kalender.html">Kalender</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Rechtliches</h4>
+                    <ul>
+                        <li><a href="impressum.html">Impressum</a></li>
+                        <li><a href="datenschutz.html">Datenschutz</a></li>
+                        <li><a href="#">Vereinssatzung</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
+    <script src="js/main.js"></script>
+    <script>
+        window.ERKA_API_BASE = 'https://erka-beach.vercel.app';
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/booking-widget.js"></script>
+    <script src="js/payments-widget.js"></script>
+</body>
+</html>

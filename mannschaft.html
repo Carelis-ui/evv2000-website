@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mannschaft | EVV 2000</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta property="og:title" content="Mannschaft | EVV 2000">
+    <meta property="og:description" content="Team-Details, Kader und Trainingszeiten beim EVV 2000.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evv2000-website.vercel.app/mannschaft">
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/herren.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
+                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+            </a>
+            <div class="mode-switch">
+                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
+                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
+                <div class="mode-slider"></div>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
+                <li><a href="events.html" class="nav-link">Events</a></li>
+                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
+                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
+                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
+                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
+                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <a href="mannschaften.html" class="td-back"><i class="fas fa-arrow-left"></i> Alle Mannschaften</a>
+            <span class="section-tag" id="tdLeague"></span>
+            <h1 id="tdName">Mannschaft</h1>
+            <p id="tdSubtitle"></p>
+        </div>
+    </section>
+
+    <!-- Team Detail Content -->
+    <section class="section td-section">
+        <div class="container">
+            <div class="td-layout">
+                <!-- Left: Info -->
+                <div class="td-info">
+                    <!-- Badge -->
+                    <div id="tdBadgeWrap"></div>
+
+                    <!-- Key Facts -->
+                    <div class="td-facts">
+                        <div class="td-fact">
+                            <div class="td-fact-icon"><i class="fas fa-trophy"></i></div>
+                            <div>
+                                <div class="td-fact-label">Liga</div>
+                                <div class="td-fact-value" id="tdFactLeague">&ndash;</div>
+                            </div>
+                        </div>
+                        <div class="td-fact">
+                            <div class="td-fact-icon"><i class="fas fa-user-tie"></i></div>
+                            <div>
+                                <div class="td-fact-label">Trainer</div>
+                                <div class="td-fact-value" id="tdFactTrainer">&ndash;</div>
+                            </div>
+                        </div>
+                        <div class="td-fact">
+                            <div class="td-fact-icon"><i class="fas fa-clock"></i></div>
+                            <div>
+                                <div class="td-fact-label">Training</div>
+                                <div class="td-fact-value" id="tdFactTraining">&ndash;</div>
+                            </div>
+                        </div>
+                        <div class="td-fact">
+                            <div class="td-fact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <div class="td-fact-label">Halle</div>
+                                <div class="td-fact-value" id="tdFactHalle">&ndash;</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="td-desc" id="tdDesc"></div>
+
+                    <!-- Nächste Termine (aus dem Kalender) -->
+                    <div id="tdUpcoming" style="display:none;margin-bottom:28px">
+                        <h3 style="font-size:1.05rem;margin-bottom:14px"><i class="fas fa-calendar-alt" style="color:var(--primary)"></i> N&auml;chste Termine</h3>
+                        <div id="tdUpcomingList" style="display:flex;flex-direction:column;gap:10px"></div>
+                        <a href="kalender.html" style="display:inline-block;margin-top:12px;font-size:0.85rem;font-weight:600">Zum vollst&auml;ndigen Kalender <i class="fas fa-arrow-right" style="font-size:0.7rem"></i></a>
+                    </div>
+
+                    <!-- MV / Probetraining -->
+                    <div class="td-contact" id="tdContact">
+                        <h3><i class="fas fa-phone-alt"></i> Probetraining</h3>
+                        <p>Du hast Lust, bei uns mitzutrainieren? Melde dich beim Mannschaftsverantwortlichen:</p>
+                        <div class="td-contact-info">
+                            <div class="td-contact-name" id="tdMvName"></div>
+                            <div class="td-contact-detail" id="tdMvPhone"></div>
+                            <div class="td-contact-detail" id="tdMvEmail"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Image + Players -->
+                <div class="td-side">
+                    <!-- Team Image -->
+                    <div class="td-image" id="tdImage">
+                        <img id="tdImg" src="" alt="">
+                    </div>
+
+                    <!-- Players -->
+                    <div class="td-players" id="tdPlayers">
+                        <h3><i class="fas fa-users"></i> Kader</h3>
+                        <div class="td-player-list" id="tdPlayerList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
+                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Verein</h4>
+                    <ul>
+                        <li><a href="mannschaften.html">Mannschaften</a></li>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="kontakt.html">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Angebote</h4>
+                    <ul>
+                        <li><a href="beachanlage.html">Beachanlage</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="kalender.html">Kalender</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Rechtliches</h4>
+                    <ul>
+                        <li><a href="impressum.html">Impressum</a></li>
+                        <li><a href="datenschutz.html">Datenschutz</a></li>
+                        <li><a href="#">Vereinssatzung</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
+    <script src="js/main.js"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script>
+    (async function() {
+        // ======= TEAM DATA =======
+        var teams = {
+            'maenner-1': {
+                name: 'Männer 1',
+                league: 'Verbandsliga',
+                category: 'Herren',
+                trainer: 'Arash',
+                training: 'Mo & Di, 20:00–22:00',
+                halle: 'Sporthalle Erkelenz',
+                badge: { text: 'Aufstieg 2026!', type: 'success' },
+                image: 'img/herren.jpg',
+                description: 'Unsere erste Herrenmannschaft spielt in der Verbandsliga und hat sich in der Saison 2025/26 den Aufstieg gesichert. Mit einer starken Mischung aus erfahrenen Spielern und jungen Talenten zeigt das Team Woche für Woche eine beeindruckende Leistung auf dem Feld.',
+                mv: { name: 'Arash', phone: '0151 12345678', email: 'maenner1@evv2000.de' },
+                players: [
+                    { name: 'Arash', role: 'Trainer / Zuspieler', number: 1 },
+                    { name: 'Finn', role: 'Libero', number: 7 },
+                    { name: 'Lukas', role: 'Außenangreifer', number: 3 },
+                    { name: 'Max', role: 'Mittelblocker', number: 5 },
+                    { name: 'Tim', role: 'Diagonalangreifer', number: 9 },
+                    { name: 'Jonas', role: 'Außenangreifer', number: 4 },
+                    { name: 'Paul', role: 'Mittelblocker', number: 8 },
+                    { name: 'Leon', role: 'Zuspieler', number: 2 },
+                    { name: 'David', role: 'Außenangreifer', number: 6 },
+                    { name: 'Niklas', role: 'Libero', number: 10 }
+                ]
+            },
+            'maenner-2': {
+                name: 'Männer 2',
+                league: 'Bezirksliga',
+                category: 'Herren',
+                trainer: 'Alexander Frizler',
+                training: 'Mo & Di, 20:00–22:00',
+                halle: 'Sporthalle Erkelenz',
+                badge: { text: 'Klassenerhalt', type: 'info' },
+                image: 'img/herren.jpg',
+                description: 'Die zweite Herrenmannschaft kämpft in der Bezirksliga und hat sich in der Saison 2025/26 den Klassenerhalt gesichert. Das Team zeichnet sich durch großen Zusammenhalt und eine stetige Entwicklung der Spieler aus.',
+                mv: { name: 'Alexander Frizler', phone: '0151 23456789', email: 'maenner2@evv2000.de' },
+                players: [
+                    { name: 'Alexander Frizler', role: 'Trainer / Zuspieler', number: 1 },
+                    { name: 'Kevin', role: 'Außenangreifer', number: 3 },
+                    { name: 'Marcel', role: 'Mittelblocker', number: 5 },
+                    { name: 'Dennis', role: 'Diagonalangreifer', number: 9 },
+                    { name: 'Christian', role: 'Außenangreifer', number: 4 },
+                    { name: 'Thomas', role: 'Libero', number: 7 },
+                    { name: 'Stefan', role: 'Mittelblocker', number: 8 },
+                    { name: 'Patrick', role: 'Zuspieler', number: 2 }
+                ]
+            },
+            'frauen-1': {
+                name: 'Frauen 1',
+                league: 'Bezirksliga',
+                category: 'Damen',
+                trainer: 'Rudi Ritz',
+                training: 'Mo & Mi, 20:00–22:00 / Di 18:30–20:00',
+                halle: 'Sporthalle Erkelenz',
+                badge: { text: 'Aufstieg 2026!', type: 'success' },
+                image: 'img/damen.jpg',
+                description: 'Unsere erste Damenmannschaft hat in einer herausragenden Saison den Aufstieg geschafft! Mit einem souveränen 3:0-Sieg im letzten Spiel steht der verdiente Lohn für eine Saison voller Einsatz und Teamgeist.',
+                mv: { name: 'Rudi Ritz', phone: '0151 34567890', email: 'frauen1@evv2000.de' },
+                players: [
+                    { name: 'Rudi Ritz', role: 'Trainer', number: null },
+                    { name: 'Lisa', role: 'Zuspielerin', number: 1 },
+                    { name: 'Anna', role: 'Außenangreiferin', number: 3 },
+                    { name: 'Sarah', role: 'Mittelblockerin', number: 5 },
+                    { name: 'Julia', role: 'Diagonalangreiferin', number: 9 },
+                    { name: 'Laura', role: 'Außenangreiferin', number: 4 },
+                    { name: 'Marie', role: 'Libera', number: 7 },
+                    { name: 'Sophie', role: 'Mittelblockerin', number: 8 },
+                    { name: 'Lena', role: 'Zuspielerin', number: 2 },
+                    { name: 'Nina', role: 'Außenangreiferin', number: 6 }
+                ]
+            },
+            'frauen-2': {
+                name: 'Frauen 2',
+                league: 'Bezirksklasse',
+                category: 'Damen',
+                trainer: 'Felix Cohnen',
+                training: 'Mo & Mi, 17:00–18:30',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/damen.jpg',
+                description: 'Die zweite Damenmannschaft bietet sowohl erfahrenen Spielerinnen als auch Neueinsteigern die Möglichkeit, auf gutem Niveau Volleyball zu spielen. In der Bezirksklasse zeigt das Team jede Woche vollen Einsatz.',
+                mv: { name: 'Felix Cohnen', phone: '0151 45678901', email: 'frauen2@evv2000.de' },
+                players: [
+                    { name: 'Felix Cohnen', role: 'Trainer', number: null },
+                    { name: 'Mia', role: 'Zuspielerin', number: 1 },
+                    { name: 'Ella', role: 'Außenangreiferin', number: 3 },
+                    { name: 'Clara', role: 'Mittelblockerin', number: 5 },
+                    { name: 'Luisa', role: 'Außenangreiferin', number: 4 },
+                    { name: 'Hannah', role: 'Libera', number: 7 },
+                    { name: 'Emilia', role: 'Mittelblockerin', number: 8 }
+                ]
+            },
+            'wu20-1': {
+                name: 'wU20 – 1',
+                league: 'Oberliga',
+                category: 'Jugend',
+                trainer: 'Christian Dicke',
+                training: 'Di & Mi, 18:30–20:00',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/jugend.jpg',
+                description: 'Unsere erste weibliche U20 spielt in der Oberliga und gehört damit zu den stärksten Jugendmannschaften der Region. Unter der Leitung von Christian Dicke entwickeln sich die Spielerinnen stetig weiter.',
+                mv: { name: 'Christian Dicke', phone: '0151 56789012', email: 'wu20@evv2000.de' },
+                players: []
+            },
+            'wu20-2': {
+                name: 'wU20 – 2',
+                league: 'Bezirksliga',
+                category: 'Jugend',
+                trainer: 'Rudi Ritz',
+                training: 'Di & Mi, 18:30–20:00',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/jugend.jpg',
+                description: 'Die zweite wU20 spielt in der Bezirksliga und bietet jungen Spielerinnen die Möglichkeit, Wettkampferfahrung zu sammeln und sich spielerisch weiterzuentwickeln.',
+                mv: { name: 'Rudi Ritz', phone: '0151 34567890', email: 'wu20-2@evv2000.de' },
+                players: []
+            },
+            'wu18-1': {
+                name: 'wU18 – 1',
+                league: 'Oberliga',
+                category: 'Jugend',
+                trainer: 'Rudi Ritz',
+                training: 'Di & Mi, 18:30–20:00',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/jugend.jpg',
+                description: 'Die wU18-1 spielt in der Oberliga und zählt zu den Aushängeschildern unserer Jugendarbeit. Die Spielerinnen werden intensiv auf den Übergang in den Erwachsenenbereich vorbereitet.',
+                mv: { name: 'Rudi Ritz', phone: '0151 34567890', email: 'wu18@evv2000.de' },
+                players: []
+            },
+            'wu18-2-3': {
+                name: 'wU18 – 2/3',
+                league: 'Bezirksliga',
+                category: 'Jugend',
+                trainer: 'Denis Grauer / Felix Cohnen',
+                training: 'Di & Mi, 18:30–20:00',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/jugend.jpg',
+                description: 'Unsere wU18-2/3 bietet weiteren jungen Talenten die Chance, in der Bezirksliga Spielpraxis zu sammeln. Unter erfahrener Anleitung werden die Grundlagen für eine erfolgreiche Volleyballkarriere gelegt.',
+                mv: { name: 'Denis Grauer', phone: '0151 67890123', email: 'wu18-23@evv2000.de' },
+                players: []
+            },
+            'mu20': {
+                name: 'mU20',
+                league: 'Bezirksliga',
+                category: 'Jugend',
+                trainer: 'Phil Joosten',
+                training: 'Di & Mi, 18:30–20:00',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/jugend.jpg',
+                description: 'Die männliche U20 spielt in der Bezirksliga und entwickelt junge Spieler für den Herrenbereich weiter. Das Team zeigt enormes Potenzial und wächst Saison für Saison zusammen.',
+                mv: { name: 'Phil Joosten', phone: '0151 78901234', email: 'mu20@evv2000.de' },
+                players: []
+            },
+            'mu16': {
+                name: 'mU16',
+                league: 'Bezirksliga',
+                category: 'Jugend',
+                trainer: 'Arash',
+                training: 'Mi 17:00–18:30 / Do 18:30–20:00',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/jugend.jpg',
+                description: 'Unsere männliche U16 lernt die Grundlagen des Wettkampfvolleyballs. In der Bezirksliga sammeln die jungen Spieler wertvolle Erfahrung und werden individuell gefördert.',
+                mv: { name: 'Arash', phone: '0151 12345678', email: 'mu16@evv2000.de' },
+                players: []
+            },
+            'u14-mixed': {
+                name: 'U14 Mixed',
+                league: 'Bezirksliga',
+                category: 'Jugend',
+                trainer: 'Arash',
+                training: 'Mo & Mi, 17:00–18:30',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/jugend.jpg',
+                description: 'Die U14 Mixed ist der perfekte Einstieg in den Vereinsvolleyball. Jungen und Mädchen trainieren gemeinsam und lernen spielerisch die Grundlagen. Das Team erreichte einen starken 3. Platz beim Bezirksfinale!',
+                badge: { text: '3. Platz Bezirksfinale', type: 'info' },
+                mv: { name: 'Arash', phone: '0151 12345678', email: 'u14@evv2000.de' },
+                players: []
+            },
+            'hobbyts': {
+                name: 'Hobbyts 1 & 2',
+                league: 'VK A-D-H',
+                category: 'Hobby',
+                trainer: 'Michael Schaefer / Felix Cohnen',
+                training: 'Mo & Di, 20:00–22:00',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/herren.jpg',
+                description: 'Die Hobbyts sind unsere Hobbymannschaften für alle, die Spaß am Volleyball haben, ohne den Druck des Leistungssports. In entspannter Atmosphäre wird trotzdem ambitioniert gespielt – und der Erfolg gibt ihnen recht!',
+                mv: { name: 'Michael Schaefer', phone: '0151 89012345', email: 'hobbyts@evv2000.de' },
+                players: []
+            },
+            'froggs': {
+                name: 'Froggs',
+                league: 'Heinsberg-Staffel',
+                category: 'Hobby',
+                trainer: 'Jürgen Hennig',
+                training: 'Mo, 20:00–22:00',
+                halle: 'Sporthalle Erkelenz',
+                image: 'img/herren.jpg',
+                description: 'Die Froggs sind eine besondere Truppe im Verein – mit viel Spaß und Leidenschaft wird in der Heinsberg-Staffel gespielt. Hier steht der Teamgeist an erster Stelle.',
+                mv: { name: 'Jürgen Hennig', phone: '0151 90123456', email: 'froggs@evv2000.de' },
+                players: []
+            }
+        };
+
+        // ======= GET TEAM FROM URL =======
+        var params = new URLSearchParams(window.location.search);
+        var teamSlug = params.get('team');
+
+        // ======= ZUERST AUS SUPABASE LADEN (Admin-Panel-Daten), sonst statischer Fallback =======
+        var team = null;
+        var dbTeam = null;
+        var catLabels = { herren: 'Herren', damen: 'Damen', jugend: 'Jugend', hobby: 'Hobby' };
+
+        try {
+            await ErkaSupabase.init();
+            if (ErkaSupabase.client && teamSlug) {
+                var res = await ErkaSupabase.client
+                    .from('public_teams')
+                    .select('*')
+                    .eq('slug', teamSlug)
+                    .maybeSingle();
+                dbTeam = res.data || null;
+            }
+        } catch (e) {
+            console.warn('Supabase nicht erreichbar — statische Team-Daten werden verwendet.', e);
+        }
+
+        if (dbTeam) {
+            team = {
+                name: dbTeam.name,
+                league: dbTeam.league || '–',
+                category: catLabels[(dbTeam.category || '').toLowerCase()] || dbTeam.category || '',
+                trainer: dbTeam.trainer || '–',
+                training: dbTeam.training || '–',
+                halle: dbTeam.halle || '–',
+                badge: dbTeam.badge_text ? { text: dbTeam.badge_text, type: dbTeam.badge_type || 'info' } : null,
+                image: dbTeam.image_url,
+                description: dbTeam.description || '',
+                mv: dbTeam.mv_name ? { name: dbTeam.mv_name, phone: dbTeam.mv_phone || '', email: dbTeam.mv_email || '' } : null,
+                players: dbTeam.players || []
+            };
+        } else {
+            team = teams[teamSlug];
+        }
+
+        if (!team) {
+            document.getElementById('tdName').textContent = 'Mannschaft nicht gefunden';
+            document.getElementById('tdSubtitle').textContent = 'Die angeforderte Mannschaft existiert nicht.';
+            document.querySelector('.td-section').innerHTML = '<div class="container" style="text-align:center;padding:60px 0"><p style="color:var(--gray-500);margin-bottom:24px">Diese Mannschaft konnte nicht gefunden werden.</p><a href="mannschaften.html" class="btn btn-primary">Zurück zu den Mannschaften</a></div>';
+            return;
+        }
+
+        // ======= SET PAGE TITLE =======
+        document.title = team.name + ' | EVV 2000';
+
+        // ======= FILL HERO =======
+        document.getElementById('tdLeague').textContent = team.league;
+        document.getElementById('tdName').textContent = team.name;
+        document.getElementById('tdSubtitle').textContent = team.category + ' – ' + team.league + ' – Saison 2025/26';
+
+        // ======= BADGE =======
+        var badgeWrap = document.getElementById('tdBadgeWrap');
+        if (team.badge) {
+            badgeWrap.innerHTML = '<div class="team-badge ' + team.badge.type + '" style="margin-bottom:20px;font-size:0.85rem">' + team.badge.text + '</div>';
+        }
+
+        // ======= FACTS =======
+        document.getElementById('tdFactLeague').textContent = team.league;
+        document.getElementById('tdFactTrainer').textContent = team.trainer;
+        document.getElementById('tdFactTraining').textContent = team.training;
+        document.getElementById('tdFactHalle').textContent = team.halle;
+
+        // ======= DESCRIPTION =======
+        document.getElementById('tdDesc').innerHTML = '<p>' + team.description + '</p>';
+
+        // ======= CONTACT / MV =======
+        if (team.mv) {
+            document.getElementById('tdMvName').innerHTML = '<i class="fas fa-user"></i> ' + team.mv.name;
+            document.getElementById('tdMvPhone').innerHTML = team.mv.phone
+                ? '<i class="fas fa-phone"></i> <a href="tel:' + team.mv.phone.replace(/\s/g,'') + '">' + team.mv.phone + '</a>'
+                : '';
+            document.getElementById('tdMvEmail').innerHTML = team.mv.email
+                ? '<i class="fas fa-envelope"></i> <a href="mailto:' + team.mv.email + '">' + team.mv.email + '</a>'
+                : '';
+        } else {
+            document.getElementById('tdContact').style.display = 'none';
+        }
+
+        // ======= IMAGE =======
+        var imgEl = document.getElementById('tdImg');
+        if (team.image) {
+            imgEl.src = team.image;
+            imgEl.alt = team.name + ' – EVV 2000';
+        } else {
+            document.getElementById('tdImage').style.display = 'none';
+        }
+
+        // ======= PLAYERS =======
+        var playerList = document.getElementById('tdPlayerList');
+        var playersWrap = document.getElementById('tdPlayers');
+        if (team.players && team.players.length > 0) {
+            playerList.innerHTML = team.players.map(function(p) {
+                var numBadge = p.number !== null && p.number !== undefined
+                    ? '<span class="td-player-num">#' + p.number + '</span>'
+                    : '<span class="td-player-num" style="background:rgba(59,130,246,0.15);color:var(--primary)"><i class="fas fa-user-tie" style="font-size:0.65rem"></i></span>';
+                return '<div class="td-player">' +
+                    numBadge +
+                    '<div class="td-player-info">' +
+                        '<span class="td-player-name">' + p.name + '</span>' +
+                        '<span class="td-player-role">' + p.role + '</span>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        } else {
+            playersWrap.innerHTML = '<div class="td-players-empty"><h3><i class="fas fa-users"></i> Kader</h3><p style="color:var(--gray-500);font-size:0.9rem;margin-top:8px">Kader wird noch aktualisiert.</p></div>';
+        }
+
+        // ======= NÄCHSTE TERMINE (nur bei Teams aus der Datenbank) =======
+        if (dbTeam && ErkaSupabase.client) {
+            try {
+                var todayStr = new Date().toISOString().slice(0, 10);
+                var evRes = await ErkaSupabase.client
+                    .from('public_calendar')
+                    .select('*')
+                    .eq('team_id', dbTeam.id)
+                    .gte('date', todayStr)
+                    .order('date', { ascending: true })
+                    .limit(5);
+                var events = evRes.data || [];
+                if (events.length) {
+                    var months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+                    var typeLabels = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
+                    document.getElementById('tdUpcoming').style.display = '';
+                    document.getElementById('tdUpcomingList').innerHTML = events.map(function (ev) {
+                        var d = new Date(ev.date + 'T00:00:00');
+                        return '<div style="display:flex;align-items:center;gap:14px;background:var(--dark-card);border:1px solid var(--border);border-radius:10px;padding:12px 16px">' +
+                            '<div style="flex-shrink:0;text-align:center;min-width:44px;background:linear-gradient(135deg,var(--royal),var(--primary));border-radius:9px;padding:6px 8px;color:#fff">' +
+                                '<div style="font-family:var(--font-heading);font-weight:800;font-size:1.05rem;line-height:1.1">' + d.getDate() + '</div>' +
+                                '<div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:1px;opacity:0.85">' + months[d.getMonth()] + '</div>' +
+                            '</div>' +
+                            '<div style="min-width:0">' +
+                                '<div style="font-family:var(--font-heading);font-weight:700;color:var(--white);font-size:0.92rem">' + (ev.title || '') + '</div>' +
+                                '<div style="font-size:0.78rem;color:var(--gray-500)">' +
+                                    (typeLabels[ev.event_type] || ev.event_type || '') +
+                                    (ev.time_start ? ' · ' + ev.time_start + ' Uhr' : '') +
+                                    (ev.location ? ' · ' + ev.location : '') +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                    }).join('');
+                }
+            } catch (e) { /* Termine sind optional */ }
+        }
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Admin Dashboard</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Dashboard</h1>
+            <div class="topbar-actions">
+                <a href="kalender.html" class="btn btn-ghost btn-sm"><i class="fas fa-calendar-alt"></i> Kalender</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <div id="dashSections"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'dashboard.html', title: 'Dashboard' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+
+        /* ── Statistiken (nur für Bereiche mit Berechtigung) ── */
+        var statDefs = [];
+        if (AdminCore.can('news'))
+            statDefs.push({ icon: 'fa-newspaper', cls: 'blue', label: 'News-Beiträge', load: function () { return count('news'); } });
+        if (AdminCore.can('events'))
+            statDefs.push({ icon: 'fa-trophy', cls: 'cyan', label: 'Turniere & Events', load: function () { return count('tournaments'); } });
+        if (AdminCore.can('teams'))
+            statDefs.push({ icon: 'fa-users', cls: 'green', label: 'Mannschaften', load: function () { return count('teams'); } });
+        if (AdminCore.can('kalender'))
+            statDefs.push({ icon: 'fa-calendar-check', cls: 'blue', label: 'Kommende Termine', load: async function () {
+                var r = await sb.from('calendar_events').select('*', { count: 'exact', head: true }).gte('date', AdminCore.dateStr(new Date()));
+                return r.count || 0;
+            } });
+        if (AdminCore.can(['registrations', 'events']))
+            statDefs.push({ icon: 'fa-clipboard-list', cls: 'orange', label: 'Anmeldungen', load: function () { return count('tournament_registrations'); } });
+        if (AdminCore.can('beach'))
+            statDefs.push({ icon: 'fa-umbrella-beach', cls: 'cyan', label: 'Beach-Sperren (ab heute)', load: async function () {
+                var r = await sb.from('beach_blocks').select('*', { count: 'exact', head: true }).gte('date', AdminCore.dateStr(new Date()));
+                return r.count || 0;
+            } });
+        if (AdminCore.can('anfragen'))
+            statDefs.push({ icon: 'fa-inbox', cls: 'red', label: 'Neue Anfragen & Anträge', load: async function () {
+                var results = await Promise.all([
+                    sb.from('contact_messages').select('*', { count: 'exact', head: true }).eq('status', 'neu'),
+                    sb.from('membership_applications').select('*', { count: 'exact', head: true }).eq('status', 'neu')
+                ]);
+                return (results[0].count || 0) + (results[1].count || 0);
+            } });
+
+        async function count(table) {
+            var r = await sb.from(table).select('*', { count: 'exact', head: true });
+            return r.count || 0;
+        }
+
+        var grid = document.getElementById('statsGrid');
+        grid.innerHTML = statDefs.map(function (s, i) {
+            return '<div class="stat-card">' +
+                '<div class="stat-icon ' + s.cls + '"><i class="fas ' + s.icon + '"></i></div>' +
+                '<div class="stat-info"><h3 id="stat' + i + '">–</h3><p>' + s.label + '</p></div>' +
+                '</div>';
+        }).join('');
+
+        statDefs.forEach(async function (s, i) {
+            try {
+                var v = await s.load();
+                document.getElementById('stat' + i).textContent = v;
+            } catch (e) {
+                document.getElementById('stat' + i).textContent = '–';
+            }
+        });
+
+        /* ── Sektionen ── */
+        var sections = document.getElementById('dashSections');
+        var html = '';
+
+        if (AdminCore.can('kalender')) {
+            html += '<div class="section-header"><h2 class="section-title">Nächste Termine</h2>' +
+                '<a href="kalender.html" class="section-link">Zum Kalender <i class="fas fa-arrow-right"></i></a></div>' +
+                '<div class="table-wrap"><table class="admin-table"><thead><tr>' +
+                '<th>Datum</th><th>Termin</th><th>Typ</th><th>Mannschaft</th></tr></thead>' +
+                '<tbody id="upcomingBody"><tr><td colspan="4" class="empty-state">Laden...</td></tr></tbody></table></div>';
+        }
+        if (AdminCore.can('news')) {
+            html += '<div class="section-header"><h2 class="section-title">Aktuelle News</h2>' +
+                '<a href="news.html" class="section-link">Alle ansehen <i class="fas fa-arrow-right"></i></a></div>' +
+                '<div class="table-wrap"><table class="admin-table"><thead><tr>' +
+                '<th>Titel</th><th>Tag</th><th>Datum</th></tr></thead>' +
+                '<tbody id="newsBody"><tr><td colspan="3" class="empty-state">Laden...</td></tr></tbody></table></div>';
+        }
+        if (AdminCore.can('log')) {
+            html += '<div class="section-header"><h2 class="section-title">Letzte Aktivitäten</h2>' +
+                '<a href="log.html" class="section-link">Ganzes Log <i class="fas fa-arrow-right"></i></a></div>' +
+                '<div class="table-wrap"><table class="admin-table"><thead><tr>' +
+                '<th>Zeit</th><th>Wer</th><th>Aktion</th><th>Was</th></tr></thead>' +
+                '<tbody id="logBody"><tr><td colspan="4" class="empty-state">Laden...</td></tr></tbody></table></div>';
+        }
+        sections.innerHTML = html || '<div class="empty-state"><i class="fas fa-check-circle"></i><p>Willkommen im Admin-Panel!</p></div>';
+
+        /* Nächste Termine */
+        if (AdminCore.can('kalender')) {
+            var tBody = document.getElementById('upcomingBody');
+            try {
+                var evRes = await sb.from('public_calendar').select('*')
+                    .gte('date', AdminCore.dateStr(new Date()))
+                    .order('date', { ascending: true })
+                    .limit(6);
+                var evs = evRes.data || [];
+                var typeLabels = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
+                var typeTagCls = { spiel: 'blue', turnier: 'cyan', event: 'success', training: 'warning' };
+                tBody.innerHTML = evs.length ? evs.map(function (ev) {
+                    return '<tr><td>' + AdminCore.fmtDate(ev.date) + (ev.time_start ? ' · ' + esc(ev.time_start) : '') + '</td>' +
+                        '<td>' + esc(ev.title) + '</td>' +
+                        '<td><span class="tag tag-' + (typeTagCls[ev.event_type] || 'muted') + '">' + (typeLabels[ev.event_type] || esc(ev.event_type)) + '</span></td>' +
+                        '<td>' + esc(ev.team_name || '—') + '</td></tr>';
+                }).join('') : '<tr><td colspan="4" class="empty-state">Keine kommenden Termine.</td></tr>';
+            } catch (e) {
+                tBody.innerHTML = '<tr><td colspan="4" class="empty-state">Termine konnten nicht geladen werden.</td></tr>';
+            }
+        }
+
+        /* News */
+        if (AdminCore.can('news')) {
+            var nBody = document.getElementById('newsBody');
+            try {
+                var newsRes = await sb.from('news').select('*').order('published_at', { ascending: false }).limit(5);
+                var news = newsRes.data || [];
+                nBody.innerHTML = news.length ? news.map(function (n) {
+                    return '<tr><td><a href="news.html?edit=' + n.id + '" style="color:var(--text)">' + esc(n.title) + '</a></td>' +
+                        '<td><span class="tag tag-' + (n.tag === 'success' ? 'success' : n.tag === 'warning' ? 'warning' : 'info') + '">' + esc(n.tag_label || n.tag || '—') + '</span></td>' +
+                        '<td>' + AdminCore.fmtDate(n.published_at) + '</td></tr>';
+                }).join('') : '<tr><td colspan="3" class="empty-state">Keine News vorhanden.</td></tr>';
+            } catch (e) {
+                nBody.innerHTML = '<tr><td colspan="3" class="empty-state">News konnten nicht geladen werden.</td></tr>';
+            }
+        }
+
+        /* Aktivitätslog */
+        if (AdminCore.can('log')) {
+            var lBody = document.getElementById('logBody');
+            try {
+                var logRes = await sb.from('admin_audit_log').select('*').order('created_at', { ascending: false }).limit(6);
+                var logs = logRes.data || [];
+                var actionLabels = { create: 'Erstellt', update: 'Bearbeitet', delete: 'Gelöscht', login: 'Login', logout: 'Logout' };
+                lBody.innerHTML = logs.length ? logs.map(function (l) {
+                    return '<tr><td>' + AdminCore.fmtDateTime(l.created_at) + '</td>' +
+                        '<td>' + esc(l.user_name || l.user_email || '—') + '</td>' +
+                        '<td><span class="log-action ' + esc(l.action) + '">' + (actionLabels[l.action] || esc(l.action)) + '</span></td>' +
+                        '<td>' + esc(l.entity) + (l.entity_label ? ': ' + esc(l.entity_label) : '') + '</td></tr>';
+                }).join('') : '<tr><td colspan="4" class="empty-state">Noch keine Aktivitäten.</td></tr>';
+            } catch (e) {
+                lBody.innerHTML = '<tr><td colspan="4" class="empty-state">Log konnte nicht geladen werden.</td></tr>';
+            }
+        }
+    })();
+    </script>
+</body>
+</html>

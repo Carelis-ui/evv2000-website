@@ -104,7 +104,41 @@
             <button type="submit" class="btn btn-primary login-btn" id="loginBtn">
                 <i class="fas fa-sign-in-alt"></i> Anmelden
             </button>
+            <div style="margin-top:14px;text-align:center;">
+                <a href="#" id="showForgot" style="color:var(--accent);font-size:0.85rem;text-decoration:none;">
+                    <i class="fas fa-key"></i> Passwort vergessen?
+                </a>
+            </div>
         </form>
+
+        <form id="forgotForm" style="display:none">
+            <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:16px;">
+                Gib deine E-Mail ein. Wir schicken dir einen Reset-Link.
+            </p>
+            <div class="form-group">
+                <label for="forgotEmail">E-Mail</label>
+                <input type="email" id="forgotEmail" class="form-input" placeholder="deine@email.de" required autocomplete="email">
+            </div>
+            <button type="submit" class="btn btn-primary login-btn" id="forgotBtn">
+                <i class="fas fa-paper-plane"></i> Reset-Link senden
+            </button>
+            <div style="margin-top:14px;text-align:center;">
+                <a href="#" id="backToLogin" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;">
+                    <i class="fas fa-arrow-left"></i> Zurück zum Login
+                </a>
+            </div>
+        </form>
+
+        <div id="forgotSuccess" style="display:none">
+            <div style="background:rgba(34,211,238,0.12);border:1px solid rgba(34,211,238,0.35);color:var(--accent);padding:20px;border-radius:12px;margin-bottom:16px;">
+                <i class="fas fa-check-circle" style="font-size:2rem;margin-bottom:10px;display:block;"></i>
+                <strong>Mail unterwegs!</strong><br>
+                <span style="font-size:0.9rem;opacity:0.9;">Schau in dein Postfach (auch Spam). Der Link ist 1 Stunde gültig.</span>
+            </div>
+            <a href="login.html" class="btn btn-primary login-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">
+                <i class="fas fa-arrow-left"></i> Zurück zum Login
+            </a>
+        </div>
 
         <form id="recoveryForm" style="display:none">
             <p style="color:var(--accent);font-size:0.85rem;margin-bottom:16px">
@@ -175,6 +209,57 @@
                 showError(err.message || 'Passwort konnte nicht gespeichert werden. Link evtl. abgelaufen — bitte neue Reset-Mail anfordern.');
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-check"></i> Passwort speichern';
+            }
+        });
+
+        // ---- "Passwort vergessen?" Flow ----
+        document.getElementById('showForgot').addEventListener('click', function (e) {
+            e.preventDefault();
+            loginForm.style.display = 'none';
+            document.getElementById('forgotForm').style.display = '';
+            errorMsg.classList.remove('visible');
+            var fe = document.getElementById('forgotEmail');
+            var current = document.getElementById('email').value.trim();
+            if (current) fe.value = current;
+            fe.focus();
+        });
+
+        document.getElementById('backToLogin').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('forgotForm').style.display = 'none';
+            loginForm.style.display = '';
+            errorMsg.classList.remove('visible');
+        });
+
+        document.getElementById('forgotForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            errorMsg.classList.remove('visible');
+            var email = document.getElementById('forgotEmail').value.trim();
+            if (!email) { showError('Bitte E-Mail eingeben.'); return; }
+
+            var btn = document.getElementById('forgotBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Wird gesendet...';
+
+            try {
+                await ErkaSupabase.init();
+                var redirectUrl = window.location.origin + window.location.pathname;
+                var res = await ErkaSupabase.client.auth.resetPasswordForEmail(email, {
+                    redirectTo: redirectUrl
+                });
+                if (res.error) throw res.error;
+                // Erfolg zeigen
+                document.getElementById('forgotForm').style.display = 'none';
+                document.getElementById('forgotSuccess').style.display = '';
+            } catch (err) {
+                console.error('Reset error:', err);
+                var msg = err.message || 'Reset fehlgeschlagen.';
+                if (msg.toLowerCase().indexOf('rate limit') !== -1 || msg.toLowerCase().indexOf('email rate') !== -1) {
+                    msg = 'Zu viele Anfragen — bitte in 1 Stunde erneut versuchen. (Supabase Mail-Limit)';
+                }
+                showError(msg);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Reset-Link senden';
             }
         });
 

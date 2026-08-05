@@ -20,13 +20,14 @@
         { key: 'beach',         label: 'Beachanlage',        icon: 'fa-umbrella-beach' },
         { key: 'registrations', label: 'Anmeldungen',        icon: 'fa-clipboard-list' },
         { key: 'anfragen',      label: 'Anfragen & Anträge', icon: 'fa-inbox' },
+        { key: 'dokumente',     label: 'Formulare/Downloads', icon: 'fa-file-arrow-down' },
         { key: 'log',           label: 'Aktivitätslog',      icon: 'fa-history' }
     ];
 
     // Rollen-Vorlagen: befüllen die Permission-Checkboxen in der Verwaltung
     var ROLES = {
         superadmin:   { label: 'Superadmin',    perms: PERMISSIONS.map(function (p) { return p.key; }) },
-        admin:        { label: 'Admin',         perms: ['news', 'events', 'teams', 'kalender', 'beach', 'registrations', 'anfragen', 'log'] },
+        admin:        { label: 'Admin',         perms: ['news', 'events', 'teams', 'kalender', 'beach', 'registrations', 'anfragen', 'dokumente', 'log'] },
         trainer:      { label: 'Trainer',       perms: ['kalender', 'beach'] },
         redakteur:    { label: 'Redakteur',     perms: ['news'] },
         eventmanager: { label: 'Event-Manager', perms: ['events', 'registrations', 'kalender'] },
@@ -42,6 +43,7 @@
         { href: 'beach.html',         icon: 'fa-umbrella-beach', label: 'Beach-Buchungen',   perm: 'beach' },
         { href: 'registrations.html', icon: 'fa-clipboard-list', label: 'Anmeldungen',       perm: ['registrations', 'events'] },
         { href: 'anfragen.html',      icon: 'fa-inbox',          label: 'Anfragen',          perm: 'anfragen' },
+        { href: 'dokumente.html',     icon: 'fa-file-arrow-down', label: 'Formulare',        perm: 'dokumente' },
         { divider: true },
         { href: 'verwaltung.html',    icon: 'fa-user-shield',    label: 'Verwaltung',        superadmin: true },
         { href: 'log.html',           icon: 'fa-history',        label: 'Aktivitätslog',     perm: 'log' },
@@ -256,6 +258,36 @@
 
             var pub = ErkaSupabase.client.storage.from('images').getPublicUrl(path);
             return pub.data.publicUrl;
+        },
+
+        /* ── Datei-Upload (PDF & Dokumente) ─────────────────────────────────
+           Nutzt denselben Bucket "images" (öffentlich lesbar, Admin-Write),
+           legt Dateien aber im Ordner "dokumente/" ab.
+           Rückgabe: { url, name, size } */
+        uploadDocument: async function (file, folder) {
+            if (!file) throw new Error('Keine Datei gewählt.');
+            if (file.size > 25 * 1024 * 1024) throw new Error('Datei ist zu groß (max. 25 MB).');
+            var okTypes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            ];
+            var name = file.name || 'dokument';
+            var ext = (name.split('.').pop() || 'pdf').toLowerCase().replace(/[^a-z0-9]/g, '');
+            var okExt = ['pdf', 'doc', 'docx'];
+            if (okTypes.indexOf(file.type) === -1 && okExt.indexOf(ext) === -1) {
+                throw new Error('Nur PDF- oder Word-Dateien erlaubt.');
+            }
+            var path = (folder || 'dokumente') + '/' + Date.now() + '-' +
+                Math.random().toString(36).slice(2, 8) + '.' + ext;
+            var up = await ErkaSupabase.client.storage.from('images').upload(path, file, {
+                cacheControl: '3600',
+                upsert: false,
+                contentType: file.type || 'application/pdf'
+            });
+            if (up.error) throw up.error;
+            var pub = ErkaSupabase.client.storage.from('images').getPublicUrl(path);
+            return { url: pub.data.publicUrl, name: name, size: file.size };
         },
 
         /* Bild-Picker-UI in ein Element mounten.

@@ -3,14 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Neuigkeiten, Spielberichte und Aktuelles vom Erkelenzer Volleyball Verein 2000 e.V.">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <meta property="og:title" content="Aktuelles | EVV 2000">
-    <meta property="og:description" content="Neuigkeiten und Spielberichte aus dem Vereinsleben des EVV 2000.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://evv2000-website.vercel.app/aktuelles">
-    <meta property="og:image" content="https://evv2000-website.vercel.app/img/hero-bg.jpg">
-    <title>Neuigkeiten &amp; Spielberichte | EVV 2000</title>
+    <title>Formulare &amp; Downloads | EVV 2000</title>
+    <meta name="description" content="Formulare und Downloads des EVV 2000 – Aufnahmeantrag, Satzung und weitere Dokumente zum Herunterladen.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -18,7 +12,8 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Navbar -->
+
+    <!-- Navigation -->
     <nav class="navbar scrolled" id="navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-logo">
@@ -48,16 +43,19 @@
     <!-- Page Hero -->
     <section class="page-hero">
         <div class="container">
-            <span class="section-tag">Aktuelles</span>
-            <h1>Neuigkeiten &amp; Spielberichte</h1>
+            <span class="section-tag">Downloads</span>
+            <h1>Formulare &amp; Downloads</h1>
+            <p>Aufnahmeantrag, Satzung und weitere Dokumente zum Herunterladen.</p>
         </div>
     </section>
 
-    <!-- News Content -->
-    <section class="section news">
+    <!-- Documents -->
+    <section class="section">
         <div class="container">
-            <div class="news-grid" id="newsGrid">
-                <div class="news-loading"><div class="news-spinner"></div><p>Lade Neuigkeiten...</p></div>
+            <div id="formulareList">
+                <div style="text-align:center;padding:60px 0;color:var(--gray-500,#64748b)">
+                    <i class="fas fa-spinner fa-spin"></i> Dokumente werden geladen…
+                </div>
             </div>
         </div>
     </section>
@@ -96,7 +94,6 @@
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
                         <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
-                        <li><a href="#">Vereinssatzung</a></li>
                     </ul>
                 </div>
             </div>
@@ -111,69 +108,72 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
     <script>
-    (async function() {
-        var grid = document.getElementById('newsGrid');
+    (async function () {
+        var host = document.getElementById('formulareList');
+
+        function esc(s) {
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        function fmtSize(bytes) {
+            if (!bytes) return '';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+        }
+        function emptyState(msg) {
+            host.innerHTML = '<div style="text-align:center;padding:60px 0;color:var(--gray-500,#64748b)">' +
+                '<i class="fas fa-folder-open" style="font-size:2rem;opacity:.5;display:block;margin-bottom:12px"></i>' +
+                esc(msg) + '</div>';
+        }
+
+        function card(d) {
+            var size = fmtSize(d.file_size);
+            var meta = size ? '<span style="opacity:.65">PDF' + (size ? ' &middot; ' + size : '') + '</span>' : '';
+            return '<a href="' + esc(d.file_url) + '" target="_blank" rel="noopener" ' +
+                'style="display:flex;align-items:center;gap:16px;padding:18px 20px;background:var(--white,#fff);' +
+                'border:1px solid rgba(30,58,138,.12);border-radius:14px;text-decoration:none;color:inherit;' +
+                'box-shadow:0 4px 14px rgba(11,31,58,.06);transition:transform .15s,box-shadow .15s" ' +
+                'onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 10px 26px rgba(11,31,58,.12)\'" ' +
+                'onmouseout="this.style.transform=\'\';this.style.boxShadow=\'0 4px 14px rgba(11,31,58,.06)\'">' +
+                '<span style="font-size:1.8rem;color:#e5484d;flex:none"><i class="fas fa-file-pdf"></i></span>' +
+                '<span style="flex:1;min-width:0">' +
+                    '<strong style="display:block">' + esc(d.title) + '</strong>' +
+                    (d.description ? '<span style="display:block;font-size:.88rem;color:var(--gray-500,#64748b);margin-top:2px">' + esc(d.description) + '</span>' : '') +
+                    (meta ? '<span style="display:block;font-size:.78rem;margin-top:4px">' + meta + '</span>' : '') +
+                '</span>' +
+                '<span style="flex:none;color:var(--accent,#3b82f6);font-weight:600"><i class="fas fa-download"></i> Download</span>' +
+                '</a>';
+        }
 
         try {
             await ErkaSupabase.init();
-            var sb = ErkaSupabase.client;
+            if (!ErkaSupabase.client) { emptyState('Dokumente können gerade nicht geladen werden.'); return; }
+            var res = await ErkaSupabase.client.from('public_documents').select('*');
+            if (res.error) throw res.error;
+            var docs = res.data || [];
+            if (!docs.length) { emptyState('Aktuell sind keine Dokumente hinterlegt. Schau bald wieder vorbei.'); return; }
 
-            if (!sb) {
-                grid.innerHTML = '<div class="news-empty"><div class="news-empty-icon"><i class="fas fa-newspaper"></i></div><h3>Noch keine Neuigkeiten</h3><p>Bald gibt es hier Spielberichte, Aufstiege und alles rund um den EVV 2000.</p></div>';
-                return;
-            }
+            // Nach Kategorie gruppieren (Reihenfolge = erstes Auftreten)
+            var groups = {}, order = [];
+            docs.forEach(function (d) {
+                var cat = d.category || 'Weitere Dokumente';
+                if (!groups[cat]) { groups[cat] = []; order.push(cat); }
+                groups[cat].push(d);
+            });
 
-            var { data: news, error } = await sb
-                .from('public_news')
-                .select('*')
-                .order('published_at', { ascending: false });
-
-            if (error) throw error;
-
-            if (!news || news.length === 0) {
-                grid.innerHTML = '<div class="news-empty"><div class="news-empty-icon"><i class="fas fa-newspaper"></i></div><h3>Noch keine Neuigkeiten</h3><p>Bald gibt es hier Spielberichte, Aufstiege und alles rund um den EVV 2000.</p></div>';
-                return;
-            }
-
-            var monthNames = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-
-            grid.innerHTML = news.map(function(item) {
-                // Format date
-                var dateStr = '';
-                if (item.published_at) {
-                    var d = new Date(item.published_at);
-                    dateStr = d.getUTCDate() + '. ' + monthNames[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
-                }
-
-                // Tag styling
-                var tagClass = item.tag || 'info';
-                var tagLabel = item.tag_label || (tagClass === 'success' ? 'Neuigkeit' : 'Info');
-
-                // Highlight card for success tags
-                var cardClass = 'news-card';
-                if (tagClass === 'success') {
-                    cardClass += ' highlight-card';
-                }
-
-                var imgHtml = item.image_url
-                    ? '<div class="news-card-img"><img src="' + item.image_url + '" alt="" loading="lazy"></div>'
-                    : '';
-
-                return '<div class="' + cardClass + '">' +
-                    imgHtml +
-                    '<div class="news-tag ' + tagClass + '">' + tagLabel + '</div>' +
-                    '<h3>' + (item.title || '') + '</h3>' +
-                    (dateStr ? '<p class="news-date">' + dateStr + '</p>' : '') +
-                    '<p>' + (item.content || item.excerpt || '') + '</p>' +
-                '</div>';
+            host.innerHTML = order.map(function (cat) {
+                return '<div style="margin-bottom:40px">' +
+                    '<h2 style="font-size:1.25rem;margin-bottom:18px">' + esc(cat) + '</h2>' +
+                    '<div style="display:flex;flex-direction:column;gap:12px">' +
+                        groups[cat].map(card).join('') +
+                    '</div></div>';
             }).join('');
-
-        } catch (err) {
-            console.error('News load error:', err);
-            grid.innerHTML = '<div class="news-empty"><div class="news-empty-icon"><i class="fas fa-newspaper"></i></div><h3>Noch keine Neuigkeiten</h3><p>Bald gibt es hier Spielberichte, Aufstiege und alles rund um den EVV 2000.</p></div>';
+        } catch (e) {
+            console.warn('Dokumente konnten nicht geladen werden.', e);
+            emptyState('Dokumente können gerade nicht geladen werden.');
         }
     })();
     </script>
-    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
 </body>
 </html>

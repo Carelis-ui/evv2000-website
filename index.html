@@ -19,51 +19,6 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Intro Animation -->
-    <div class="intro" id="intro">
-        <div class="intro-bg"></div>
-        <!-- Realistic Net via CSS -->
-        <div class="intro-net-wrap">
-            <div class="intro-pole-left"></div>
-            <div class="intro-pole-right"></div>
-            <div class="intro-net-band"></div>
-            <div class="intro-net-mesh"></div>
-        </div>
-        <!-- Volleyball -->
-        <div class="intro-ball" id="introBall">
-            <svg viewBox="0 0 100 100" width="100" height="100">
-                <defs>
-                    <radialGradient id="ballGrad" cx="40%" cy="35%">
-                        <stop offset="0%" stop-color="#fffde8"/>
-                        <stop offset="60%" stop-color="#f5f0c0"/>
-                        <stop offset="100%" stop-color="#d4c96a"/>
-                    </radialGradient>
-                    <filter id="ballShadow">
-                        <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.5"/>
-                    </filter>
-                </defs>
-                <circle cx="50" cy="50" r="46" fill="url(#ballGrad)" filter="url(#ballShadow)" stroke="#b8a840" stroke-width="1"/>
-                <path d="M 10 35 Q 50 15 90 35" fill="none" stroke="#1a2744" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M 10 65 Q 50 85 90 65" fill="none" stroke="#1a2744" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M 35 5 Q 20 50 35 95" fill="none" stroke="#1a2744" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M 65 5 Q 80 50 65 95" fill="none" stroke="#1a2744" stroke-width="2.5" stroke-linecap="round"/>
-            </svg>
-        </div>
-        <!-- Impact rings -->
-        <div class="intro-impact-ring ring-1"></div>
-        <div class="intro-impact-ring ring-2"></div>
-        <div class="intro-impact-ring ring-3"></div>
-        <!-- Impact flash -->
-        <div class="intro-impact" id="introImpact"></div>
-        <!-- Logo reveal - ball morphs into logo -->
-        <div class="intro-logo" id="introLogo">
-            <img src="img/logo.svg" alt="EVV 2000">
-            <div class="intro-title">
-                <span class="intro-evv">EVV</span><span class="intro-2000">2000</span>
-            </div>
-        </div>
-    </div>
-
     <!-- Navbar -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">

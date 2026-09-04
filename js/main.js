@@ -1,44 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // === INTRO ANIMATION ===
-    // Only show on fresh load or reload — skip when navigating from another page on the site
-    const intro = document.getElementById('intro');
-    if (intro) {
-        var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-        var navType = navEntry ? navEntry.type : 'navigate';
-        var isReload = navType === 'reload';
-        var isSameOrigin = false;
-        try { isSameOrigin = document.referrer && new URL(document.referrer).origin === window.location.origin; } catch(e) {}
-        var showIntro = isReload || !isSameOrigin;
-
-        if (showIntro) {
-            document.body.classList.add('intro-active');
-
-            // Add shaking at impact moment — shake the INTRO, not body
-            setTimeout(() => {
-                intro.classList.add('shaking');
-            }, 2000);
-
-            // Remove shaking class
-            setTimeout(() => {
-                intro.classList.remove('shaking');
-            }, 2500);
-
-            // Fade out intro and reveal site
-            setTimeout(() => {
-                intro.classList.add('done');
-                document.body.classList.remove('intro-active');
-            }, 3500);
-
-            // Remove intro from DOM
-            setTimeout(() => {
-                intro.remove();
-            }, 4500);
-        } else {
-            // Skip animation — remove intro immediately
-            intro.remove();
-        }
-    }
-
     // === NAVBAR ===
     const navbar = document.getElementById('navbar');
     const handleScroll = () => {

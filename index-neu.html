@@ -16,30 +16,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
+<body data-page="start" data-mode="halle">
 
+<!-- @chrome:header -->
     <header class="site-nav" id="siteNav">
         <div class="wrap nav-inner">
-            <a class="brand" href="index-neu.html" aria-label="EVV 2000 Startseite">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
                 <img src="img/logo-evv.png" alt="">
                 <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
             </a>
             <div class="mode-switch" role="group" aria-label="Bereich wählen">
-                <a class="mode-btn is-active" href="index-neu.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
-                <a class="mode-btn" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
             </div>
             <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
-                <a href="#mannschaften">Mannschaften</a>
-                <a href="#termine">Termine</a>
-                <a href="#aktuelles">Aktuelles</a>
-                <a href="#beach">ERKA Beach</a>
-                <a href="#partner">Partner</a>
-                <a href="kontakt.html">Kontakt</a>
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
             </nav>
             <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
             <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
     </header>
+<!-- @chrome:/header -->
 
     <!-- ===== HERO ===== -->
     <section class="hero" id="top">
@@ -179,6 +181,7 @@
     </section>
 
     <!-- ===== FOOTER ===== -->
+<!-- @chrome:footer -->
     <footer class="footer">
         <div class="wrap">
             <div class="footer-grid">
@@ -215,47 +218,24 @@
                         <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <span>© 2026 Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
                 <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/matchday.js"></script>
     <script>
     (function () {
-        /* ---------- Chrome ---------- */
-        var nav = document.getElementById('siteNav');
-        var onScroll = function () { nav.classList.toggle('scrolled', window.scrollY > 24); };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
-
-        var burger = document.getElementById('navBurger');
-        burger.addEventListener('click', function () {
-            var open = document.body.classList.toggle('nav-open');
-            burger.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-        document.querySelectorAll('#navLinks a').forEach(function (a) {
-            a.addEventListener('click', function () { document.body.classList.remove('nav-open'); });
-        });
-
-        /* ---------- Reveal ---------- */
-        var io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-        }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-        document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
-        // Above-the-fold sofort zeigen – nicht auf den Observer warten
-        // (setTimeout statt rAF: feuert auch in Hintergrund-Tabs/Prerender)
-        setTimeout(function () {
-            document.querySelectorAll('.hero [data-reveal]').forEach(function (el) { el.classList.add('in'); });
-        }, 60);
-
         /* ---------- Helfer ---------- */
         var MONTHS = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
         var DAYS = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];

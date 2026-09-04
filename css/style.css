@@ -1083,11 +1083,14 @@ a.team-card-link {
     object-fit: cover;
     object-position: center top;
     display: block;
+    /* Ganzkörper-Studiofotos: leicht Richtung Kopf zoomen, damit Gesichter lesbar sind */
+    transform-origin: 50% 15%;
+    transform: scale(1.22);
     transition: opacity 0.45s ease, transform 0.6s ease;
 }
 .td-roster-photo .td-roster-alt { opacity: 0; }
 .td-roster-card.has-alt:hover .td-roster-alt { opacity: 1; }
-.td-roster-card:hover .td-roster-photo img { transform: scale(1.04); }
+.td-roster-card:hover .td-roster-photo img { transform: scale(1.28); }
 .td-roster-ph {
     position: absolute;
     inset: 0;

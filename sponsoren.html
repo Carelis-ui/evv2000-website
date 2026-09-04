@@ -3,209 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Partner und Sponsoren des EVV 2000 – gemeinsam den Volleyballsport in Erkelenz fördern.">
+    <meta name="description" content="Partner und Sponsoren des EVV 2000 – gemeinsam den Volleyballsport in Erkelenz fördern. Sponsor werden.">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <meta property="og:title" content="Sponsoren | EVV 2000">
+    <meta property="og:title" content="Partner &amp; Sponsoren | EVV 2000">
     <meta property="og:description" content="Unsere Partner und Sponsoren machen den Volleyballsport in Erkelenz möglich.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://evv2000-website.vercel.app/sponsoren">
-    <meta property="og:image" content="https://evv2000-website.vercel.app/img/hero-bg.jpg">
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/team-haie-26-27.jpg">
     <title>Partner &amp; Sponsoren | EVV 2000</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
+<body data-page="sponsoren" data-mode="halle">
 
-    <!-- Navigation -->
-    <nav class="navbar scrolled" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
-                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
             </a>
-            <div class="mode-switch">
-                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
-                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
-                <div class="mode-slider"></div>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
             </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
-                <li><a href="events.html" class="nav-link">Events</a></li>
-                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
-                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
-                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
-                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
-                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
-            </ul>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
-    </nav>
+    </header>
+<!-- @chrome:/header -->
 
-    <!-- Page Hero -->
     <section class="page-hero">
-        <div class="container">
-            <span class="section-tag">Partner &amp; Sponsoren</span>
-            <h1>Gemeinsam st&auml;rker</h1>
-            <p>Unsere Partner und Sponsoren machen unsere Vereinsarbeit m&ouml;glich. Gemeinsam f&ouml;rdern wir den Volleyballsport in der Region Erkelenz.</p>
+        <div class="wrap">
+            <p class="kicker" data-reveal>Partner &amp; Sponsoren</p>
+            <h1 data-reveal="2">Gemeinsam<br>stärker.</h1>
+            <p class="lead" data-reveal="3">Unsere Partner und Sponsoren machen unsere Vereinsarbeit möglich – von der Jugend bis zur Verbandsliga, von der Halle bis zur Beachanlage.</p>
         </div>
     </section>
 
-    <!-- Sponsors Showcase (dynamisch via Supabase — Placeholder-Slots als Fallback) -->
+    <section class="section sponsors">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div>
+                    <p class="kicker">Unsere Partner</p>
+                    <h2>Sie machen es möglich.</h2>
+                </div>
+                <span class="count" id="sponsorCount" style="color:var(--paper-muted)"></span>
+            </div>
+            <div class="sponsor-band" id="sponsorBand" data-reveal>
+                <div class="sponsor-tile"><span style="color:var(--paper-muted)">Partner werden geladen…</span></div>
+            </div>
+        </div>
+    </section>
+
     <section class="section">
-        <div class="container">
-            <div id="sponsorsTiers"></div>
-            <div class="sponsors-showcase" id="sponsorsFallback">
-                <div class="sponsor-slot">
-                    <div class="sponsor-placeholder">
-                        <i class="fas fa-handshake"></i>
-                        <span>Ihr Logo hier</span>
-                    </div>
+        <div class="wrap">
+            <div class="td-grid">
+                <div data-reveal>
+                    <p class="kicker">Sponsor werden</p>
+                    <h2 style="font-size:clamp(36px,4.5vw,60px);margin:14px 0 18px">Ihre Marke.<br>Unser Spielfeld.</h2>
+                    <p class="lead">Unterstützen Sie den Volleyballsport in Erkelenz und profitieren Sie von einer starken, regionalen Partnerschaft mit über 300 Mitgliedern, 14 Mannschaften und Turnieren mit hunderten Gästen.</p>
+                    <ul class="benefits" style="margin-top:24px">
+                        <li>Logo auf Website &amp; Trikots</li>
+                        <li>Präsenz bei Turnieren &amp; Events</li>
+                        <li>Sichtbarkeit an der Beachanlage</li>
+                        <li>Reichweite in Social Media</li>
+                        <li>Regionale Verbundenheit</li>
+                        <li>Individuelle Pakete nach Wunsch</li>
+                    </ul>
                 </div>
-                <div class="sponsor-slot">
-                    <div class="sponsor-placeholder">
-                        <i class="fas fa-handshake"></i>
-                        <span>Ihr Logo hier</span>
+                <div class="form-card" data-reveal="2">
+                    <h2>Kontakt aufnehmen</h2>
+                    <p class="form-intro">Wir stellen Ihnen gerne unsere Sponsoring-Pakete vor – unverbindlich und persönlich.</p>
+                    <div class="contact-lines" style="margin-bottom:22px">
+                        <span><b>Erkelenzer Volleyball-Verein 2000 e.V.</b></span>
+                        <span><a href="mailto:kontakt@evv2000.de?subject=Sponsoring-Anfrage">kontakt@evv2000.de</a></span>
+                        <span><a href="tel:+491719940856">0171 9940856</a></span>
                     </div>
-                </div>
-                <div class="sponsor-slot">
-                    <div class="sponsor-placeholder">
-                        <i class="fas fa-handshake"></i>
-                        <span>Ihr Logo hier</span>
-                    </div>
-                </div>
-                <div class="sponsor-slot">
-                    <div class="sponsor-placeholder">
-                        <i class="fas fa-handshake"></i>
-                        <span>Ihr Logo hier</span>
+                    <div class="form-actions" style="margin-top:0">
+                        <a class="btn btn-solid btn-lg" href="mailto:kontakt@evv2000.de?subject=Sponsoring-Anfrage">Sponsoring anfragen</a>
+                        <a class="btn btn-ghost" href="kontakt.html">Kontaktformular</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Sponsor CTA -->
-    <section class="section">
-        <div class="container">
-            <div class="sponsor-cta">
-                <h2>Werden Sie Sponsor!</h2>
-                <p>Unterst&uuml;tzen Sie den Volleyballsport in Erkelenz und profitieren Sie von einer starken Partnerschaft mit dem EVV 2000. Wir bieten Ihnen vielf&auml;ltige M&ouml;glichkeiten, Ihre Marke sichtbar zu machen.</p>
-                <div class="sponsor-benefits">
-                    <div class="sponsor-benefit">
-                        <i class="fas fa-tshirt"></i>
-                        <span>Logo auf Website &amp; Trikots</span>
-                    </div>
-                    <div class="sponsor-benefit">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Pr&auml;senz bei Events</span>
-                    </div>
-                    <div class="sponsor-benefit">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Regionale Verbundenheit</span>
-                    </div>
-                    <div class="sponsor-benefit">
-                        <i class="fas fa-users"></i>
-                        <span>Reichweite in Community</span>
-                    </div>
-                </div>
-                <a href="mailto:kontakt@evv2000.de?subject=Sponsoring-Anfrage" class="btn btn-primary">
-                    <i class="fas fa-envelope"></i> Kontakt aufnehmen
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
+<!-- @chrome:footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="wrap">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
-                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
                 </div>
-                <div class="footer-links">
+                <div>
                     <h4>Verein</h4>
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
-                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Angebote</h4>
-                    <ul>
-                        <li><a href="beachanlage.html">Beachanlage</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>Rechtliches</h4>
+                <div>
+                    <h4>Mitmachen</h4>
                     <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
-                        <li><a href="#">Vereinssatzung</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
-    <script src="js/main.js"></script>
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/matchday.js"></script>
     <script>
-    /* Sponsoren aus Supabase — einheitliches Grid. Placeholder bleibt bei 0 Einträgen. */
     (async function () {
+        var host = document.getElementById('sponsorBand');
         function esc(s) {
-            if (s == null) return '';
+            if (s === null || s === undefined) return '';
             return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
-
         try {
             await ErkaSupabase.init();
             var sb = ErkaSupabase.client;
-            if (!sb) return;
-
-            var res = await sb.from('sponsors')
-                .select('id, name, logo_url, website_url')
-                .eq('is_visible', true)
-                .order('sort_order', { ascending: true })
-                .order('name', { ascending: true });
-
-            var sponsors = res.data || [];
-            if (res.error || !sponsors.length) return;
-
-            document.getElementById('sponsorsFallback').style.display = 'none';
-
-            var cards = sponsors.map(function (s) {
-                var img = s.logo_url
-                    ? '<img src="' + esc(s.logo_url) + '" alt="' + esc(s.name) + '" loading="lazy">'
-                    : '<span class="sponsor-name-fallback">' + esc(s.name) + '</span>';
-                var body = '<div class="sponsor-logo-card" title="' + esc(s.name) + '">' + img + '</div>';
+            if (!sb) throw new Error('offline');
+            var res = await sb.from('sponsors').select('name,logo_url,website_url').eq('is_visible', true).order('sort_order', { ascending: true }).order('name', { ascending: true });
+            if (res.error) throw res.error;
+            var list = res.data || [];
+            document.getElementById('sponsorCount').textContent = list.length ? list.length + ' Partner' : '';
+            if (!list.length) { host.innerHTML = '<div class="sponsor-tile"><span style="color:var(--paper-muted)">Ihr Logo hier</span></div>'; return; }
+            host.innerHTML = list.map(function (s) {
+                var inner = s.logo_url ? '<img src="' + esc(s.logo_url) + '" alt="' + esc(s.name) + '" loading="lazy">' : '<span>' + esc(s.name) + '</span>';
                 return s.website_url
-                    ? '<a href="' + esc(s.website_url) + '" target="_blank" rel="noopener sponsored">' + body + '</a>'
-                    : body;
+                    ? '<a class="sponsor-tile" href="' + esc(s.website_url) + '" target="_blank" rel="noopener sponsored" title="' + esc(s.name) + '">' + inner + '</a>'
+                    : '<div class="sponsor-tile" title="' + esc(s.name) + '">' + inner + '</div>';
             }).join('');
-
-            document.getElementById('sponsorsTiers').innerHTML =
-                '<div class="sponsors-logo-row">' + cards + '</div>';
-        } catch (e) { /* Fallback bleibt */ }
+        } catch (e) {
+            console.warn('Sponsoren konnten nicht geladen werden', e);
+            host.innerHTML = '<div class="sponsor-tile"><span style="color:var(--paper-muted)">Partner konnten nicht geladen werden</span></div>';
+        }
     })();
     </script>
-    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
 </body>
 </html>

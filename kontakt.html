@@ -3,245 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kontakt | EVV 2000</title>
-    <meta name="description" content="Kontaktiere den EVV 2000 – Adresse, Telefon, E-Mail und Kontaktformular.">
+    <meta name="description" content="Kontakt zum EVV 2000 – Fragen zu Training, Mitgliedschaft, Beachanlage oder Sponsoring. Wir freuen uns auf deine Nachricht.">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta property="og:title" content="Kontakt | EVV 2000">
-    <meta property="og:description" content="Kontaktiere den EVV 2000 – Adresse, Telefon, E-Mail und Kontaktformular.">
+    <meta property="og:description" content="Fragen zum Verein, zum Training oder zur Beachanlage? Schreib uns.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://evv2000-website.vercel.app/kontakt">
-    <meta property="og:image" content="https://evv2000-website.vercel.app/img/hero-bg.jpg">
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/team-haie-26-27.jpg">
+    <title>Kontakt | EVV 2000</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
+<body data-page="kontakt" data-mode="halle">
 
-    <!-- Navigation -->
-    <nav class="navbar scrolled" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
-                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
             </a>
-            <div class="mode-switch">
-                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
-                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
-                <div class="mode-slider"></div>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
             </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
-                <li><a href="events.html" class="nav-link">Events</a></li>
-                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
-                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
-                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
-                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
-                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
-            </ul>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
-    </nav>
+    </header>
+<!-- @chrome:/header -->
 
-    <!-- Page Hero -->
     <section class="page-hero">
-        <div class="container">
-            <span class="section-tag">Kontakt</span>
-            <h1>Schreib uns!</h1>
-            <p>Du hast Fragen zum Verein, zum Training oder zur Beachanlage? Wir freuen uns auf deine Nachricht!</p>
+        <div class="wrap">
+            <p class="kicker" data-reveal>Kontakt</p>
+            <h1 data-reveal="2">Schreib uns.</h1>
+            <p class="lead" data-reveal="3">Fragen zum Verein, zum Training, zur Beachanlage oder zum Sponsoring? Wir melden uns so schnell wie möglich.</p>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section class="section contact">
-        <div class="container">
-            <div class="contact-grid">
-
-                <!-- Contact Info Cards -->
-                <div class="contact-info-cards">
-                    <div class="contact-card">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <h3>Adresse</h3>
-                        <p>Beachanlage:<br>Krefelder Stra&szlig;e<br>41812 Erkelenz</p>
-                    </div>
-                    <div class="contact-card">
-                        <i class="fas fa-phone"></i>
-                        <h3>Telefon</h3>
-                        <p><a href="tel:+491719940856">0171 9940856</a><br><a href="tel:+4924319462785">02431 9462785</a> (Beach)</p>
-                    </div>
-                    <div class="contact-card">
-                        <i class="fas fa-envelope"></i>
-                        <h3>E-Mail</h3>
-                        <p><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></p>
-                    </div>
-                    <div class="contact-card">
-                        <i class="fas fa-globe"></i>
-                        <h3>Web</h3>
-                        <p><a href="https://www.evv2000.de" target="_blank" rel="noopener">www.evv2000.de</a></p>
-                    </div>
-                </div>
-
-                <div class="contact-map">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2505.5!2d6.3165!3d51.0785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bf5d6e0e2f93a9%3A0x4b6e6e8e8e8e8e8e!2sKrefelder%20Str.%2C%2041812%20Erkelenz!5e0!3m2!1sde!2sde!4v1700000000000" width="100%" height="300" style="border:0; border-radius: 12px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-
-                <!-- Contact Form -->
-                <div class="contact-form">
-                    <form id="contactForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" id="name" name="name" placeholder="Dein Name" required>
+    <section class="section">
+        <div class="wrap">
+            <div class="td-grid">
+                <div class="form-card" data-reveal>
+                    <h2>Nachricht senden</h2>
+                    <p class="form-intro">Die Ansprechpartner der einzelnen Mannschaften findest du direkt auf den <a href="mannschaften.html" style="color:var(--blue)">Team-Seiten</a>.</p>
+                    <form id="contactForm" novalidate>
+                        <div class="form-grid">
+                            <div class="field"><label for="name">Name <em>*</em></label><input type="text" id="name" name="name" placeholder="Dein Name" required autocomplete="name"></div>
+                            <div class="field"><label for="email">E-Mail <em>*</em></label><input type="email" id="email" name="email" placeholder="deine@mail.de" required autocomplete="email"></div>
+                            <div class="field full"><label for="betreff">Betreff <em>*</em></label>
+                                <select id="betreff" name="betreff" required>
+                                    <option value="" disabled selected>Bitte wählen…</option>
+                                    <option value="probetraining">Probetraining</option>
+                                    <option value="mitgliedschaft">Mitgliedschaft</option>
+                                    <option value="mannschaften">Mannschaften</option>
+                                    <option value="beachanlage">Beachanlage / Buchung</option>
+                                    <option value="sponsoring">Sponsoring</option>
+                                    <option value="turniere">Turniere / Events</option>
+                                    <option value="sonstiges">Sonstiges</option>
+                                </select>
                             </div>
-                            <div class="form-group">
-                                <label for="email">E-Mail</label>
-                                <input type="email" id="email" name="email" placeholder="Deine E-Mail-Adresse" required>
-                            </div>
+                            <div class="field full"><label for="nachricht">Nachricht <em>*</em></label><textarea id="nachricht" name="nachricht" rows="6" placeholder="Worum geht es?" required></textarea></div>
                         </div>
-                        <div class="form-group">
-                            <label for="betreff">Betreff</label>
-                            <select id="betreff" name="betreff" required>
-                                <option value="" disabled selected>Bitte w&auml;hlen...</option>
-                                <option value="probetraining">Probetraining</option>
-                                <option value="mitgliedschaft">Mitgliedschaft</option>
-                                <option value="mannschaften">Mannschaften</option>
-                                <option value="beachanlage">Beachanlage / Buchung</option>
-                                <option value="sponsoring">Sponsoring</option>
-                                <option value="turniere">Turniere / Events</option>
-                                <option value="sonstiges">Sonstiges</option>
-                            </select>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-solid btn-lg">Nachricht senden</button>
+                            <span class="hint">Mit dem Absenden akzeptierst du unsere <a href="datenschutz.html" style="color:var(--blue)">Datenschutzerklärung</a>.</span>
                         </div>
-                        <div class="form-group">
-                            <label for="nachricht">Nachricht</label>
-                            <textarea id="nachricht" name="nachricht" rows="6" placeholder="Deine Nachricht..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Nachricht senden
-                        </button>
+                        <div id="formMessage" class="form-msg"></div>
                     </form>
                 </div>
-
+                <div class="stack">
+                    <div class="facts" data-reveal="2">
+                        <div class="fact"><div class="fact-label">Halle</div><div class="fact-value">Karl-Fischer-Halle<br>Schulring 38 · 41812 Erkelenz</div></div>
+                        <div class="fact"><div class="fact-label">ERKA Beach</div><div class="fact-value">Direkt an der Halle<br>Schulring 38 · 41812 Erkelenz</div></div>
+                        <div class="fact"><div class="fact-label">Telefon</div><div class="fact-value"><a href="tel:+491719940856">0171 9940856</a><br><a href="tel:+4924319462785" style="color:var(--muted);font-weight:500">02431 9462785 (Beach)</a></div></div>
+                        <div class="fact"><div class="fact-label">E-Mail</div><div class="fact-value"><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></div></div>
+                    </div>
+                    <div class="map-frame" data-reveal="3">
+                        <iframe title="Karte: ERKA Beach, Krefelder Straße, Erkelenz" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2505.5!2d6.3165!3d51.0785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bf5d6e0e2f93a9%3A0x4b6e6e8e8e8e8e8e!2sKrefelder%20Str.%2C%2041812%20Erkelenz!5e0!3m2!1sde!2sde!4v1700000000000" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" data-reveal="3">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        Folge uns auf Instagram: @evv_2000
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+<!-- @chrome:footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="wrap">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
-                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
                 </div>
-                <div class="footer-links">
+                <div>
                     <h4>Verein</h4>
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
-                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Angebote</h4>
-                    <ul>
-                        <li><a href="beachanlage.html">Beachanlage</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>Rechtliches</h4>
+                <div>
+                    <h4>Mitmachen</h4>
                     <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
-                        <li><a href="#">Vereinssatzung</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
-    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
-    <script src="js/main.js"></script>
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/matchday.js"></script>
     <script>
-    /* Kontaktformular: speichert in Supabase (erscheint im Admin-Panel unter
-       "Anfragen"). Fällt auf das E-Mail-Programm zurück, wenn keine Verbindung. */
+    /* Kontaktformular: speichert in Supabase (Admin-Panel → Anfragen); Mail-Fallback ohne Verbindung. */
     (function () {
         var form = document.getElementById('contactForm');
         if (!form) return;
-
-        var subjectLabels = {
-            probetraining: 'Probetraining',
-            mitgliedschaft: 'Mitgliedschaft',
-            mannschaften: 'Mannschaften',
-            beachanlage: 'Beachanlage / Buchung',
-            sponsoring: 'Sponsoring',
-            turniere: 'Turniere / Events',
-            sonstiges: 'Sonstiges'
-        };
+        var msg = document.getElementById('formMessage');
+        var LABELS = { probetraining: 'Probetraining', mitgliedschaft: 'Mitgliedschaft', mannschaften: 'Mannschaften', beachanlage: 'Beachanlage / Buchung', sponsoring: 'Sponsoring', turniere: 'Turniere / Events', sonstiges: 'Sonstiges' };
 
         function mailtoFallback(name, email, betreff, nachricht) {
-            var subject = 'Kontaktanfrage: ' + (subjectLabels[betreff] || betreff || 'Allgemein');
+            var subject = 'Kontaktanfrage: ' + (LABELS[betreff] || betreff || 'Allgemein');
             var body = 'Name: ' + name + '\nE-Mail: ' + email + '\n\n' + nachricht;
-            window.location.href = 'mailto:kontakt@evv2000.de?subject=' +
-                encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-        }
-
-        function showSuccess() {
-            form.innerHTML =
-                '<div style="text-align:center;padding:40px 16px">' +
-                '<div style="font-size:2.6rem;color:var(--accent);margin-bottom:14px"><i class="fas fa-check-circle"></i></div>' +
-                '<h3 style="margin-bottom:8px">Nachricht gesendet!</h3>' +
-                '<p style="color:var(--gray-500);font-size:0.92rem">Danke f&uuml;r deine Anfrage &ndash; wir melden uns so schnell wie m&ouml;glich bei dir.</p>' +
-                '</div>';
+            window.location.href = 'mailto:kontakt@evv2000.de?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
         }
 
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
-
             var name = document.getElementById('name').value.trim();
             var email = document.getElementById('email').value.trim();
             var betreff = document.getElementById('betreff').value;
             var nachricht = document.getElementById('nachricht').value.trim();
-
-            if (!name || !email || !nachricht) return;
-
+            if (!name || !email || !betreff || !nachricht) {
+                msg.className = 'form-msg error show';
+                msg.textContent = 'Bitte alle Felder ausfüllen.';
+                return;
+            }
             var btn = form.querySelector('button[type=submit]');
-            var btnHtml = btn.innerHTML;
+            var original = btn.textContent;
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Senden...';
+            btn.textContent = 'Wird gesendet…';
+            msg.className = 'form-msg';
 
             try {
                 await ErkaSupabase.init();
                 if (!ErkaSupabase.client) throw new Error('offline');
-
-                var res = await ErkaSupabase.client.from('contact_messages').insert({
-                    name: name,
-                    email: email,
-                    subject: betreff || null,
-                    message: nachricht
-                });
+                var res = await ErkaSupabase.client.from('contact_messages').insert({ name: name, email: email, subject: betreff || null, message: nachricht });
                 if (res.error) throw res.error;
-
-                showSuccess();
+                form.innerHTML = '<div class="notice ok"><h3>Nachricht gesendet</h3><p>Danke für deine Anfrage – wir melden uns so schnell wie möglich bei dir.</p></div>';
             } catch (err) {
                 console.warn('Kontakt: Speichern fehlgeschlagen, Mail-Fallback.', err);
                 btn.disabled = false;
-                btn.innerHTML = btnHtml;
+                btn.textContent = original;
                 mailtoFallback(name, email, betreff, nachricht);
             }
         });

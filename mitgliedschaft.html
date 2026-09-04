@@ -3,808 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Werde Mitglied beim EVV 2000 &ndash; Erkelenzer Volleyball Verein. Jetzt digital anmelden und Teil unserer Volleyball-Familie werden!">
-    <title>Mitglied werden | EVV 2000</title>
-    <meta name="description" content="Werde Mitglied im EVV 2000 – digitaler Mitgliedsantrag, Beitragsordnung und alle Vorteile.">
+    <meta name="description" content="Mitglied werden beim EVV 2000 – Beitragsordnung, Vorteile und digitaler Mitgliedsantrag. Volleyball für jedes Alter und jedes Level in Erkelenz.">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta property="og:title" content="Mitglied werden | EVV 2000">
-    <meta property="og:description" content="Werde Teil der EVV 2000 Volleyball-Familie – jetzt digital anmelden!">
+    <meta property="og:description" content="Werde Teil der Volleyball-Familie – digitaler Mitgliedsantrag beim EVV 2000.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://evv2000-website.vercel.app/mitgliedschaft">
-    <meta property="og:image" content="https://evv2000-website.vercel.app/img/hero-bg.jpg">
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/team-haie-26-27.jpg">
+    <title>Mitglied werden | EVV 2000</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* --- Membership Page --- */
-        .membership-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.4fr;
-            gap: 48px;
-            align-items: start;
-        }
-
-        .membership-benefits {
-            position: sticky;
-            top: 100px;
-        }
-
-        .membership-benefits h2 {
-            font-size: 1.6rem;
-            margin-bottom: 8px;
-            color: var(--white);
-        }
-
-        .membership-benefits > p {
-            font-size: 0.95rem;
-            color: var(--gray-500);
-            margin-bottom: 28px;
-            line-height: 1.7;
-        }
-
-        .benefits-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-bottom: 40px;
-        }
-
-        .benefits-list li {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--gray-400);
-        }
-
-        .benefits-list li i {
-            color: var(--primary);
-            font-size: 1.1rem;
-            width: 20px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        /* Pricing Table */
-        .membership-pricing {
-            background: rgba(17, 24, 39, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 28px 24px;
-            margin-bottom: 32px;
-        }
-
-        .membership-pricing h3 {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            text-align: left;
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-
-        .membership-pricing h3 i {
-            color: var(--primary);
-            font-size: 0.95rem;
-        }
-
-        .membership-pricing .pricing-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* Contact hint */
-        .membership-contact {
-            background: var(--dark-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            text-align: center;
-        }
-
-        .membership-contact p {
-            font-size: 0.9rem;
-            color: var(--gray-500);
-            margin-bottom: 16px;
-            line-height: 1.7;
-        }
-
-        .membership-contact .contact-links {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .membership-contact .contact-links a {
-            font-size: 0.85rem;
-            color: var(--gray-400);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .membership-contact .contact-links a:hover {
-            color: var(--primary);
-        }
-
-        /* Form Card */
-        .membership-form {
-            background: var(--dark-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 40px;
-        }
-
-        .membership-form h2 {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-            color: var(--white);
-        }
-
-        .membership-form > p {
-            font-size: 0.9rem;
-            color: var(--gray-500);
-            margin-bottom: 32px;
-        }
-
-        .form-section {
-            margin-bottom: 32px;
-        }
-
-        .form-section-title {
-            font-family: var(--font-heading);
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .form-section-title i {
-            font-size: 0.85rem;
-        }
-
-        /* Guardian section */
-        .guardian-section {
-            background: rgba(59, 130, 246, 0.03);
-            border: 1px solid rgba(59, 130, 246, 0.1);
-            border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 32px;
-        }
-
-        .guardian-section .form-section-title {
-            border-bottom-color: rgba(59, 130, 246, 0.15);
-        }
-
-        .guardian-section .form-section-title i {
-            color: var(--primary);
-        }
-
-        /* SEPA section */
-        .sepa-section {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 32px;
-        }
-
-        .sepa-notice {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-            margin-top: 12px;
-            line-height: 1.6;
-        }
-
-        /* Checkboxes */
-        .consent-group {
-            margin-bottom: 32px;
-        }
-
-        .consent-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-
-        .consent-item:last-child {
-            border-bottom: none;
-        }
-
-        .consent-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            min-width: 18px;
-            margin-top: 2px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .consent-item label {
-            font-size: 0.88rem;
-            color: var(--gray-400);
-            cursor: pointer;
-            line-height: 1.6;
-        }
-
-        .consent-item label a {
-            color: var(--primary);
-            text-decoration: underline;
-        }
-
-        /* Success message */
-        .form-success {
-            display: none;
-            text-align: center;
-            padding: 60px 24px;
-        }
-
-        .form-success.show {
-            display: block;
-        }
-
-        .form-success-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            font-size: 2rem;
-            color: var(--dark);
-            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.3);
-        }
-
-        .form-success h3 {
-            font-size: 1.5rem;
-            margin-bottom: 12px;
-            color: var(--white);
-        }
-
-        .form-success p {
-            font-size: 0.95rem;
-            color: var(--gray-500);
-            line-height: 1.7;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .form-success p + p {
-            margin-top: 16px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .membership-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .membership-benefits {
-                position: static;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .membership-form {
-                padding: 24px 20px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .membership-contact .contact-links {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar scrolled" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
-                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
-            </a>
-            <div class="mode-switch">
-                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
-                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
-                <div class="mode-slider"></div>
-            </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
-                <li><a href="events.html" class="nav-link">Events</a></li>
-                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
-                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
-                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
-                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
-                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
-            </ul>
-        </div>
-    </nav>
+<body data-page="mitgliedschaft" data-mode="halle">
 
-    <!-- Page Hero -->
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
+            </a>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
+            </div>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+<!-- @chrome:/header -->
+
     <section class="page-hero">
-        <div class="container">
-            <span class="section-tag">Mitmachen</span>
-            <h1>Werde Teil unserer Volleyball-Familie!</h1>
-            <p>Ob Anf&auml;nger oder Erfahrener, ob jung oder jung geblieben &ndash; beim EVV 2000 findet jeder seinen Platz. Melde dich jetzt digital als Mitglied an!</p>
+        <div class="wrap">
+            <p class="kicker" data-reveal>Mitmachen</p>
+            <h1 data-reveal="2">Werde Teil der<br>Volleyball-Familie.</h1>
+            <p class="lead" data-reveal="3">Ob Anfänger oder Ligaerfahrung, ob jung oder jung geblieben – beim EVV 2000 findet jeder seinen Platz. Der Mitgliedsantrag geht direkt hier online.</p>
         </div>
     </section>
 
-    <!-- Membership Content -->
     <section class="section">
-        <div class="container">
-            <div class="membership-grid">
-
-                <!-- Left Column: Benefits & Pricing -->
-                <div class="membership-benefits">
-                    <h2>Deine Vorteile</h2>
-                    <p>Als Mitglied im EVV 2000 profitierst du von einem tollen Vereinsleben rund um den Volleyballsport.</p>
-
-                    <ul class="benefits-list">
-                        <li><i class="fas fa-check-circle"></i> Kostenloses Probetraining</li>
-                        <li><i class="fas fa-check-circle"></i> Teams f&uuml;r jedes Alter &amp; Level</li>
-                        <li><i class="fas fa-check-circle"></i> Qualifizierte Trainer</li>
-                        <li><i class="fas fa-check-circle"></i> Kostenlose Beachanlage-Nutzung</li>
-                        <li><i class="fas fa-check-circle"></i> Tolle Vereinsgemeinschaft</li>
-                        <li><i class="fas fa-check-circle"></i> Turniere &amp; Events</li>
-                    </ul>
-
-                    <!-- Pricing Table -->
-                    <div class="membership-pricing">
-                        <h3><i class="fas fa-tag"></i> Beitragsordnung</h3>
-                        <div class="pricing-grid">
-                            <div class="pricing-card">
-                                <div class="pricing-icon"><i class="fas fa-child"></i></div>
-                                <div class="pricing-body">
-                                    <div class="pricing-label">Kinder &amp; Jugendliche</div>
-                                    <div class="pricing-detail">bis 17 Jahre</div>
-                                </div>
-                                <div class="pricing-price">60&euro;<small>/Jahr</small></div>
-                            </div>
-                            <div class="pricing-card highlight">
-                                <div class="pricing-icon"><i class="fas fa-user"></i></div>
-                                <div class="pricing-body">
-                                    <div class="pricing-label">Erwachsene</div>
-                                    <div class="pricing-detail">ab 18 Jahre</div>
-                                </div>
-                                <div class="pricing-price">120&euro;<small>/Jahr</small></div>
-                            </div>
-                            <div class="pricing-card">
-                                <div class="pricing-icon"><i class="fas fa-users"></i></div>
-                                <div class="pricing-body">
-                                    <div class="pricing-label">Familien</div>
-                                    <div class="pricing-detail">ab 2 Personen</div>
-                                </div>
-                                <div class="pricing-price">180&euro;<small>/Jahr</small></div>
-                            </div>
-                            <div class="pricing-card">
-                                <div class="pricing-icon"><i class="fas fa-heart"></i></div>
-                                <div class="pricing-body">
-                                    <div class="pricing-label">Passive Mitgliedschaft</div>
-                                    <div class="pricing-detail">ohne Trainingsteilnahme</div>
-                                </div>
-                                <div class="pricing-price">30&euro;<small>/Jahr</small></div>
-                            </div>
+        <div class="wrap">
+            <div class="td-grid">
+                <div class="stack">
+                    <div data-reveal>
+                        <p class="kicker">Deine Vorteile</p>
+                        <h2 style="font-size:clamp(30px,3.4vw,44px);margin:12px 0 18px">Mehr als nur Training.</h2>
+                        <ul class="benefits">
+                            <li>Kostenloses Probetraining</li>
+                            <li>Teams für jedes Alter &amp; Level</li>
+                            <li>Qualifizierte Trainer</li>
+                            <li>Beachanlage für Mitglieder kostenlos</li>
+                            <li>Starke Vereinsgemeinschaft</li>
+                            <li>Turniere &amp; Events das ganze Jahr</li>
+                        </ul>
+                    </div>
+                    <div data-reveal>
+                        <p class="kicker">Beitragsordnung</p>
+                        <div class="price-list" style="margin-top:14px">
+                            <div class="price"><div><b>Kinder &amp; Jugendliche</b><span>bis 17 Jahre</span></div><div class="price-amount">60 €<small>pro Jahr</small></div></div>
+                            <div class="price highlight"><div><b>Erwachsene</b><span>ab 18 Jahre</span></div><div class="price-amount">120 €<small>pro Jahr</small></div></div>
+                            <div class="price"><div><b>Familien</b><span>ab 2 Personen</span></div><div class="price-amount">180 €<small>pro Jahr</small></div></div>
+                            <div class="price"><div><b>Passive Mitgliedschaft</b><span>ohne Trainingsteilnahme</span></div><div class="price-amount">30 €<small>pro Jahr</small></div></div>
                         </div>
                     </div>
-
-                    <!-- Contact hint -->
-                    <div class="membership-contact">
-                        <p>Fragen zur Mitgliedschaft? Wir helfen gerne weiter!</p>
-                        <div class="contact-links">
-                            <a href="mailto:kontakt@evv2000.de"><i class="fas fa-envelope"></i> kontakt@evv2000.de</a>
-                            <a href="tel:01719940856"><i class="fas fa-phone"></i> 0171 9940856</a>
+                    <div class="panel" data-reveal>
+                        <h3>Fragen zur <span>Mitgliedschaft?</span></h3>
+                        <div class="contact-lines">
+                            <span><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></span>
+                            <span><a href="tel:+491719940856">0171 9940856</a></span>
+                            <span><a href="formulare.html">Satzung &amp; Beitragsordnung als PDF</a></span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Column: Membership Form -->
-                <div class="membership-form" id="membershipFormCard">
-                    <h2><i class="fas fa-file-signature" style="color: var(--primary); margin-right: 8px; font-size: 1.3rem;"></i> Mitgliedsantrag</h2>
-                    <p>F&uuml;lle das Formular aus, um deinen Mitgliedsantrag digital einzureichen. Pflichtfelder sind mit * gekennzeichnet.</p>
+                <div class="form-card" id="membershipFormCard" data-reveal="2">
+                    <h2>Mitgliedsantrag</h2>
+                    <p class="form-intro">Fülle das Formular aus, um deinen Antrag digital einzureichen. Pflichtfelder sind mit <em style="color:var(--blue);font-style:normal">*</em> gekennzeichnet.</p>
 
                     <form id="membershipForm" novalidate>
-
-                        <!-- Pers&ouml;nliche Daten -->
                         <div class="form-section">
-                            <div class="form-section-title">
-                                <i class="fas fa-user"></i> Pers&ouml;nliche Daten
-                            </div>
-
-                            <div class="form-group">
-                                <label for="anrede">Anrede</label>
-                                <select id="anrede" name="anrede">
-                                    <option value="">Bitte w&auml;hlen&hellip;</option>
-                                    <option value="Herr">Herr</option>
-                                    <option value="Frau">Frau</option>
-                                    <option value="Divers">Divers</option>
-                                </select>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="vorname">Vorname *</label>
-                                    <input type="text" id="vorname" name="vorname" required placeholder="Max">
-                                </div>
-                                <div class="form-group">
-                                    <label for="nachname">Nachname *</label>
-                                    <input type="text" id="nachname" name="nachname" required placeholder="Mustermann">
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="geburtsdatum">Geburtsdatum *</label>
-                                    <input type="date" id="geburtsdatum" name="geburtsdatum" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="telefon">Telefon</label>
-                                    <input type="tel" id="telefon" name="telefon" placeholder="+49 171 1234567">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="memberEmail">E-Mail *</label>
-                                <input type="email" id="memberEmail" name="email" required placeholder="deine@email.de">
-                            </div>
-                        </div>
-
-                        <!-- Adresse -->
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <i class="fas fa-map-marker-alt"></i> Adresse
-                            </div>
-
-                            <div class="form-group">
-                                <label for="strasse">Stra&szlig;e &amp; Hausnummer *</label>
-                                <input type="text" id="strasse" name="strasse" required placeholder="Musterstra&szlig;e 1">
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="plz">PLZ *</label>
-                                    <input type="text" id="plz" name="plz" required pattern="[0-9]{5}" maxlength="5" placeholder="41812">
-                                </div>
-                                <div class="form-group">
-                                    <label for="ort">Ort *</label>
-                                    <input type="text" id="ort" name="ort" required placeholder="Erkelenz">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Mitgliedschaft -->
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <i class="fas fa-volleyball-ball"></i> Mitgliedschaft
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="mitgliedschaft">Art der Mitgliedschaft *</label>
-                                    <select id="mitgliedschaft" name="mitgliedschaft" required>
-                                        <option value="">Bitte w&auml;hlen&hellip;</option>
-                                        <option value="jugend">Kinder &amp; Jugendliche &ndash; 60&euro;/Jahr</option>
-                                        <option value="erwachsene">Erwachsene &ndash; 120&euro;/Jahr</option>
-                                        <option value="familie">Familie &ndash; 180&euro;/Jahr</option>
-                                        <option value="passiv">Passiv &ndash; 30&euro;/Jahr</option>
+                            <div class="form-section-title"><span>01</span> Persönliche Daten</div>
+                            <div class="form-grid">
+                                <div class="field"><label for="anrede">Anrede</label>
+                                    <select id="anrede" name="anrede">
+                                        <option value="">Bitte wählen…</option>
+                                        <option value="Herr">Herr</option>
+                                        <option value="Frau">Frau</option>
+                                        <option value="Divers">Divers</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label for="mannschaft">Gew&uuml;nschte Mannschaft</label>
+                                <div class="field"><label for="geburtsdatum">Geburtsdatum <em>*</em></label><input type="date" id="geburtsdatum" name="geburtsdatum" required></div>
+                                <div class="field"><label for="vorname">Vorname <em>*</em></label><input type="text" id="vorname" name="vorname" required placeholder="Max" autocomplete="given-name"></div>
+                                <div class="field"><label for="nachname">Nachname <em>*</em></label><input type="text" id="nachname" name="nachname" required placeholder="Mustermann" autocomplete="family-name"></div>
+                                <div class="field"><label for="memberEmail">E-Mail <em>*</em></label><input type="email" id="memberEmail" name="email" required placeholder="deine@email.de" autocomplete="email"></div>
+                                <div class="field"><label for="telefon">Telefon</label><input type="tel" id="telefon" name="telefon" placeholder="+49 171 1234567" autocomplete="tel"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-section-title"><span>02</span> Adresse</div>
+                            <div class="form-grid">
+                                <div class="field full"><label for="strasse">Straße &amp; Hausnummer <em>*</em></label><input type="text" id="strasse" name="strasse" required placeholder="Musterstraße 1" autocomplete="street-address"></div>
+                                <div class="field"><label for="plz">PLZ <em>*</em></label><input type="text" id="plz" name="plz" required inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="41812" autocomplete="postal-code"></div>
+                                <div class="field"><label for="ort">Ort <em>*</em></label><input type="text" id="ort" name="ort" required placeholder="Erkelenz" autocomplete="address-level2"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-section-title"><span>03</span> Mitgliedschaft</div>
+                            <div class="form-grid">
+                                <div class="field"><label for="mitgliedschaft">Art der Mitgliedschaft <em>*</em></label>
+                                    <select id="mitgliedschaft" name="mitgliedschaft" required>
+                                        <option value="">Bitte wählen…</option>
+                                        <option value="jugend">Kinder &amp; Jugendliche – 60 €/Jahr</option>
+                                        <option value="erwachsene">Erwachsene – 120 €/Jahr</option>
+                                        <option value="familie">Familie – 180 €/Jahr</option>
+                                        <option value="passiv">Passiv – 30 €/Jahr</option>
+                                    </select>
+                                </div>
+                                <div class="field"><label for="mannschaft">Gewünschte Mannschaft</label>
                                     <select id="mannschaft" name="mannschaft">
                                         <option value="unsicher">Noch unsicher</option>
-                                        <option value="maenner1">M&auml;nner 1</option>
-                                        <option value="maenner2">M&auml;nner 2</option>
-                                        <option value="frauen1">Frauen 1</option>
-                                        <option value="frauen2">Frauen 2</option>
-                                        <option value="wu20">wU20</option>
-                                        <option value="wu18">wU18</option>
-                                        <option value="mu20">mU20</option>
-                                        <option value="mu16">mU16</option>
-                                        <option value="u14mixed">U14 Mixed</option>
-                                        <option value="hobbyts">Hobbyts</option>
-                                        <option value="froggs">Froggs</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Bei Minderj&auml;hrigen -->
-                        <div class="guardian-section" id="guardianSection">
-                            <div class="form-section-title">
-                                <i class="fas fa-user-shield"></i> Bei Minderj&auml;hrigen
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="erziehungsberechtigter">Name Erziehungsberechtigter</label>
-                                    <input type="text" id="erziehungsberechtigter" name="erziehungsberechtigter" placeholder="Vor- und Nachname">
-                                </div>
-                                <div class="form-group">
-                                    <label for="kontaktErziehungsberechtigter">Kontakt Erziehungsberechtigter</label>
-                                    <input type="text" id="kontaktErziehungsberechtigter" name="kontaktErziehungsberechtigter" placeholder="Telefon oder E-Mail">
-                                </div>
+                        <div class="form-section" id="guardianSection">
+                            <div class="form-section-title"><span>04</span> Erziehungsberechtigte <small style="font-family:var(--font-body);font-weight:400;text-transform:none;letter-spacing:0;font-size:13px;color:var(--muted)">(bei Minderjährigen)</small></div>
+                            <div class="form-grid">
+                                <div class="field"><label for="erziehungsberechtigter">Name</label><input type="text" id="erziehungsberechtigter" name="erziehungsberechtigter" placeholder="Vor- und Nachname"></div>
+                                <div class="field"><label for="kontaktErziehungsberechtigter">Kontakt</label><input type="text" id="kontaktErziehungsberechtigter" name="kontaktErziehungsberechtigter" placeholder="Telefon oder E-Mail"></div>
                             </div>
                         </div>
 
-                        <!-- SEPA-Lastschriftmandat -->
-                        <div class="sepa-section">
-                            <div class="form-section">
-                                <div class="form-section-title">
-                                    <i class="fas fa-university"></i> SEPA-Lastschriftmandat
-                                </div>
+                        <div class="form-section">
+                            <div class="form-section-title"><span>05</span> SEPA-Lastschriftmandat</div>
+                            <div class="form-grid">
+                                <div class="field"><label for="kontoinhaber">Kontoinhaber <em>*</em></label><input type="text" id="kontoinhaber" name="kontoinhaber" required placeholder="Max Mustermann"></div>
+                                <div class="field"><label for="iban">IBAN <em>*</em></label><input type="text" id="iban" name="iban" required placeholder="DE89 3704 0044 0532 0130 00" autocomplete="off"></div>
+                            </div>
+                            <p class="form-intro" style="margin:14px 0 0;font-size:13px;line-height:1.5">Ich ermächtige den EVV 2000 e.V., Zahlungen von meinem Konto mittels SEPA-Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom EVV 2000 e.V. auf mein Konto gezogenen Lastschriften einzulösen.</p>
+                        </div>
 
-                                <div class="form-group">
-                                    <label for="kontoinhaber">Kontoinhaber *</label>
-                                    <input type="text" id="kontoinhaber" name="kontoinhaber" required placeholder="Max Mustermann">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="iban">IBAN *</label>
-                                    <input type="text" id="iban" name="iban" required placeholder="DE89 3704 0044 0532 0130 00" autocomplete="off">
-                                </div>
-
-                                <p class="sepa-notice"><i class="fas fa-info-circle" style="color: var(--primary); margin-right: 4px;"></i> Ich erm&auml;chtige den EVV 2000 e.V., Zahlungen von meinem Konto mittels SEPA-Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom EVV 2000 e.V. auf mein Konto gezogenen Lastschriften einzul&ouml;sen.</p>
+                        <div class="form-section">
+                            <div class="form-section-title"><span>06</span> Zustimmungen</div>
+                            <div class="consents">
+                                <label class="check"><input type="checkbox" id="consentSatzung" name="consentSatzung" required><span>Ich habe die <a href="formulare.html" target="_blank">Vereinssatzung</a> und die <a href="formulare.html" target="_blank">Beitragsordnung</a> gelesen und akzeptiere diese. <em style="color:var(--blue);font-style:normal">*</em></span></label>
+                                <label class="check"><input type="checkbox" id="consentDatenschutz" name="consentDatenschutz" required><span>Ich habe die <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a> gelesen und akzeptiere die Verarbeitung meiner Daten gemäß DSGVO. <em style="color:var(--blue);font-style:normal">*</em></span></label>
+                                <label class="check"><input type="checkbox" id="consentSepa" name="consentSepa" required><span>Ich erteile das SEPA-Lastschriftmandat für den jährlichen Mitgliedsbeitrag. <em style="color:var(--blue);font-style:normal">*</em></span></label>
                             </div>
                         </div>
 
-                        <!-- Zustimmungen -->
-                        <div class="consent-group">
-                            <div class="form-section-title">
-                                <i class="fas fa-check-double"></i> Zustimmungen
-                            </div>
-
-                            <div class="consent-item">
-                                <input type="checkbox" id="consentSatzung" name="consentSatzung" required>
-                                <label for="consentSatzung">Ich habe die <a href="#" target="_blank">Vereinssatzung</a> und die <a href="#" target="_blank">Beitragsordnung</a> gelesen und akzeptiere diese. *</label>
-                            </div>
-
-                            <div class="consent-item">
-                                <input type="checkbox" id="consentDatenschutz" name="consentDatenschutz" required>
-                                <label for="consentDatenschutz">Ich habe die <a href="#" target="_blank">Datenschutzerkl&auml;rung</a> gelesen und akzeptiere die Verarbeitung meiner Daten gem&auml;&szlig; DSGVO. *</label>
-                            </div>
-
-                            <div class="consent-item">
-                                <input type="checkbox" id="consentSepa" name="consentSepa" required>
-                                <label for="consentSepa">Ich erteile das SEPA-Lastschriftmandat f&uuml;r den j&auml;hrlichen Mitgliedsbeitrag. *</label>
-                            </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-solid btn-lg" id="submitBtn">Mitgliedsantrag absenden</button>
                         </div>
-
-                        <!-- Submit -->
-                        <button type="submit" class="btn btn-primary btn-lg btn-full" id="submitBtn">
-                            <i class="fas fa-paper-plane"></i> Mitgliedsantrag absenden
-                        </button>
+                        <div id="formMessage" class="form-msg"></div>
                     </form>
 
-                    <!-- Success Message -->
-                    <div class="form-success" id="formSuccess">
-                        <div class="form-success-icon">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <h3>Antrag erfolgreich gesendet!</h3>
-                        <p>Vielen Dank f&uuml;r dein Interesse am EVV 2000. Dein Mitgliedsantrag wurde per E-Mail an uns gesendet.</p>
-                        <p>Wir melden uns in K&uuml;rze bei dir, um die Anmeldung zu best&auml;tigen und dich in deiner Mannschaft willkommen zu hei&szlig;en.</p>
-                        <p style="margin-top: 24px;"><a href="index.html" class="btn btn-outline"><i class="fas fa-home"></i> Zur&uuml;ck zur Startseite</a></p>
+                    <div class="notice ok" id="formSuccess" style="display:none">
+                        <h3>Antrag erfolgreich gesendet</h3>
+                        <p>Vielen Dank für dein Interesse am EVV 2000. Wir melden uns in Kürze bei dir, um die Anmeldung zu bestätigen und dich in deiner Mannschaft willkommen zu heißen.</p>
+                        <p style="margin-top:18px"><a class="btn btn-ghost" href="index.html">Zur Startseite</a></p>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+<!-- @chrome:footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="wrap">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
-                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
                 </div>
-                <div class="footer-links">
+                <div>
                     <h4>Verein</h4>
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
-                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Angebote</h4>
-                    <ul>
-                        <li><a href="beachanlage.html">Beachanlage</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>Rechtliches</h4>
+                <div>
+                    <h4>Mitmachen</h4>
                     <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
-                        <li><a href="#">Vereinssatzung</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
-    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
-    <script src="js/main.js"></script>
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/matchday.js"></script>
     <script>
-    (function() {
+    (function () {
         var form = document.getElementById('membershipForm');
         var formCard = document.getElementById('membershipFormCard');
         var successDiv = document.getElementById('formSuccess');
         var submitBtn = document.getElementById('submitBtn');
+        var msg = document.getElementById('formMessage');
 
-        // Membership type labels for email
         var membershipLabels = {
-            'jugend': 'Kinder & Jugendliche (60€/Jahr)',
-            'erwachsene': 'Erwachsene (120€/Jahr)',
-            'familie': 'Familie (180€/Jahr)',
-            'passiv': 'Passiv (30€/Jahr)'
+            jugend: 'Kinder & Jugendliche (60€/Jahr)',
+            erwachsene: 'Erwachsene (120€/Jahr)',
+            familie: 'Familie (180€/Jahr)',
+            passiv: 'Passiv (30€/Jahr)'
         };
 
-        // Team labels
-        var teamLabels = {
-            'unsicher': 'Noch unsicher',
-            'maenner1': 'Männer 1',
-            'maenner2': 'Männer 2',
-            'frauen1': 'Frauen 1',
-            'frauen2': 'Frauen 2',
-            'wu20': 'wU20',
-            'wu18': 'wU18',
-            'mu20': 'mU20',
-            'mu16': 'mU16',
-            'u14mixed': 'U14 Mixed',
-            'hobbyts': 'Hobbyts',
-            'froggs': 'Froggs'
-        };
-
-        // Mask IBAN for display (show only last 4)
         function maskIban(iban) {
             var clean = iban.replace(/\s/g, '');
             if (clean.length <= 4) return clean;
             return clean.substring(0, 4) + ' **** **** **** ' + clean.substring(clean.length - 4);
         }
 
-        // Format form data as email body
-        function buildEmailBody(data) {
-            var lines = [];
-            lines.push('=== NEUER MITGLIEDSANTRAG ===');
-            lines.push('');
-            lines.push('--- Persönliche Daten ---');
-            if (data.anrede) lines.push('Anrede: ' + data.anrede);
-            lines.push('Vorname: ' + data.vorname);
-            lines.push('Nachname: ' + data.nachname);
-            lines.push('Geburtsdatum: ' + data.geburtsdatum);
-            lines.push('E-Mail: ' + data.email);
-            if (data.telefon) lines.push('Telefon: ' + data.telefon);
-            lines.push('');
-            lines.push('--- Adresse ---');
-            lines.push('Straße: ' + data.strasse);
-            lines.push('PLZ: ' + data.plz);
-            lines.push('Ort: ' + data.ort);
-            lines.push('');
-            lines.push('--- Mitgliedschaft ---');
-            lines.push('Art: ' + (membershipLabels[data.mitgliedschaft] || data.mitgliedschaft));
-            lines.push('Gewünschte Mannschaft: ' + (teamLabels[data.mannschaft] || data.mannschaft));
-            lines.push('');
-            if (data.erziehungsberechtigter) {
-                lines.push('--- Erziehungsberechtigter ---');
-                lines.push('Name: ' + data.erziehungsberechtigter);
-                if (data.kontaktErziehungsberechtigter) lines.push('Kontakt: ' + data.kontaktErziehungsberechtigter);
-                lines.push('');
-            }
-            lines.push('--- SEPA-Lastschriftmandat ---');
-            lines.push('Kontoinhaber: ' + data.kontoinhaber);
-            lines.push('IBAN: ' + maskIban(data.iban));
-            lines.push('');
-            lines.push('--- Zustimmungen ---');
-            lines.push('Vereinssatzung & Beitragsordnung: Akzeptiert');
-            lines.push('Datenschutzerklärung: Akzeptiert');
-            lines.push('SEPA-Lastschriftmandat: Erteilt');
-            lines.push('');
-            lines.push('Gesendet am: ' + new Date().toLocaleString('de-DE'));
-
-            return lines.join('\n');
-        }
-
-        // Collect form data
-        function getFormData() {
-            return {
-                anrede: document.getElementById('anrede').value,
-                vorname: document.getElementById('vorname').value.trim(),
-                nachname: document.getElementById('nachname').value.trim(),
-                geburtsdatum: document.getElementById('geburtsdatum').value,
-                email: document.getElementById('memberEmail').value.trim(),
-                telefon: document.getElementById('telefon').value.trim(),
-                strasse: document.getElementById('strasse').value.trim(),
-                plz: document.getElementById('plz').value.trim(),
-                ort: document.getElementById('ort').value.trim(),
-                mitgliedschaft: document.getElementById('mitgliedschaft').value,
-                mannschaft: document.getElementById('mannschaft').value,
-                erziehungsberechtigter: document.getElementById('erziehungsberechtigter').value.trim(),
-                kontaktErziehungsberechtigter: document.getElementById('kontaktErziehungsberechtigter').value.trim(),
-                kontoinhaber: document.getElementById('kontoinhaber').value.trim(),
-                iban: document.getElementById('iban').value.trim()
-            };
-        }
-
-        // Validate form
-        function validateForm() {
-            var data = getFormData();
-            var errors = [];
-
-            if (!data.vorname) errors.push('Vorname');
-            if (!data.nachname) errors.push('Nachname');
-            if (!data.geburtsdatum) errors.push('Geburtsdatum');
-            if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.push('E-Mail');
-            if (!data.strasse) errors.push('Straße & Hausnummer');
-            if (!data.plz || !/^[0-9]{5}$/.test(data.plz)) errors.push('PLZ (5 Ziffern)');
-            if (!data.ort) errors.push('Ort');
-            if (!data.mitgliedschaft) errors.push('Art der Mitgliedschaft');
-            if (!data.kontoinhaber) errors.push('Kontoinhaber');
-            if (!data.iban || data.iban.replace(/\s/g, '').length < 15) errors.push('IBAN');
-
-            if (!document.getElementById('consentSatzung').checked) errors.push('Vereinssatzung & Beitragsordnung');
-            if (!document.getElementById('consentDatenschutz').checked) errors.push('Datenschutzerklärung');
-            if (!document.getElementById('consentSepa').checked) errors.push('SEPA-Lastschriftmandat');
-
-            return errors;
-        }
-
-        // Gewählte Mannschaft als Anzeigename (funktioniert mit statischen
-        // und dynamisch geladenen Optionen)
         function selectedTeamLabel() {
             var sel = document.getElementById('mannschaft');
             var opt = sel.options[sel.selectedIndex];
-            return opt ? opt.textContent.trim() : (teamLabels[sel.value] || sel.value);
+            return opt ? opt.textContent.trim() : sel.value;
         }
 
-        // Mannschafts-Dropdown aus der Datenbank füllen (Admin-Panel-Teams);
-        // bei Fehlern bleiben die statischen Optionen stehen
+        function buildEmailBody(d) {
+            var l = ['=== NEUER MITGLIEDSANTRAG ===', '', '--- Persönliche Daten ---'];
+            if (d.anrede) l.push('Anrede: ' + d.anrede);
+            l.push('Vorname: ' + d.vorname, 'Nachname: ' + d.nachname, 'Geburtsdatum: ' + d.geburtsdatum, 'E-Mail: ' + d.email);
+            if (d.telefon) l.push('Telefon: ' + d.telefon);
+            l.push('', '--- Adresse ---', 'Straße: ' + d.strasse, 'PLZ: ' + d.plz, 'Ort: ' + d.ort, '', '--- Mitgliedschaft ---',
+                'Art: ' + (membershipLabels[d.mitgliedschaft] || d.mitgliedschaft), 'Gewünschte Mannschaft: ' + selectedTeamLabel(), '');
+            if (d.erziehungsberechtigter) { l.push('--- Erziehungsberechtigter ---', 'Name: ' + d.erziehungsberechtigter); if (d.kontaktErziehungsberechtigter) l.push('Kontakt: ' + d.kontaktErziehungsberechtigter); l.push(''); }
+            l.push('--- SEPA-Lastschriftmandat ---', 'Kontoinhaber: ' + d.kontoinhaber, 'IBAN: ' + maskIban(d.iban), '', '--- Zustimmungen ---',
+                'Vereinssatzung & Beitragsordnung: Akzeptiert', 'Datenschutzerklärung: Akzeptiert', 'SEPA-Lastschriftmandat: Erteilt', '', 'Gesendet am: ' + new Date().toLocaleString('de-DE'));
+            return l.join('\n');
+        }
+
+        function getFormData() {
+            var v = function (id) { return document.getElementById(id).value; };
+            return {
+                anrede: v('anrede'), vorname: v('vorname').trim(), nachname: v('nachname').trim(), geburtsdatum: v('geburtsdatum'),
+                email: v('memberEmail').trim(), telefon: v('telefon').trim(), strasse: v('strasse').trim(), plz: v('plz').trim(), ort: v('ort').trim(),
+                mitgliedschaft: v('mitgliedschaft'), mannschaft: v('mannschaft'),
+                erziehungsberechtigter: v('erziehungsberechtigter').trim(), kontaktErziehungsberechtigter: v('kontaktErziehungsberechtigter').trim(),
+                kontoinhaber: v('kontoinhaber').trim(), iban: v('iban').trim()
+            };
+        }
+
+        function validateForm(d) {
+            var e = [];
+            if (!d.vorname) e.push('Vorname');
+            if (!d.nachname) e.push('Nachname');
+            if (!d.geburtsdatum) e.push('Geburtsdatum');
+            if (!d.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) e.push('E-Mail');
+            if (!d.strasse) e.push('Straße & Hausnummer');
+            if (!d.plz || !/^[0-9]{5}$/.test(d.plz)) e.push('PLZ (5 Ziffern)');
+            if (!d.ort) e.push('Ort');
+            if (!d.mitgliedschaft) e.push('Art der Mitgliedschaft');
+            if (isMinor() && !d.erziehungsberechtigter) e.push('Name Erziehungsberechtigte(r)');
+            if (!d.kontoinhaber) e.push('Kontoinhaber');
+            if (!d.iban || d.iban.replace(/\s/g, '').length < 15) e.push('IBAN');
+            if (!document.getElementById('consentSatzung').checked) e.push('Zustimmung Satzung & Beitragsordnung');
+            if (!document.getElementById('consentDatenschutz').checked) e.push('Zustimmung Datenschutz');
+            if (!document.getElementById('consentSepa').checked) e.push('SEPA-Lastschriftmandat');
+            return e;
+        }
+
+        /* Erziehungsberechtigte nur bei Minderjährigen einblenden */
+        var guardian = document.getElementById('guardianSection');
+        function isMinor() {
+            var v = document.getElementById('geburtsdatum').value;
+            if (!v) return false;
+            var b = new Date(v), t = new Date();
+            var age = t.getFullYear() - b.getFullYear() - ((t.getMonth() < b.getMonth() || (t.getMonth() === b.getMonth() && t.getDate() < b.getDate())) ? 1 : 0);
+            return age < 18;
+        }
+        function toggleGuardian() { guardian.style.display = isMinor() ? '' : 'none'; }
+        document.getElementById('geburtsdatum').addEventListener('change', toggleGuardian);
+        toggleGuardian();
+
+        /* Mannschafts-Dropdown aus der Datenbank */
         (async function loadTeams() {
             try {
                 await ErkaSupabase.init();
@@ -813,43 +326,37 @@
                 var teams = res.data;
                 if (res.error || !teams || !teams.length) return;
                 var sel = document.getElementById('mannschaft');
-                sel.innerHTML = '<option value="unsicher">Noch unsicher</option>' +
-                    teams.map(function (t) {
-                        var div = document.createElement('div');
-                        div.textContent = t.name;
-                        return '<option value="' + t.slug + '">' + div.innerHTML + '</option>';
-                    }).join('');
-            } catch (e) { /* statische Optionen bleiben */ }
+                sel.innerHTML = '<option value="unsicher">Noch unsicher</option>' + teams.map(function (t) {
+                    var div = document.createElement('div'); div.textContent = t.name;
+                    return '<option value="' + t.slug + '">' + div.innerHTML + '</option>';
+                }).join('');
+            } catch (e) { /* Standard-Option bleibt */ }
         })();
 
         function showSuccess() {
             form.style.display = 'none';
-            successDiv.classList.add('show');
+            successDiv.style.display = '';
             formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // Handle form submission — speichert in Supabase (Admin-Panel "Anfragen"),
-        // fällt bei Verbindungsproblemen auf das E-Mail-Programm zurück
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
-
-            var errors = validateForm();
-
-            if (errors.length > 0) {
-                alert('Bitte fülle folgende Pflichtfelder korrekt aus:\n\n• ' + errors.join('\n• '));
+            var data = getFormData();
+            var errors = validateForm(data);
+            if (errors.length) {
+                msg.className = 'form-msg error show';
+                msg.innerHTML = 'Bitte prüfe folgende Angaben: <b>' + errors.join(', ') + '</b>';
+                msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
-
-            var data = getFormData();
-
+            msg.className = 'form-msg';
             submitBtn.disabled = true;
-            var btnHtml = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Wird gesendet...';
+            var original = submitBtn.textContent;
+            submitBtn.textContent = 'Wird gesendet…';
 
             try {
                 await ErkaSupabase.init();
                 if (!ErkaSupabase.client) throw new Error('offline');
-
                 var res = await ErkaSupabase.client.from('membership_applications').insert({
                     anrede: data.anrede || null,
                     vorname: data.vorname,
@@ -871,18 +378,13 @@
                     consent_sepa: true
                 });
                 if (res.error) throw res.error;
-
                 showSuccess();
             } catch (err) {
                 console.warn('Antrag: Speichern fehlgeschlagen, Mail-Fallback.', err);
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = btnHtml;
-
+                submitBtn.textContent = original;
                 var subject = 'Neuer Mitgliedsantrag: ' + data.vorname + ' ' + data.nachname;
-                var body = buildEmailBody(data);
-                window.location.href = 'mailto:kontakt@evv2000.de'
-                    + '?subject=' + encodeURIComponent(subject)
-                    + '&body=' + encodeURIComponent(body);
+                window.location.href = 'mailto:kontakt@evv2000.de?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(buildEmailBody(data));
                 setTimeout(showSuccess, 500);
             }
         });

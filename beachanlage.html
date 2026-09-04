@@ -3,450 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ERKA Beach – 4 Beachvolleyball-Felder in Erkelenz. Platz anfragen ab 15€/Std, Firmen-Events, Geburtstage, Turniere. Duschen, B&auml;lle & mehr inklusive.">
-    <meta name="keywords" content="Beachvolleyball, Erkelenz, EVV2000, Beachanlage, Buchung, Platz mieten, Firmen-Event, Geburtstag, Turnier">
-    <title>ERKA Beach | Beachvolleyball in Erkelenz</title>
+    <meta name="description" content="ERKA Beach – die Beachvolleyball-Anlage des EVV 2000 in Erkelenz: 4 Felder, faire Preise, Platz anfragen, Firmen-Events und Turniere.">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <meta property="og:title" content="ERKA Beach – 4 Beachvolleyball-Felder in Erkelenz">
-    <meta property="og:description" content="Platz anfragen ab 15&euro;/Std. Firmen-Events, Geburtstage, Turniere. Duschen & B&auml;lle vor Ort.">
+    <meta property="og:title" content="ERKA Beach | Beachvolleyball in Erkelenz">
+    <meta property="og:description" content="4 Beachvolleyball-Felder mitten in Erkelenz – Platz anfragen, Events, Turniere.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://evv2000-website.vercel.app/beachanlage">
     <meta property="og:image" content="https://evv2000-website.vercel.app/img/beach-bg.jpg">
+    <title>ERKA Beach | Beachvolleyball in Erkelenz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar scrolled" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
-                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+<body data-page="beach" data-mode="beach">
+
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
             </a>
-            <div class="mode-switch">
-                <a href="index.html" class="mode-btn" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
-                <a href="beachanlage.html" class="mode-btn mode-active" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
-                <div class="mode-slider"></div>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
             </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="#preise" class="nav-link">Preise</a></li>
-                <li><a href="#anfrage" class="nav-link">Anfragen</a></li>
-                <li><a href="#angebote" class="nav-link">Angebote</a></li>
-                <li><a href="events.html" class="nav-link">Turniere</a></li>
-                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
-                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
-            </ul>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
-    </nav>
+    </header>
+<!-- @chrome:/header -->
 
-    <!-- HERO BANNER -->
-    <section class="beach-hero" id="beach-hero">
-        <div class="beach-hero-bg">
-            <img src="img/beach-bg.jpg" alt="ERKA Beach Erkelenz">
+    <section class="hero" id="top" style="min-height:88svh">
+        <div class="hero-visual" aria-hidden="true"><img src="img/beach-bg.jpg" alt="" fetchpriority="high" style="object-position:55% 60%"></div>
+        <div class="wrap hero-grid">
+            <div class="hero-copy">
+                <p class="kicker" data-reveal>ERKA Beach · Beachanlage des EVV 2000</p>
+                <h1 data-reveal="2">Vier Felder.<br>Mitten in<br><span>Erkelenz.</span></h1>
+                <p class="lead" data-reveal="3">Turniersand, Flutlicht, Duschen und über 50 Bälle vor Ort. Reserviere deinen Platz per Anfrage – für Vereinsmitglieder kostenlos.</p>
+                <div class="hero-actions" data-reveal="3">
+                    <a class="btn btn-solid btn-lg" href="#anfrage">Platz anfragen</a>
+                    <a class="btn btn-ghost btn-lg" href="#preise">Preise ansehen</a>
+                </div>
+            </div>
         </div>
-        <div class="beach-hero-overlay"></div>
-        <div class="beach-hero-content">
-            <span class="beach-hero-badge"><i class="fas fa-fire"></i> Saison 2025 ge&ouml;ffnet</span>
-            <h1>ERKA Beach</h1>
-            <p class="beach-hero-sub">4 Beachvolleyball-Felder &middot; Mitten in Erkelenz</p>
-            <p class="beach-hero-desc">Reserviere deinen Platz einfach per Anfrage. Duschen, B&auml;lle und Chill-Bereich vor Ort. F&uuml;r Mitglieder kostenlos.</p>
-            <div class="beach-hero-ctas">
-                <a href="#anfrage" class="btn btn-primary btn-lg"><i class="fas fa-envelope"></i> Platz anfragen</a>
-                <a href="#preise" class="btn btn-outline btn-lg">Preise ansehen</a>
-            </div>
-            <div class="beach-hero-stats">
-                <div class="beach-hero-stat">
-                    <strong>4</strong><span>Felder</span>
-                </div>
-                <div class="beach-hero-stat">
-                    <strong>tgl.</strong><span>ab 9 Uhr</span>
-                </div>
-                <div class="beach-hero-stat">
-                    <strong>15&euro;</strong><span>ab / Stunde</span>
-                </div>
-                <div class="beach-hero-stat">
-                    <strong>50+</strong><span>B&auml;lle</span>
-                </div>
-            </div>
+        <div class="wrap hero-facts">
+            <div class="hero-fact"><b>4</b><span>Felder</span></div>
+            <div class="hero-fact"><b>ab 15 €</b><span>pro Platz &amp; Stunde</span></div>
+            <div class="hero-fact"><b>14–19 Uhr</b><span>Sa, So &amp; Feiertage (Gäste)</span></div>
+            <div class="hero-fact"><b>50+</b><span>Bälle vor Ort</span></div>
         </div>
     </section>
 
-    <!-- WAS WIR BIETEN -->
+    <section class="matchday">
+        <div class="wrap matchday-inner">
+            <div class="matchday-label"><i></i> Saison 2026</div>
+            <div class="matchday-event"><div class="md-body"><div class="md-title">Plätze per Anfrage buchbar</div><div class="md-meta"><span>Bestätigung per Mail oder Telefon · mindestens 2 Tage im Voraus anfragen</span></div></div></div>
+            <div class="md-more"><a class="link-arrow" href="#anfrage">Zur Anfrage <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a></div>
+        </div>
+    </section>
+
+    <!-- Ausstattung -->
     <section class="section" id="ausstattung">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Unsere Anlage</span>
-                <h2>Alles was du brauchst</h2>
-                <p class="section-description">Keine Extras n&ouml;tig &ndash; komm einfach vorbei und spiel los.</p>
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div>
+                    <p class="kicker">Unsere Anlage</p>
+                    <h2>Alles, was du brauchst.</h2>
+                </div>
+                <p class="lead" style="max-width:36ch">Keine Extras nötig – komm einfach vorbei und spiel los.</p>
             </div>
-            <div class="beach-usp-grid">
-                <div class="beach-usp-card">
-                    <div class="beach-usp-icon"><i class="fas fa-volleyball-ball"></i></div>
-                    <h3>4 Profi-Felder</h3>
-                    <p>Turniersand, offizielle Ma&szlig;e, gepflegte Netze &ndash; alles auf Wettkampfniveau.</p>
-                </div>
-                <div class="beach-usp-card">
-                    <div class="beach-usp-icon"><i class="fas fa-shower"></i></div>
-                    <h3>Duschen vor Ort</h3>
-                    <p>2 Dusch-Container direkt an den Feldern. Nach dem Spiel frisch nach Hause.</p>
-                </div>
-                <div class="beach-usp-card">
-                    <div class="beach-usp-icon"><i class="fas fa-volleyball-ball"></i></div>
-                    <h3>50+ B&auml;lle</h3>
-                    <p>&Uuml;ber 50 Beachvolleyb&auml;lle zum Ausleihen &ndash; du brauchst nichts mitbringen.</p>
-                </div>
-                <div class="beach-usp-card">
-                    <div class="beach-usp-icon"><i class="fas fa-umbrella-beach"></i></div>
-                    <h3>Chill-Area</h3>
-                    <p>&Uuml;berdachter Bereich mit B&auml;nken, Tischen, K&uuml;hlschrank und Theke.</p>
-                </div>
-                <div class="beach-usp-card">
-                    <div class="beach-usp-icon"><i class="fas fa-tree"></i></div>
-                    <h3>Gro&szlig;e Rasenfl&auml;che</h3>
-                    <p>Perfekt zum Grillen, Chillen oder f&uuml;r Kids-Programm bei Events.</p>
-                </div>
-                <div class="beach-usp-card">
-                    <div class="beach-usp-icon"><i class="fas fa-clock"></i></div>
-                    <h3>T&auml;glich ab 9 Uhr</h3>
-                    <p>Slots ab 9:00 bis 22:00 Uhr buchbar &ndash; den ganzen Tag.</p>
-                </div>
+            <div class="usp-grid">
+                <div class="usp" data-reveal><div class="num">01</div><b>4 Profi-Felder</b><p>Turniersand, offizielle Maße, gepflegte Netze – alles auf Wettkampfniveau.</p></div>
+                <div class="usp" data-reveal="2"><div class="num">02</div><b>Duschen vor Ort</b><p>Zwei Dusch-Container direkt an den Feldern. Nach dem Spiel frisch nach Hause.</p></div>
+                <div class="usp" data-reveal="3"><div class="num">03</div><b>50+ Bälle</b><p>Über 50 Beachvolleybälle zum Ausleihen – du brauchst nichts mitzubringen.</p></div>
+                <div class="usp" data-reveal><div class="num">04</div><b>Chill-Area</b><p>Überdachter Bereich mit Bänken, Tischen, Kühlschrank und Theke.</p></div>
+                <div class="usp" data-reveal="2"><div class="num">05</div><b>Große Rasenfläche</b><p>Perfekt zum Grillen, Chillen oder für Kids-Programm bei Events.</p></div>
+                <div class="usp" data-reveal="3"><div class="num">06</div><b>Flutlicht</b><p>Abends geht's weiter – bei Sonnenuntergang über Erkelenz und Licht auf allen Feldern.</p></div>
             </div>
         </div>
     </section>
 
-    <!-- PREISE -->
-    <section class="section" id="preise" style="padding-top: 40px;">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Preise</span>
-                <h2>Transparent &amp; fair</h2>
-                <p class="section-description">Platzmiete pro Platz und Stunde. Ball-Leihgeb&uuml;hr 2&euro;.</p>
+    <!-- Preise -->
+    <section class="section" id="preise" style="padding-top:0">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div>
+                    <p class="kicker">Preise</p>
+                    <h2>Transparent &amp; fair.</h2>
+                </div>
+                <p class="lead" style="max-width:40ch">Platzmiete pro Platz und Stunde. Aktive Vereinsmitglieder spielen kostenlos.</p>
             </div>
-            <div class="beach-pricing-grid">
-                <div class="beach-price-card">
-                    <div class="beach-price-icon"><i class="fas fa-sun"></i></div>
-                    <div class="beach-price-name">Mo&ndash;Fr bis 18 Uhr</div>
-                    <div class="beach-price-time">Tags&uuml;ber &middot; werktags</div>
-                    <div class="beach-price-amount">15<span>&euro;</span></div>
-                    <div class="beach-price-detail">pro Platz &middot; Stunde</div>
-                    <a href="#anfrage" class="btn btn-outline">Platz anfragen</a>
-                </div>
-                <div class="beach-price-card beach-price-highlight">
-                    <div class="beach-price-badge">Prime Time</div>
-                    <div class="beach-price-icon"><i class="fas fa-moon"></i></div>
-                    <div class="beach-price-name">Mo&ndash;Fr ab 18 Uhr</div>
-                    <div class="beach-price-time">Abends &middot; werktags</div>
-                    <div class="beach-price-amount">20<span>&euro;</span></div>
-                    <div class="beach-price-detail">pro Platz &middot; Stunde</div>
-                    <a href="#anfrage" class="btn btn-primary">Platz anfragen</a>
-                </div>
-                <div class="beach-price-card">
-                    <div class="beach-price-icon"><i class="fas fa-calendar-week"></i></div>
-                    <div class="beach-price-name">Wochenende &amp; Feiertage</div>
-                    <div class="beach-price-time">Sa, So &amp; Feiertage</div>
-                    <div class="beach-price-amount">20<span>&euro;</span></div>
-                    <div class="beach-price-detail">pro Platz &middot; Stunde</div>
-                    <a href="#anfrage" class="btn btn-outline">Platz anfragen</a>
-                </div>
-                <div class="beach-price-card">
-                    <div class="beach-price-icon"><i class="fas fa-medal"></i></div>
-                    <div class="beach-price-name">Vereinsmitglieder</div>
-                    <div class="beach-price-time">Au&szlig;erhalb der Trainingszeiten</div>
-                    <div class="beach-price-amount beach-price-free">Gratis</div>
-                    <div class="beach-price-detail">spielen kostenlos</div>
-                    <a href="mitgliedschaft.html" class="btn btn-outline">Mitglied werden</a>
-                </div>
-                <div class="beach-price-card">
-                    <div class="beach-price-icon"><i class="fas fa-user-friends"></i></div>
-                    <div class="beach-price-name">Mitspielen bei Mitgliedern</div>
-                    <div class="beach-price-time">G&auml;ste von EVV-Mitgliedern</div>
-                    <div class="beach-price-amount">3<span>&euro;</span></div>
-                    <div class="beach-price-detail">pro Person &middot; Stunde &middot; Jugendliche bis 18 J.: 2&euro;</div>
-                </div>
-                <div class="beach-price-card">
-                    <div class="beach-price-icon"><i class="fas fa-volleyball-ball"></i></div>
-                    <div class="beach-price-name">Ball leihen</div>
-                    <div class="beach-price-time">Offizieller Beachvolleyball</div>
-                    <div class="beach-price-amount">2<span>&euro;</span></div>
-                    <div class="beach-price-detail">Leihgeb&uuml;hr &middot; vor Ort</div>
-                </div>
-                <div class="beach-price-card">
-                    <div class="beach-price-icon"><i class="fas fa-ticket-alt"></i></div>
-                    <div class="beach-price-name">Saisonkarte Erwachsene</div>
-                    <div class="beach-price-time">Ganze Saison</div>
-                    <div class="beach-price-amount">60<span>&euro;</span></div>
-                    <div class="beach-price-detail">unbegrenzt spielen</div>
-                    <a href="#anfrage" class="btn btn-outline">Anfragen</a>
-                </div>
-                <div class="beach-price-card">
-                    <div class="beach-price-icon"><i class="fas fa-ticket-alt"></i></div>
-                    <div class="beach-price-name">Saisonkarte Jugendliche</div>
-                    <div class="beach-price-time">Bis 18 Jahre &middot; ganze Saison</div>
-                    <div class="beach-price-amount">40<span>&euro;</span></div>
-                    <div class="beach-price-detail">unbegrenzt spielen</div>
-                    <a href="#anfrage" class="btn btn-outline">Anfragen</a>
-                </div>
+            <div class="tariff-grid" data-reveal>
+                <div class="tariff"><span class="tag tag--ghost">Werktags</span><div class="tariff-name">Mo–Fr bis 18 Uhr</div><div class="tariff-when">Tagsüber</div><div class="tariff-amount">15<small>€</small></div><div class="tariff-detail">pro Platz · Stunde</div></div>
+                <div class="tariff highlight"><span class="tag">Prime Time</span><div class="tariff-name">Mo–Fr ab 18 Uhr</div><div class="tariff-when">Abends</div><div class="tariff-amount">20<small>€</small></div><div class="tariff-detail">pro Platz · Stunde</div></div>
+                <div class="tariff"><span class="tag tag--ghost">Wochenende</span><div class="tariff-name">Sa, So &amp; Feiertage</div><div class="tariff-when">14:00 – 19:00 Uhr</div><div class="tariff-amount">20<small>€</small></div><div class="tariff-detail">pro Platz · Stunde</div></div>
+                <div class="tariff"><span class="tag tag--ghost">Mitglieder</span><div class="tariff-name">Aktive Vereinsmitglieder</div><div class="tariff-when">Außerhalb der Trainingszeiten</div><div class="tariff-amount">Gratis</div><div class="tariff-detail"><a href="mitgliedschaft.html" style="color:var(--blue)">Mitglied werden →</a></div></div>
+                <div class="tariff"><span class="tag tag--ghost">Gäste</span><div class="tariff-name">Mitspielen bei Mitgliedern</div><div class="tariff-when">Gäste von EVV-Mitgliedern</div><div class="tariff-amount">3<small>€</small></div><div class="tariff-detail">pro Person · Stunde · Jugendliche bis 18 J.: 2 €</div></div>
+                <div class="tariff"><span class="tag tag--ghost">Leihe</span><div class="tariff-name">Ball leihen</div><div class="tariff-when">Offizieller Beachvolleyball</div><div class="tariff-amount">2<small>€</small></div><div class="tariff-detail">Leihgebühr · vor Ort</div></div>
+                <div class="tariff"><span class="tag tag--ghost">Saison</span><div class="tariff-name">Saisonkarte Erwachsene</div><div class="tariff-when">Ganze Saison</div><div class="tariff-amount">60<small>€</small></div><div class="tariff-detail">unbegrenzt spielen</div></div>
+                <div class="tariff"><span class="tag tag--ghost">Saison</span><div class="tariff-name">Saisonkarte Jugendliche</div><div class="tariff-when">Bis 18 Jahre · ganze Saison</div><div class="tariff-amount">40<small>€</small></div><div class="tariff-detail">unbegrenzt spielen</div></div>
             </div>
         </div>
     </section>
 
-    <!-- BUCHUNG — bald verfügbar (ausgegraut) -->
-    <section class="section" id="booking-section" style="padding-top: 40px;">
-        <div class="container">
-            <div id="belegung" style="text-align:center;max-width:680px;margin:0 auto;background:var(--white,#fff);border:1px dashed rgba(30,58,138,.28);border-radius:20px;padding:44px 26px;">
-                <div style="display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-400,#94a3b8);background:rgba(30,58,138,.06);border-radius:999px;padding:6px 14px;margin-bottom:16px;">
-                    <i class="fas fa-person-digging"></i> Bald verf&uuml;gbar
-                </div>
-                <h3 style="margin:0 0 10px;">Hier entsteht bald ein Online-Buchungssystem</h3>
-                <p style="color:var(--gray-500,#64748b);margin:0 auto 22px;max-width:520px;">Bald kannst du deinen Platz direkt online buchen und bezahlen. Bis dahin reservierst du ganz einfach per Anfrage &ndash; wir best&auml;tigen dir deinen Wunschtermin schnellstm&ouml;glich.</p>
-                <a href="#anfrage" class="btn btn-primary btn-lg"><i class="fas fa-envelope"></i> Platz anfragen</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- ANFRAGEFORMULAR -->
-    <section class="section" id="anfrage" style="padding-top: 20px;">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Anfrage</span>
-                <h2>Platz anfragen</h2>
-                <p class="section-description">Sag uns deinen Wunschtermin &ndash; wir melden uns schnellstm&ouml;glich mit einer Best&auml;tigung.</p>
-            </div>
-            <div class="contact-form" style="max-width:680px;margin:0 auto;">
-                <form id="beachInquiryForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="biName">Name *</label>
-                            <input type="text" id="biName" name="name" placeholder="Dein Name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="biEmail">E-Mail *</label>
-                            <input type="email" id="biEmail" name="email" placeholder="Deine E-Mail-Adresse" required>
+    <!-- Anfrage -->
+    <section class="section" id="anfrage" style="padding-top:0">
+        <div class="wrap">
+            <div class="td-grid">
+                <div class="stack">
+                    <div data-reveal>
+                        <p class="kicker">Buchung</p>
+                        <h2 style="font-size:clamp(34px,4.2vw,56px);margin:14px 0 16px">Platz anfragen.</h2>
+                        <p class="lead">Sag uns deinen Wunschtermin – wir bestätigen schnellstmöglich per Mail oder Telefon. Bitte mindestens zwei Tage im Voraus anfragen.</p>
+                    </div>
+                    <div class="notice" data-reveal="2">
+                        <h3>Online-Buchung kommt</h3>
+                        <p>Bald kannst du deinen Platz direkt online buchen und bezahlen. Bis dahin reservierst du ganz einfach per Anfrage.</p>
+                    </div>
+                    <div class="panel" data-reveal="3">
+                        <h3>Direkt<span>kontakt</span></h3>
+                        <div class="contact-lines">
+                            <span><a href="tel:+4924319462785">02431 9462785</a></span>
+                            <span><a href="mailto:beach@evv2000.de">beach@evv2000.de</a></span>
+                            <span><b>Schulring 38 · 41812 Erkelenz</b></span>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="biPhone">Telefon</label>
-                            <input type="tel" id="biPhone" name="phone" placeholder="F&uuml;r schnelle R&uuml;ckmeldung">
+                </div>
+                <div class="form-card" data-reveal="2">
+                    <h2>Anfrage senden</h2>
+                    <p class="form-intro">Kostenlos und unverbindlich – du bekommst eine Bestätigung von uns.</p>
+                    <form id="beachInquiryForm" novalidate>
+                        <div class="form-grid">
+                            <div class="field"><label for="biName">Name <em>*</em></label><input type="text" id="biName" name="name" placeholder="Dein Name" required autocomplete="name"></div>
+                            <div class="field"><label for="biEmail">E-Mail <em>*</em></label><input type="email" id="biEmail" name="email" placeholder="deine@mail.de" required autocomplete="email"></div>
+                            <div class="field"><label for="biPhone">Telefon</label><input type="tel" id="biPhone" name="phone" placeholder="Für schnelle Rückmeldung" autocomplete="tel"></div>
+                            <div class="field"><label for="biDate">Wunschtermin</label><input type="date" id="biDate" name="date"></div>
+                            <div class="field"><label for="biTime">Wunschzeit</label><input type="text" id="biTime" name="time" placeholder="z. B. 18:00 – 20:00 Uhr"></div>
+                            <div class="field"><label for="biPlayers">Anzahl Spieler</label>
+                                <select id="biPlayers" name="players">
+                                    <option value="2">2 (1 vs 1)</option>
+                                    <option value="4" selected>4 (2 vs 2)</option>
+                                    <option value="6">6 (3 vs 3)</option>
+                                    <option value="8">8 (4 vs 4)</option>
+                                    <option value="mehr">Mehr / Event</option>
+                                </select>
+                            </div>
+                            <div class="field full"><label for="biMessage">Nachricht</label><textarea id="biMessage" name="message" rows="4" placeholder="Weitere Wünsche, Fragen, Ball leihen …"></textarea></div>
                         </div>
-                        <div class="form-group">
-                            <label for="biDate">Wunschtermin</label>
-                            <input type="date" id="biDate" name="date">
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-solid btn-lg">Anfrage senden</button>
+                            <span class="hint">Stornierung bis 24 h vorher kostenfrei.</span>
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="biTime">Wunschzeit</label>
-                            <input type="text" id="biTime" name="time" placeholder="z. B. 18:00 &ndash; 20:00 Uhr">
-                        </div>
-                        <div class="form-group">
-                            <label for="biPlayers">Anzahl Spieler</label>
-                            <select id="biPlayers" name="players">
-                                <option value="2">2 (1 vs 1)</option>
-                                <option value="4" selected>4 (2 vs 2)</option>
-                                <option value="6">6 (3 vs 3)</option>
-                                <option value="8">8 (4 vs 4)</option>
-                                <option value="mehr">Mehr / Event</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="biMessage">Nachricht</label>
-                        <textarea id="biMessage" name="message" rows="4" placeholder="Weitere W&uuml;nsche, Fragen, Ball leihen ..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-paper-plane"></i> Anfrage senden
-                    </button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- ANGEBOTE -->
-    <section class="section" id="angebote">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Angebote</span>
-                <h2>F&uuml;r jeden Anlass</h2>
-                <p class="section-description">Ob mit Freunden, Kollegen oder der ganzen Familie &ndash; wir haben das passende Paket.</p>
-            </div>
-            <div class="angebote-grid">
-                <div class="angebot-card">
-                    <div class="angebot-icon"><i class="fas fa-users"></i></div>
-                    <h3>Freizeit &amp; Freunde</h3>
-                    <p>Einen Platz anfragen, Freunde einladen und losspielen. F&uuml;r bis zu 8 Spieler. B&auml;lle vor Ort, Duschen inklusive.</p>
-                    <a href="#anfrage" class="angebot-link">Platz anfragen <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="angebot-card angebot-highlight">
-                    <div class="angebot-badge">Beliebt</div>
-                    <div class="angebot-icon"><i class="fas fa-briefcase"></i></div>
-                    <h3>Firmen-Events</h3>
-                    <p>Das perfekte Teamevent! Bis zu 4 Felder f&uuml;r bis zu 32 Personen. Gro&szlig;e Rasenfl&auml;che zum Grillen, &uuml;berdachter Bereich mit Theke. Ab 300&euro;.</p>
-                    <a href="mailto:beach@evv2000.de?subject=Firmen-Event%20Anfrage" class="angebot-link">Angebot anfragen <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="angebot-card">
-                    <div class="angebot-icon"><i class="fas fa-birthday-cake"></i></div>
-                    <h3>Geburtstage &amp; Feiern</h3>
-                    <p>Feiert euren Geburtstag im Sand! Perfekt f&uuml;r Kindergeburtstage, JGA oder Privatfeiern. Felder + Chill-Area + Rasenfl&auml;che. Ab 180&euro;.</p>
-                    <a href="mailto:beach@evv2000.de?subject=Geburtstag%20/%20Feier%20Anfrage" class="angebot-link">Jetzt anfragen <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="angebot-card">
-                    <div class="angebot-icon"><i class="fas fa-child"></i></div>
-                    <h3>Family Days</h3>
-                    <p>Beachvolleyball, Kinderspiele, Grillen &amp; Chillen &ndash; Spa&szlig; f&uuml;r die ganze Familie. Termine werden &uuml;ber Instagram angek&uuml;ndigt!</p>
-                    <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" class="angebot-link">Auf Instagram folgen <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="angebot-card">
-                    <div class="angebot-icon"><i class="fas fa-school"></i></div>
-                    <h3>Schulen &amp; Gruppen</h3>
-                    <p>Ideal f&uuml;r Schul-AGs, Klassenausfl&uuml;ge oder Vereinsgruppen. Vormittags- und Sondertermine auf Anfrage m&ouml;glich.</p>
-                    <a href="mailto:beach@evv2000.de?subject=Schul-Anfrage" class="angebot-link">Termin anfragen <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="angebot-card">
-                    <div class="angebot-icon"><i class="fas fa-trophy"></i></div>
-                    <h3>Turniere</h3>
-                    <p>Von C- bis A-Turnieren &ndash; wir veranstalten regelm&auml;&szlig;ig Beachturniere f&uuml;r alle Level. Meldet euch jetzt an!</p>
-                    <a href="events.html" class="angebot-link">Zu den Events <i class="fas fa-arrow-right"></i></a>
+                        <div id="formMessage" class="form-msg"></div>
+                    </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA BANNER -->
-    <section class="section" style="padding: 40px 0 80px;">
-        <div class="container">
-            <div class="beach-cta-banner">
-                <div class="beach-cta-content">
-                    <h2>Bereit f&uuml;r Sand zwischen den Zehen?</h2>
-                    <p>Buch dir jetzt deinen Platz &ndash; oder schreib uns f&uuml;r dein individuelles Event.</p>
-                    <div class="beach-cta-buttons">
-                        <a href="#anfrage" class="btn btn-primary btn-lg"><i class="fas fa-envelope"></i> Platz anfragen</a>
-                        <a href="mailto:beach@evv2000.de" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> Event anfragen</a>
+    <!-- Angebote -->
+    <section class="section" id="angebote" style="padding-top:0">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div>
+                    <p class="kicker">Angebote</p>
+                    <h2>Für jeden Anlass.</h2>
+                </div>
+                <p class="lead" style="max-width:40ch">Ob mit Freunden, Kollegen oder der ganzen Familie – wir haben das passende Paket.</p>
+            </div>
+            <div class="offer-grid">
+                <div class="offer" data-reveal><h3>Freizeit &amp; Freunde</h3><p>Einen Platz anfragen, Freunde einladen und losspielen. Für bis zu 8 Spieler. Bälle vor Ort, Duschen inklusive.</p><a class="link-arrow" href="#anfrage">Platz anfragen</a></div>
+                <div class="offer highlight" data-reveal="2"><span class="tag">Beliebt</span><h3 style="margin-top:12px">Firmen-Events</h3><p>Das perfekte Teamevent: bis zu 4 Felder für bis zu 32 Personen, große Rasenfläche zum Grillen, überdachter Bereich mit Theke. Ab 300 €.</p><a class="link-arrow" href="mailto:beach@evv2000.de?subject=Firmen-Event%20Anfrage">Angebot anfragen</a></div>
+                <div class="offer" data-reveal="3"><h3>Geburtstage &amp; Feiern</h3><p>Feiert im Sand – perfekt für Kindergeburtstage, JGA oder Privatfeiern. Felder, Chill-Area und Rasenfläche. Ab 180 €.</p><a class="link-arrow" href="mailto:beach@evv2000.de?subject=Geburtstag%20/%20Feier%20Anfrage">Jetzt anfragen</a></div>
+                <div class="offer" data-reveal><h3>Family Days</h3><p>Beachvolleyball, Kinderspiele, Grillen &amp; Chillen – Spaß für die ganze Familie. Termine werden über Instagram angekündigt.</p><a class="link-arrow" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">Auf Instagram folgen</a></div>
+                <div class="offer" data-reveal="2"><h3>Schulen &amp; Gruppen</h3><p>Ideal für Schul-AGs, Klassenausflüge oder Vereinsgruppen. Vormittags- und Ferientermine auf Anfrage.</p><a class="link-arrow" href="mailto:beach@evv2000.de?subject=Schul-Anfrage">Termin anfragen</a></div>
+                <div class="offer" data-reveal="3"><h3>Turniere</h3><p>Midsommar-Cup, SNBFM-Turnier und mehr – wir veranstalten regelmäßig Beachturniere für alle Level. Meldet euch an!</p><a class="link-arrow" href="events.html">Zu den Turnieren</a></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Standort & Zeiten -->
+    <section class="section" id="standort" style="padding-top:0">
+        <div class="wrap">
+            <div class="td-grid">
+                <div class="stack">
+                    <div data-reveal>
+                        <p class="kicker">Standort &amp; Zeiten</p>
+                        <h2 style="font-size:clamp(34px,4.2vw,56px);margin:14px 0 16px">Direkt an der<br>Karl-Fischer-Halle.</h2>
+                        <p class="lead">Schulring 38, 41812 Erkelenz – direkt an der B57 mit eigenem Parkplatz an der Anlage.</p>
                     </div>
+                    <div class="panel" data-reveal="2">
+                        <h3>Nutzungs<span>zeiten</span></h3>
+                        <div class="hours">
+                            <span>Sa, So &amp; Feiertage (Gäste)</span><b>14:00 – 19:00 Uhr</b>
+                            <span>Werktags &amp; Ferien</span><b>auf Anfrage</b>
+                            <span>Aktive Mitglieder</span><b>außerhalb der Trainingszeiten</b>
+                        </div>
+                    </div>
+                    <div class="facts" data-reveal="3">
+                        <div class="fact"><div class="fact-label">Adresse</div><div class="fact-value">Schulring 38<br>41812 Erkelenz</div></div>
+                        <div class="fact"><div class="fact-label">Telefon</div><div class="fact-value"><a href="tel:+4924319462785">02431 9462785</a></div></div>
+                        <div class="fact"><div class="fact-label">E-Mail</div><div class="fact-value"><a href="mailto:beach@evv2000.de">beach@evv2000.de</a></div></div>
+                        <div class="fact"><div class="fact-label">Route</div><div class="fact-value"><a href="https://www.google.com/maps/dir/?api=1&destination=Schulring+38,+41812+Erkelenz" target="_blank" rel="noopener">In Google Maps öffnen ↗</a></div></div>
+                    </div>
+                </div>
+                <div class="map-frame" style="aspect-ratio:auto;min-height:420px;height:100%" data-reveal="2">
+                    <iframe title="Karte: ERKA Beach, Schulring 38, Erkelenz" src="https://www.google.com/maps?q=Schulring+38,+41812+Erkelenz&output=embed&hl=de" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Toast Notification -->
-    <div class="evv-toast" id="evvToast"></div>
+    <!-- FAQ -->
+    <section class="section" id="faq" style="padding-top:0">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div>
+                    <p class="kicker">Häufige Fragen</p>
+                    <h2>Gut zu wissen.</h2>
+                </div>
+            </div>
+            <div class="faq" data-reveal>
+                <details><summary>Wer darf die Beachanlage nutzen?</summary><div class="prose"><p>Aktive Vereinsmitglieder spielen kostenlos. Für alle anderen ist die Anlage an Wochenenden und Feiertagen zwischen 14:00 und 19:00 Uhr buchbar. Werktags und während der Schulferien sind weitere Termine nach Absprache möglich.</p></div></details>
+                <details><summary>Wie funktioniert die Buchung?</summary><div class="prose"><p>Anfrage über das Formular, per Mail an <a href="mailto:beach@evv2000.de">beach@evv2000.de</a> oder telefonisch unter <a href="tel:+4924319462785">02431 9462785</a>. Bitte mindestens zwei Tage im Voraus anfragen – die Bestätigung erfolgt per Mail oder Telefon. Die Online-Buchung mit Bezahlung kommt in Kürze.</p></div></details>
+                <details><summary>Was kostet das Spielen als Gast?</summary><div class="prose"><p>Gruppenbuchung pro Platz und Stunde: Mo–Fr bis 18 Uhr 15 €, Mo–Fr ab 18 Uhr 20 €, Sa/So/Feiertage 20 €. Einzelspieler bei EVV-Mitgliedern: Erwachsene 3 €/h, Jugendliche bis 18 Jahre 2 €/h. Saisonkarten 60 € (Erwachsene) bzw. 40 € (Jugendliche). Ballleihe 2 €.</p></div></details>
+                <details><summary>Wo genau ist die Anlage?</summary><div class="prose"><p>Schulring 38, 41812 Erkelenz – direkt neben der Karl-Fischer-Halle, mit eigenem Parkplatz an der Anlage.</p></div></details>
+                <details><summary>Wann trainiert der Verein selbst auf der Anlage?</summary><div class="prose"><p>Aktive Mitglieder und Mannschaften trainieren regelmäßig auf den Plätzen. Die Nutzungszeiten für Gäste (Wochenenden 14–19 Uhr) sind bewusst so gewählt, dass sich alles verträgt.</p></div></details>
+                <details><summary>Kann ich Mitglied werden?</summary><div class="prose"><p>Sehr gern! Alle Infos zu Beiträgen (Erwachsene, Jugend, Familie, passiv) und den digitalen Antrag findest du unter <a href="mitgliedschaft.html">Mitglied werden</a>.</p></div></details>
+                <details><summary>Was passiert bei schlechtem Wetter?</summary><div class="prose"><p>Bei leichtem Regen kann gespielt werden – der Sand wird ohnehin nass. Bei Gewitter oder Sturm verschieben wir kostenfrei auf einen anderen Termin. Stornierungen sind bis 24 Stunden vorher kostenfrei.</p></div></details>
+            </div>
+        </div>
+    </section>
 
-    <!-- Footer -->
+    <section class="join">
+        <div class="wrap join-inner">
+            <div data-reveal>
+                <h2>Sand zwischen<br>den Zehen?</h2>
+                <p>Frag jetzt deinen Platz an – oder schreib uns für dein individuelles Event auf der Anlage.</p>
+            </div>
+            <div class="join-actions" data-reveal="2">
+                <a class="btn btn-white btn-lg" href="#anfrage">Platz anfragen</a>
+                <a class="btn btn-ghost btn-lg" href="mailto:beach@evv2000.de?subject=Event-Anfrage">Event anfragen</a>
+            </div>
+        </div>
+    </section>
+
+<!-- @chrome:footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="wrap">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
-                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
                 </div>
-                <div class="footer-links">
+                <div>
                     <h4>Verein</h4>
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
-                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Angebote</h4>
-                    <ul>
-                        <li><a href="beachanlage.html">Beachanlage</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>Rechtliches</h4>
+                <div>
+                    <h4>Mitmachen</h4>
                     <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
-                        <li><a href="#">Vereinssatzung</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
-    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
-    <script src="js/main.js"></script>
-    <script>
-        window.ERKA_API_BASE = 'https://erka-beach.vercel.app';
-    </script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/matchday.js"></script>
     <script>
-    /* Beach-Anfrage: speichert in Supabase contact_messages (Admin -> Anfragen),
-       Betreff "beachanlage". Mail-Fallback an beach@evv2000.de bei Offline. */
+    /* Beach-Anfrage: speichert in Supabase contact_messages (Admin → Anfragen, Betreff "beachanlage");
+       Mail-Fallback an beach@evv2000.de ohne Verbindung. */
     (function () {
         var form = document.getElementById('beachInquiryForm');
         if (!form) return;
-
-        function val(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; }
-
+        var msg = document.getElementById('formMessage');
+        function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
         function buildMessage() {
             var lines = [];
-            var d = val('biDate'), t = val('biTime');
-            var pEl = document.getElementById('biPlayers'), p = pEl ? pEl.value : '';
-            var ph = val('biPhone'), m = val('biMessage');
-            if (d)  lines.push('Wunschtermin: ' + d);
-            if (t)  lines.push('Wunschzeit: ' + t);
-            if (p)  lines.push('Spieler: ' + p);
+            var d = val('biDate'), t = val('biTime'), p = val('biPlayers'), ph = val('biPhone'), m = val('biMessage');
+            if (d) lines.push('Wunschtermin: ' + d);
+            if (t) lines.push('Wunschzeit: ' + t);
+            if (p) lines.push('Spieler: ' + p);
             if (ph) lines.push('Telefon: ' + ph);
-            if (m)  lines.push('\n' + m);
+            if (m) lines.push('\n' + m);
             return lines.join('\n');
         }
-
-        function mailtoFallback(name, email, msg) {
-            window.location.href = 'mailto:beach@evv2000.de?subject=' +
-                encodeURIComponent('Beach-Platzanfrage') + '&body=' +
-                encodeURIComponent('Name: ' + name + '\nE-Mail: ' + email + '\n\n' + msg);
+        function mailtoFallback(name, email, body) {
+            window.location.href = 'mailto:beach@evv2000.de?subject=' + encodeURIComponent('Beach-Platzanfrage') +
+                '&body=' + encodeURIComponent('Name: ' + name + '\nE-Mail: ' + email + '\n\n' + body);
         }
-
-        function showSuccess() {
-            form.innerHTML =
-                '<div style="text-align:center;padding:40px 16px">' +
-                '<div style="font-size:2.6rem;color:var(--accent,#3b82f6);margin-bottom:14px"><i class="fas fa-check-circle"></i></div>' +
-                '<h3 style="margin-bottom:8px">Anfrage gesendet!</h3>' +
-                '<p style="color:var(--gray-500,#64748b);font-size:0.92rem">Danke &ndash; wir melden uns schnellstm&ouml;glich mit deinem Wunschtermin bei dir.</p>' +
-                '</div>';
-        }
-
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
             var name = val('biName'), email = val('biEmail');
-            if (!name || !email) return;
-            var msg = buildMessage();
+            if (!name || !email) { msg.className = 'form-msg error show'; msg.textContent = 'Bitte Name und E-Mail angeben.'; return; }
+            msg.className = 'form-msg';
+            var body = buildMessage();
             var btn = form.querySelector('button[type=submit]');
-            var btnHtml = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Senden...';
+            var original = btn.textContent;
+            btn.disabled = true; btn.textContent = 'Wird gesendet…';
             try {
                 await ErkaSupabase.init();
                 if (!ErkaSupabase.client) throw new Error('offline');
-                var res = await ErkaSupabase.client.from('contact_messages').insert({
-                    name: name, email: email, subject: 'beachanlage', message: msg || 'Beach-Platzanfrage'
-                });
+                var res = await ErkaSupabase.client.from('contact_messages').insert({ name: name, email: email, subject: 'beachanlage', message: body || 'Beach-Platzanfrage' });
                 if (res.error) throw res.error;
-                showSuccess();
+                form.innerHTML = '<div class="notice ok"><h3>Anfrage gesendet</h3><p>Danke – wir melden uns schnellstmöglich mit deinem Wunschtermin bei dir.</p></div>';
             } catch (err) {
                 console.warn('Beach-Anfrage: Speichern fehlgeschlagen, Mail-Fallback.', err);
-                btn.disabled = false;
-                btn.innerHTML = btnHtml;
-                mailtoFallback(name, email, msg);
+                btn.disabled = false; btn.textContent = original;
+                mailtoFallback(name, email, body);
             }
         });
     })();

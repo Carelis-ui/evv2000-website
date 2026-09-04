@@ -3,312 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Erkelenzer Volleyball Verein 2000 e.V. - Dein Volleyballverein in Erkelenz. Hallenvolleyball, Beachvolleyball, Jugendförderung und mehr.">
-    <meta name="keywords" content="Volleyball, Erkelenz, EVV2000, Beachvolleyball, Verein, Sport, Jugend, Mannschaften">
+    <meta name="description" content="Erkelenzer Volleyball-Verein 2000 e.V. – Volleyball in Erkelenz: 14 Mannschaften von der Jugend bis zur Verbandsliga, Beachanlage ERKA Beach, Mitglied werden.">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <meta property="og:title" content="EVV 2000 | Erkelenzer Volleyball Verein">
-    <meta property="og:description" content="Dein Volleyballverein in Erkelenz – Hallenvolleyball, Beachvolleyball, Jugendförderung und mehr.">
+    <meta property="og:title" content="EVV 2000 | Volleyball in Erkelenz">
+    <meta property="og:description" content="14 Mannschaften, über 300 Mitglieder, eine Beachanlage mitten in der Stadt – seit 2000.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://evv2000-website.vercel.app">
+    <meta property="og:url" content="https://evv2000-website.vercel.app/">
     <meta property="og:image" content="https://evv2000-website.vercel.app/img/team-haie-26-27.jpg">
-    <title>EVV 2000 | Erkelenzer Volleyball Verein</title>
+    <title>EVV 2000 | Volleyball in Erkelenz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="#hero" class="nav-logo">
-                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
-                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+<body data-page="start" data-mode="halle">
+
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
             </a>
-            <div class="mode-switch">
-                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
-                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
-                <div class="mode-slider"></div>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
             </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
-                <li><a href="events.html" class="nav-link">Events</a></li>
-                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
-                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
-                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
-                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
-                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
-            </ul>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
-    </nav>
+    </header>
+<!-- @chrome:/header -->
 
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <div class="hero-bg">
-            <img src="img/hero-bg.jpg" alt="Volleyball Action">
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="top">
+        <div class="hero-visual" aria-hidden="true">
+            <img src="img/hero-bg.jpg" alt="" fetchpriority="high">
         </div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <div class="hero-badge">Seit 2000 in Erkelenz</div>
-            <h1>Erkelenzer Volleyball<br>Verein 2000 e.V.</h1>
-            <p class="hero-subtitle">Leidenschaft. Teamgeist. Volleyball.</p>
-            <p class="hero-description">Von der Jugend bis zur Landesliga &ndash; Volleyball f&uuml;r jedes Alter und jedes Level. Werde Teil unserer Volleyball-Familie!</p>
-            <div class="hero-buttons">
-                <a href="mitgliedschaft.html" class="btn btn-primary btn-lg">Jetzt Mitglied werden</a>
-                <a href="mannschaften.html" class="btn btn-outline btn-lg">Unsere Mannschaften</a>
-            </div>
-            <div class="hero-stats">
-                <div class="stat">
-                    <div class="stat-value"><span class="stat-number" data-target="15">0</span><span class="stat-suffix">+</span></div>
-                    <span class="stat-label">Mannschaften</span>
-                </div>
-                <div class="stat">
-                    <div class="stat-value"><span class="stat-number" data-target="25">0</span></div>
-                    <span class="stat-label">Jahre Tradition</span>
-                </div>
-                <div class="stat">
-                    <div class="stat-value"><span class="stat-number" data-target="4">0</span></div>
-                    <span class="stat-label">Beachfelder</span>
-                </div>
-                <div class="stat">
-                    <div class="stat-value"><span class="stat-number" data-target="300">0</span><span class="stat-suffix">+</span></div>
-                    <span class="stat-label">Mitglieder</span>
+        <div class="wrap hero-grid">
+            <div class="hero-copy">
+                <p class="kicker" data-reveal>Erkelenzer Volleyball-Verein 2000 e.V.</p>
+                <h1 data-reveal="2">Volley&shy;ball.<br>Erkelenz.<br><span>Seit 2000.</span></h1>
+                <p class="lead" data-reveal="3">Von der U12 bis zur Verbandsliga: 14 Mannschaften, über 300 Mitglieder und eine Beachanlage mitten in der Stadt. Wir suchen Menschen, die Volleyball lieben – auf jedem Level.</p>
+                <div class="hero-actions" data-reveal="3">
+                    <a class="btn btn-solid btn-lg" href="#mannschaften">Unsere Mannschaften</a>
+                    <a class="btn btn-ghost btn-lg" href="mitgliedschaft.html">Mitglied werden</a>
                 </div>
             </div>
         </div>
-        <div class="hero-scroll">
-            <a href="#teams"><i class="fas fa-chevron-down"></i></a>
+        <div class="wrap hero-facts">
+            <div class="hero-fact"><b>14</b><span>Mannschaften</span></div>
+            <div class="hero-fact"><b>300+</b><span>Mitglieder</span></div>
+            <div class="hero-fact"><b>4</b><span>Beachfelder</span></div>
+            <div class="hero-fact"><b>2000</b><span>Gegründet</span></div>
         </div>
     </section>
 
-    <!-- Teams Teaser -->
-    <section class="section teams" id="teams">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Mannschaften</span>
-                <h2>Unsere Teams</h2>
-                <p class="section-description">&Uuml;ber 15 Mannschaften in allen Altersklassen &ndash; von ambitioniertem Leistungssport bis hin zu Hobby und Freizeit.</p>
+    <!-- ===== NÄCHSTER TERMIN ===== -->
+    <section class="matchday" id="termine">
+        <div class="wrap matchday-inner">
+            <div class="matchday-label"><i></i> Nächster Termin</div>
+            <div class="matchday-event" id="nextEvent"><span class="md-empty">Termine werden geladen…</span></div>
+            <div class="md-more" id="moreEvents"></div>
+        </div>
+    </section>
+
+    <!-- ===== MANNSCHAFTEN ===== -->
+    <section class="section" id="mannschaften">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div>
+                    <p class="kicker">Mannschaften</p>
+                    <h2>Vierzehn Teams.<br>Ein Verein.</h2>
+                </div>
+                <a class="link-arrow" href="mannschaften.html">Alle Mannschaften <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
             </div>
-            <div class="teams-showcase">
-                <a href="mannschaft.html?team=maenner-1" class="showcase-card showcase-card--lineup">
-                    <img src="img/herren.jpg" alt="Herren 1 – Erkelenzer Haie 26/27" loading="lazy">
-                    <div class="showcase-overlay">
-                        <span class="showcase-badge">Verbandsliga</span>
-                        <h3>Herren</h3>
-                        <p>Aufstieg 2026 gesichert</p>
+            <div class="team-grid">
+                <a class="team-feature" href="mannschaft.html?team=maenner-1" data-reveal>
+                    <div class="team-feature-media"><img src="img/team-haie-26-27.jpg" alt="Herren 1 – Erkelenzer Haie, Saison 2026/27"></div>
+                    <div class="team-feature-caption">
+                        <div><span class="tag">Verbandsliga</span><h3>Herren 1</h3></div>
+                        <p>Erkelenzer Haie · Aufstieg 2026 · Karl-Fischer-Halle</p>
+                        <span class="link-arrow">Zur Mannschaft <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
                     </div>
                 </a>
-                <a href="mannschaft.html?team=frauen-1" class="showcase-card">
-                    <img src="img/damen.jpg" alt="Damen 1 - Bezirksliga" loading="lazy">
-                    <div class="showcase-overlay">
-                        <span class="showcase-badge">Bezirksliga</span>
-                        <h3>Damen</h3>
-                        <p>Starke Saison 2025/26</p>
+                <a class="team-card" href="mannschaft.html?team=frauen-1" data-reveal="2">
+                    <img src="img/damen.jpg" alt="Damen 1 des EVV 2000">
+                    <div class="team-card-body">
+                        <span class="tag">Bezirksliga</span>
+                        <h3>Damen 1</h3>
+                        <p>Aufstieg 2026</p>
                     </div>
                 </a>
-                <a href="mannschaft.html?team=wu20-1" class="showcase-card">
-                    <img src="img/jugend.jpg" alt="U14 Mixed - Bezirksfinale" loading="lazy">
-                    <div class="showcase-overlay">
-                        <span class="showcase-badge">Oberliga &middot; Bezirksliga</span>
+                <a class="team-card" href="mannschaften.html" data-reveal="3">
+                    <img src="img/jugend.jpg" alt="Jugendmannschaft des EVV 2000">
+                    <div class="team-card-body">
+                        <span class="tag tag--ghost">7 Jugendteams</span>
                         <h3>Jugend</h3>
-                        <p>3. Platz Bezirksfinale U14</p>
+                        <p>U12 bis U20 · 3. Platz Bezirksfinale U14</p>
                     </div>
                 </a>
             </div>
-            <div style="text-align: center;">
-                <a href="mannschaften.html" class="btn btn-outline btn-lg">Alle Mannschaften ansehen <i class="fas fa-arrow-right"></i></a>
-            </div>
+            <div class="team-index" id="teamIndex" data-reveal></div>
         </div>
     </section>
 
-    <!-- Beach Promo -->
-    <section class="section beach-promo" id="beach-promo">
-        <div class="container">
-            <div class="beach-promo-banner">
-                <div class="beach-promo-bg">
-                    <img src="img/beach-bg.jpg" alt="Beachvolleyball Erkelenz" loading="lazy">
+    <!-- ===== AKTUELLES ===== -->
+    <section class="section" id="aktuelles" style="padding-top:0">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div>
+                    <p class="kicker">Aktuelles</p>
+                    <h2>Neues aus<br>dem Verein.</h2>
                 </div>
-                <div class="beach-promo-overlay"></div>
-                <div class="beach-promo-content">
-                    <span class="beach-promo-badge"><i class="fas fa-fire"></i> NEU</span>
-                    <h2>ERKA Beach &ndash; Unsere Beachanlage</h2>
-                    <p>4 professionelle Beachvolleyball-Felder mitten in Erkelenz. Online buchen, Ball leihen, losspielen &ndash; f&uuml;r Mitglieder kostenlos!</p>
-                    <div class="beach-promo-features">
-                        <div class="beach-promo-feat"><i class="fas fa-volleyball-ball"></i> 4 Felder</div>
-                        <div class="beach-promo-feat"><i class="fas fa-clock"></i> 9&ndash;22 Uhr</div>
-                        <div class="beach-promo-feat"><i class="fas fa-euro-sign"></i> Ab 30&euro; / Slot</div>
-                        <div class="beach-promo-feat"><i class="fas fa-medal"></i> Mitglieder gratis</div>
-                    </div>
-                    <div class="beach-promo-cards">
-                        <div class="beach-promo-card">
-                            <i class="fas fa-users"></i>
-                            <h4>Freizeit &amp; Freunde</h4>
-                            <p>45-Min-Slots f&uuml;r bis zu 8 Spieler</p>
-                        </div>
-                        <div class="beach-promo-card">
-                            <i class="fas fa-briefcase"></i>
-                            <h4>Firmen-Events</h4>
-                            <p>Teambuilding auf bis zu 4 Feldern</p>
-                        </div>
-                        <div class="beach-promo-card">
-                            <i class="fas fa-birthday-cake"></i>
-                            <h4>Geburtstage</h4>
-                            <p>Feier deine Party im Sand!</p>
-                        </div>
-                    </div>
-                    <div class="beach-promo-buttons">
-                        <a href="beachanlage.html" class="btn btn-primary btn-lg"><i class="fas fa-calendar-check"></i> Jetzt Platz buchen</a>
-                        <a href="kontakt.html" class="btn btn-outline btn-lg">Event anfragen</a>
-                    </div>
+                <a class="link-arrow" href="aktuelles.html">Alle Beiträge <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+            </div>
+            <div class="news-grid" id="newsGrid" data-reveal></div>
+        </div>
+    </section>
+
+    <!-- ===== ERKA BEACH ===== -->
+    <section class="beach" id="beach">
+        <div class="beach-media" aria-hidden="true"><img src="img/beach-bg.jpg" alt="" loading="lazy"></div>
+        <div class="wrap">
+            <div class="beach-copy" data-reveal>
+                <p class="kicker">ERKA Beach</p>
+                <h2>Vier Felder.<br>Mitten in Erkelenz.</h2>
+                <p class="lead">Unsere Beachanlage – für Training, Turniere und den Feierabend im Sand. Platzmiete ab 15 € pro Stunde, Saisonkarten für Vielspieler. Die Online-Buchung kommt in Kürze; bis dahin einfach anfragen.</p>
+                <div class="beach-facts">
+                    <div><b>4</b>Felder</div>
+                    <div><b>ab 15 €</b>pro Stunde</div>
+                    <div><b>ab 40 €</b>Saisonkarte</div>
                 </div>
+                <a class="btn btn-solid btn-lg" href="beachanlage.html">Zur Beachanlage</a>
             </div>
         </div>
     </section>
 
-    <!-- Quick Links Section -->
-    <section class="section" id="quicklinks">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Entdecken</span>
-                <h2>Mehr vom EVV 2000</h2>
+    <!-- ===== MITGLIED WERDEN ===== -->
+    <section class="join" id="mitglied">
+        <div class="wrap join-inner">
+            <div data-reveal>
+                <h2>Werde Teil<br>des EVV.</h2>
+                <p>Probetraining ist jederzeit möglich – egal ob Einsteiger, Wiedereinsteiger oder Ligaerfahrung. Schreib uns oder komm einfach vorbei.</p>
             </div>
-            <div class="about-grid">
-                <a href="events.html" class="about-card" style="text-decoration:none;">
-                    <div class="about-icon"><i class="fas fa-trophy"></i></div>
-                    <h3>Events & Turniere</h3>
-                    <p>ERKA-Turnier, Midsommar-Cup und mehr &ndash; unsere Highlights im Volleyballjahr.</p>
-                </a>
-                <a href="beachanlage.html" class="about-card" style="text-decoration:none;">
-                    <div class="about-icon"><i class="fas fa-umbrella-beach"></i></div>
-                    <h3>Beachanlage</h3>
-                    <p>4 Felder, Online-Buchung und Live-Belegung &ndash; jetzt Platz reservieren!</p>
-                </a>
-                <a href="aktuelles.html" class="about-card" style="text-decoration:none;">
-                    <div class="about-icon"><i class="fas fa-newspaper"></i></div>
-                    <h3>Aktuelles</h3>
-                    <p>Spielberichte, Aufstiege und Neuigkeiten aus dem Vereinsleben.</p>
-                </a>
-                <a href="mitgliedschaft.html" class="about-card" style="text-decoration:none;">
-                    <div class="about-icon"><i class="fas fa-user-plus"></i></div>
-                    <h3>Mitglied werden</h3>
-                    <p>Jetzt digital anmelden und Teil unserer Volleyball-Familie werden!</p>
-                </a>
+            <div class="join-actions" data-reveal="2">
+                <a class="btn btn-white btn-lg" href="mitgliedschaft.html">Mitglied werden</a>
+                <a class="btn btn-ghost btn-lg" href="kontakt.html">Probetraining anfragen</a>
             </div>
         </div>
     </section>
 
-    <!-- Sponsoren-Sektion (dynamisch, versteckt sich bei 0 Sponsoren) -->
-    <section class="section sponsors-strip" id="sponsorsStrip" style="display:none">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">Partner &amp; Sponsoren</span>
-                <h2>Gemeinsam stärker</h2>
-                <p class="section-description">Diese Firmen unterstützen den Volleyballsport in Erkelenz.</p>
+    <!-- ===== PARTNER ===== -->
+    <section class="section sponsors" id="partner">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div>
+                    <p class="kicker">Partner &amp; Sponsoren</p>
+                    <h2>Sie machen es möglich.</h2>
+                </div>
+                <a class="link-arrow" href="sponsoren.html">Alle Partner <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
             </div>
-            <div class="sponsors-logo-row" id="sponsorsRow"></div>
-            <div style="text-align:center;margin-top:36px">
-                <a href="sponsoren.html" class="btn btn-outline">Alle Partner ansehen <i class="fas fa-arrow-right"></i></a>
+            <div class="sponsor-band" id="sponsorBand" data-reveal></div>
+            <div class="sponsors-cta" data-reveal>
+                <span>Sie möchten den Volleyballsport in Erkelenz unterstützen?</span>
+                <a class="btn btn-paper" href="mailto:kontakt@evv2000.de?subject=Sponsoring-Anfrage">Sponsor werden</a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- ===== FOOTER ===== -->
+<!-- @chrome:footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="wrap">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo">
-                        <img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img">
-                    </div>
-                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
                 </div>
-                <div class="footer-links">
+                <div>
                     <h4>Verein</h4>
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
-                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Angebote</h4>
-                    <ul>
-                        <li><a href="beachanlage.html">Beachanlage</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>Rechtliches</h4>
+                <div>
+                    <h4>Mitmachen</h4>
                     <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
-                        <li><a href="#">Vereinssatzung</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
-    <script src="js/main.js"></script>
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/matchday.js"></script>
     <script>
-    /* Sponsoren dynamisch von Supabase — Sektion versteckt sich, wenn 0 Einträge */
-    (async function () {
+    (function () {
+        /* ---------- Helfer ---------- */
+        var MONTHS = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+        var DAYS = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+        var TYPE = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
+        var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>';
         function esc(s) {
-            if (s == null) return '';
+            if (s === null || s === undefined) return '';
             return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
-        try {
-            await ErkaSupabase.init();
-            var sb = ErkaSupabase.client;
-            if (!sb) return;
+        function d(iso) { return new Date(iso + 'T00:00:00'); }
+        function fmtRange(ev) {
+            var a = d(ev.date), b = ev.date_end && ev.date_end !== ev.date ? d(ev.date_end) : null;
+            var s = DAYS[a.getDay()] + ', ' + a.getDate() + '. ' + MONTHS[a.getMonth()];
+            if (b) s = DAYS[a.getDay()] + '–' + DAYS[b.getDay()] + ', ' + a.getDate() + '.–' + b.getDate() + '. ' + MONTHS[b.getMonth()];
+            return s;
+        }
+        function fmtTime(ev) {
+            if (!ev.time_start) return '';
+            return ev.time_start.slice(0, 5) + (ev.time_end ? '–' + ev.time_end.slice(0, 5) : '') + ' Uhr';
+        }
 
-            var res = await sb.from('sponsors')
-                .select('id, name, logo_url, website_url, tier')
-                .eq('is_visible', true)
-                .order('sort_order', { ascending: true })
-                .order('name', { ascending: true });
+        /* ---------- Daten ---------- */
+        (async function () {
+            try {
+                await ErkaSupabase.init();
+                var sb = ErkaSupabase.client;
+                if (!sb) throw new Error('offline');
+                var today = new Date().toISOString().slice(0, 10);
 
-            var sponsors = res.data || [];
-            if (res.error || !sponsors.length) return;
+                var res = await Promise.all([
+                    sb.from('public_calendar').select('*').gte('date', today).order('date', { ascending: true }).limit(4),
+                    sb.from('news').select('id,title,content,tag,tag_label,published_at,image_url').eq('is_published', true).order('published_at', { ascending: false }).limit(4),
+                    sb.from('sponsors').select('name,logo_url,website_url').eq('is_visible', true).order('sort_order', { ascending: true }).order('name', { ascending: true }),
+                    sb.from('public_teams').select('slug,name,category,league').order('sort_order', { ascending: true })
+                ]);
 
-            var strip = document.getElementById('sponsorsStrip');
-            var row = document.getElementById('sponsorsRow');
+                renderEvents(res[0].data || []);
+                renderNews(res[1].data || []);
+                renderSponsors(res[2].data || []);
+                renderTeamIndex(res[3].data || []);
+            } catch (e) {
+                console.warn('Daten konnten nicht geladen werden', e);
+                document.getElementById('nextEvent').innerHTML = '<span class="md-empty">Termine aktuell nicht verfügbar.</span>';
+                document.getElementById('newsGrid').innerHTML = '';
+            }
+        })();
 
-            row.innerHTML = sponsors.map(function (s) {
-                var img = s.logo_url
+        function renderEvents(list) {
+            var host = document.getElementById('nextEvent');
+            var more = document.getElementById('moreEvents');
+            if (!list.length) {
+                host.innerHTML = '<span class="md-empty">Aktuell keine anstehenden Termine – der Spielplan folgt in Kürze.</span>';
+                more.innerHTML = '<a class="link-arrow" href="kalender.html">Kalender ' + ARROW + '</a>';
+                return;
+            }
+            var ev = list[0], dt = d(ev.date);
+            var meta = [];
+            meta.push('<span class="tag" style="background:transparent;padding:0;margin:0">' + esc(TYPE[ev.event_type] || ev.event_type) + '</span>');
+            meta.push(esc(fmtRange(ev)));
+            if (ev.time_start) meta.push(esc(fmtTime(ev)));
+            if (ev.location) meta.push(esc(ev.location));
+            if (ev.opponent) meta.push((ev.is_home ? 'Heim vs. ' : 'Auswärts bei ') + esc(ev.opponent));
+            host.innerHTML =
+                '<div class="md-date"><b>' + dt.getDate() + '</b><span>' + MONTHS[dt.getMonth()] + '</span></div>' +
+                '<div class="md-body"><div class="md-title">' + esc(ev.team_name ? ev.team_name + ' · ' : '') + esc(ev.title) + '</div>' +
+                '<div class="md-meta">' + meta.join('<span style="opacity:.35">·</span>') + '</div></div>';
+            var rest = list.slice(1, 3).map(function (e2) {
+                var x = d(e2.date);
+                return '<div><b>' + x.getDate() + '. ' + MONTHS[x.getMonth()] + '</b> · ' + esc(e2.title) + '</div>';
+            });
+            more.innerHTML = rest.join('') + '<a class="link-arrow" href="kalender.html">Alle Termine ' + ARROW + '</a>';
+        }
+
+        function renderNews(list) {
+            var host = document.getElementById('newsGrid');
+            if (!list.length) { host.innerHTML = '<p class="md-empty">Noch keine Beiträge.</p>'; return; }
+            var featIdx = list.findIndex(function (n) { return n.image_url; });
+            if (featIdx < 0) featIdx = 0;
+            var feat = list[featIdx];
+            var rest = list.filter(function (_, i) { return i !== featIdx; }).slice(0, 3);
+            var fd = new Date(feat.published_at);
+            var excerpt = (feat.content || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+            if (excerpt.length > 180) excerpt = excerpt.slice(0, 177).replace(/\s+\S*$/, '') + '…';
+            var media = feat.image_url
+                ? '<div class="news-media"><img src="' + esc(feat.image_url) + '" alt="" loading="lazy"></div>'
+                : '<div class="news-media" style="display:flex;align-items:end;padding:28px"><img src="img/logo-evv.png" alt="" style="width:90px;opacity:.5"></div>';
+            var featHtml =
+                '<a class="news-feature" href="aktuelles.html#' + esc(feat.id) + '">' + media +
+                '<div class="news-body"><div class="news-meta"><span class="tag">' + esc(feat.tag_label || 'News') + '</span><span>' +
+                fd.getDate() + '. ' + MONTHS[fd.getMonth()] + ' ' + fd.getFullYear() + '</span></div>' +
+                '<h3>' + esc(feat.title) + '</h3>' + (excerpt ? '<p>' + esc(excerpt) + '</p>' : '') + '</div></a>';
+            var listHtml = '<div class="news-list">' + rest.map(function (n) {
+                var nd = new Date(n.published_at);
+                return '<a class="news-item" href="aktuelles.html#' + esc(n.id) + '">' +
+                    '<div class="nd"><b>' + nd.getDate() + '</b><span>' + MONTHS[nd.getMonth()] + ' ' + String(nd.getFullYear()).slice(2) + '</span></div>' +
+                    '<div><h3>' + esc(n.title) + '</h3><div class="news-meta"><span>' + esc(n.tag_label || 'News') + '</span></div></div>' +
+                    ARROW + '</a>';
+            }).join('') + '</div>';
+            host.innerHTML = featHtml + listHtml;
+        }
+
+        function renderSponsors(list) {
+            var host = document.getElementById('sponsorBand');
+            if (!list.length) { host.parentElement.style.display = 'none'; return; }
+            host.innerHTML = list.map(function (s) {
+                var inner = s.logo_url
                     ? '<img src="' + esc(s.logo_url) + '" alt="' + esc(s.name) + '" loading="lazy">'
-                    : '<span class="sponsor-name-fallback">' + esc(s.name) + '</span>';
-                var inner = '<div class="sponsor-logo-card" title="' + esc(s.name) +
-                    (s.tier ? ' — ' + esc(s.tier) : '') + '">' + img + '</div>';
-                return s.website_url
-                    ? '<a href="' + esc(s.website_url) + '" target="_blank" rel="noopener sponsored">' + inner + '</a>'
-                    : inner;
+                    : '<span>' + esc(s.name) + '</span>';
+                var open = s.website_url ? '<a class="sponsor-tile" href="' + esc(s.website_url) + '" target="_blank" rel="noopener sponsored" title="' + esc(s.name) + '">' : '<div class="sponsor-tile" title="' + esc(s.name) + '">';
+                return open + inner + (s.website_url ? '</a>' : '</div>');
             }).join('');
+        }
 
-            strip.style.display = '';
-        } catch (e) {
-            /* Silent — Sektion bleibt versteckt */
+        function renderTeamIndex(list) {
+            var host = document.getElementById('teamIndex');
+            if (!list.length) { host.style.display = 'none'; return; }
+            var groups = { herren: [], damen: [], jugend: [], hobby: [] };
+            var labels = { herren: 'Herren', damen: 'Damen', jugend: 'Jugend', hobby: 'Hobby' };
+            list.forEach(function (t) { var c = (t.category || 'hobby').toLowerCase(); (groups[c] = groups[c] || []).push(t); });
+            host.innerHTML = Object.keys(groups).filter(function (k) { return groups[k].length; }).map(function (k) {
+                return '<div class="team-index-col"><h4>' + labels[k] + '<b>' + groups[k].length + '</b></h4>' +
+                    groups[k].map(function (t) {
+                        return '<a href="mannschaft.html?team=' + encodeURIComponent(t.slug) + '">' + esc(t.name) +
+                            '<span>' + esc(t.league && t.league !== '-' ? t.league : '') + '</span></a>';
+                    }).join('') + '</div>';
+            }).join('');
         }
     })();
     </script>
-    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
 </body>
 </html>

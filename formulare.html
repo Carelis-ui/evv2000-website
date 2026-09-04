@@ -3,175 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formulare und Downloads des EVV 2000 – Aufnahmeantrag, Satzung, Beitragsordnung und weitere Dokumente.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta property="og:title" content="Formulare &amp; Downloads | EVV 2000">
+    <meta property="og:description" content="Aufnahmeantrag, Satzung und weitere Dokumente des EVV 2000 zum Herunterladen.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evv2000-website.vercel.app/formulare">
     <title>Formulare &amp; Downloads | EVV 2000</title>
-    <meta name="description" content="Formulare und Downloads des EVV 2000 – Aufnahmeantrag, Satzung und weitere Dokumente zum Herunterladen.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
+<body data-page="formulare" data-mode="halle">
 
-    <!-- Navigation -->
-    <nav class="navbar scrolled" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
-                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
             </a>
-            <div class="mode-switch">
-                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
-                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
-                <div class="mode-slider"></div>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
             </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
-                <li><a href="events.html" class="nav-link">Events</a></li>
-                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
-                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
-                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
-                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
-                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
-            </ul>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
-    </nav>
+    </header>
+<!-- @chrome:/header -->
 
-    <!-- Page Hero -->
     <section class="page-hero">
-        <div class="container">
-            <span class="section-tag">Downloads</span>
-            <h1>Formulare &amp; Downloads</h1>
-            <p>Aufnahmeantrag, Satzung und weitere Dokumente zum Herunterladen.</p>
+        <div class="wrap">
+            <p class="kicker" data-reveal>Downloads</p>
+            <h1 data-reveal="2">Formulare &amp;<br>Dokumente.</h1>
+            <p class="lead" data-reveal="3">Aufnahmeantrag, Satzung, Beitragsordnung und weitere Unterlagen zum Herunterladen.</p>
         </div>
     </section>
 
-    <!-- Documents -->
     <section class="section">
-        <div class="container">
-            <div id="formulareList">
-                <div style="text-align:center;padding:60px 0;color:var(--gray-500,#64748b)">
-                    <i class="fas fa-spinner fa-spin"></i> Dokumente werden geladen…
-                </div>
+        <div class="wrap">
+            <div id="docList" data-reveal>
+                <div class="empty-note">Dokumente werden geladen…</div>
+            </div>
+            <div class="panel" style="margin-top:40px" data-reveal>
+                <h3>Lieber <span>online?</span></h3>
+                <p>Den Mitgliedsantrag kannst du auch direkt digital ausfüllen – ohne Ausdrucken und Scannen.</p>
+                <a class="btn btn-solid" href="mitgliedschaft.html">Zum Online-Antrag</a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+<!-- @chrome:footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="wrap">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
-                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
                 </div>
-                <div class="footer-links">
+                <div>
                     <h4>Verein</h4>
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
-                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Angebote</h4>
-                    <ul>
-                        <li><a href="beachanlage.html">Beachanlage</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>Rechtliches</h4>
+                <div>
+                    <h4>Mitmachen</h4>
                     <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
-    <script src="js/main.js"></script>
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/matchday.js"></script>
     <script>
     (async function () {
-        var host = document.getElementById('formulareList');
+        var host = document.getElementById('docList');
+        var LABEL = { mitgliedschaft: 'Mitgliedschaft', satzung: 'Satzung & Ordnungen', beitrag: 'Beitrag & Zahlung', veranstaltungen: 'Veranstaltungen', allgemein: 'Allgemein', formulare: 'Formulare', dokumente: 'Dokumente' };
+        var ORDER = ['mitgliedschaft', 'formulare', 'beitrag', 'satzung', 'veranstaltungen', 'dokumente', 'allgemein'];
+        var DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>';
 
         function esc(s) {
             if (s === null || s === undefined) return '';
             return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
-        function fmtSize(bytes) {
-            if (!bytes) return '';
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
-            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+        function fmtSize(b) {
+            if (!b) return '';
+            if (b < 1024) return b + ' B';
+            if (b < 1024 * 1024) return (b / 1024).toFixed(0) + ' KB';
+            return (b / 1024 / 1024).toFixed(1) + ' MB';
         }
-        function emptyState(msg) {
-            host.innerHTML = '<div style="text-align:center;padding:60px 0;color:var(--gray-500,#64748b)">' +
-                '<i class="fas fa-folder-open" style="font-size:2rem;opacity:.5;display:block;margin-bottom:12px"></i>' +
-                esc(msg) + '</div>';
+        function ext(d) {
+            var name = String(d.file_name || d.file_url || '');
+            var m = name.match(/\.([a-z0-9]{2,5})(?:\?|$)/i);
+            return m ? m[1].toUpperCase() : 'PDF';
         }
-
         function card(d) {
-            var size = fmtSize(d.file_size);
-            var meta = size ? '<span style="opacity:.65">PDF' + (size ? ' &middot; ' + size : '') + '</span>' : '';
-            return '<a href="' + esc(d.file_url) + '" target="_blank" rel="noopener" ' +
-                'style="display:flex;align-items:center;gap:16px;padding:18px 20px;background:var(--white,#fff);' +
-                'border:1px solid rgba(30,58,138,.12);border-radius:14px;text-decoration:none;color:inherit;' +
-                'box-shadow:0 4px 14px rgba(11,31,58,.06);transition:transform .15s,box-shadow .15s" ' +
-                'onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 10px 26px rgba(11,31,58,.12)\'" ' +
-                'onmouseout="this.style.transform=\'\';this.style.boxShadow=\'0 4px 14px rgba(11,31,58,.06)\'">' +
-                '<span style="font-size:1.8rem;color:#e5484d;flex:none"><i class="fas fa-file-pdf"></i></span>' +
-                '<span style="flex:1;min-width:0">' +
-                    '<strong style="display:block">' + esc(d.title) + '</strong>' +
-                    (d.description ? '<span style="display:block;font-size:.88rem;color:var(--gray-500,#64748b);margin-top:2px">' + esc(d.description) + '</span>' : '') +
-                    (meta ? '<span style="display:block;font-size:.78rem;margin-top:4px">' + meta + '</span>' : '') +
-                '</span>' +
-                '<span style="flex:none;color:var(--accent,#3b82f6);font-weight:600"><i class="fas fa-download"></i> Download</span>' +
-                '</a>';
+            var e = ext(d);
+            return '<a class="doc" href="' + esc(d.file_url) + '" target="_blank" rel="noopener">' +
+                '<div class="doc-ico' + (e === 'DOCX' || e === 'DOC' ? ' docx' : '') + '">' + esc(e) + '</div>' +
+                '<div><b>' + esc(d.title) + '</b>' + (d.description ? '<span>' + esc(d.description) + '</span>' : '') + '</div>' +
+                '<div class="doc-meta">' + DL + esc(fmtSize(d.file_size)) + '</div>' +
+            '</a>';
         }
 
         try {
             await ErkaSupabase.init();
-            if (!ErkaSupabase.client) { emptyState('Dokumente können gerade nicht geladen werden.'); return; }
-            var res = await ErkaSupabase.client.from('public_documents').select('*');
+            var sb = ErkaSupabase.client;
+            if (!sb) throw new Error('offline');
+            var res = await sb.from('public_documents').select('*');
             if (res.error) throw res.error;
-            var docs = res.data || [];
-            if (!docs.length) { emptyState('Aktuell sind keine Dokumente hinterlegt. Schau bald wieder vorbei.'); return; }
-
-            // Nach Kategorie gruppieren (Reihenfolge = erstes Auftreten)
-            var groups = {}, order = [];
-            docs.forEach(function (d) {
-                var cat = d.category || 'Weitere Dokumente';
-                if (!groups[cat]) { groups[cat] = []; order.push(cat); }
-                groups[cat].push(d);
-            });
-
-            host.innerHTML = order.map(function (cat) {
-                return '<div style="margin-bottom:40px">' +
-                    '<h2 style="font-size:1.25rem;margin-bottom:18px">' + esc(cat) + '</h2>' +
-                    '<div style="display:flex;flex-direction:column;gap:12px">' +
-                        groups[cat].map(card).join('') +
-                    '</div></div>';
+            var docs = (res.data || []).slice().sort(function (a, b) { return (a.sort_order || 0) - (b.sort_order || 0) || String(a.title).localeCompare(String(b.title), 'de'); });
+            if (!docs.length) {
+                host.innerHTML = '<div class="empty-note">Noch keine Dokumente hinterlegt. Bei Fragen: <a href="kontakt.html" style="color:var(--blue)">Kontakt aufnehmen</a>.</div>';
+                return;
+            }
+            var groups = {};
+            docs.forEach(function (d) { var c = String(d.category || 'dokumente').toLowerCase(); (groups[c] = groups[c] || []).push(d); });
+            var cats = ORDER.filter(function (c) { return groups[c]; }).concat(Object.keys(groups).filter(function (c) { return ORDER.indexOf(c) === -1; }));
+            host.innerHTML = cats.map(function (c) {
+                var label = LABEL[c] || (c.charAt(0).toUpperCase() + c.slice(1));
+                return '<div class="doc-group"><h2>' + esc(label) + ' <span>' + groups[c].length + '</span></h2><div class="doc-list">' + groups[c].map(card).join('') + '</div></div>';
             }).join('');
         } catch (e) {
-            console.warn('Dokumente konnten nicht geladen werden.', e);
-            emptyState('Dokumente können gerade nicht geladen werden.');
+            console.warn('Dokumente konnten nicht geladen werden', e);
+            host.innerHTML = '<div class="empty-note">Dokumente können gerade nicht geladen werden. Bitte später erneut versuchen.</div>';
         }
     })();
     </script>

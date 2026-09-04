@@ -3,182 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <title>Datenschutz | EVV 2000</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
+<body data-page="datenschutz" data-mode="halle">
 
-    <!-- Navigation -->
-    <nav class="navbar scrolled" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
-                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
             </a>
-            <div class="mode-switch">
-                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
-                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
-                <div class="mode-slider"></div>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
             </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
-                <li><a href="events.html" class="nav-link">Events</a></li>
-                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
-                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
-                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
-                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
-                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
-            </ul>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
-    </nav>
+    </header>
+<!-- @chrome:/header -->
 
-    <!-- Page Hero -->
     <section class="page-hero">
-        <div class="container">
-            <span class="section-tag">Rechtliches</span>
-            <h1>Datenschutzerkl&auml;rung</h1>
+        <div class="wrap">
+            <p class="kicker" data-reveal>Rechtliches</p>
+            <h1 data-reveal="2">Datenschutz.</h1>
+            <p class="lead" data-reveal="3">Was mit deinen Daten passiert, wenn du diese Website nutzt – kurz und verständlich.</p>
         </div>
     </section>
 
-    <!-- Datenschutz Content -->
     <section class="section">
-        <div class="container">
-            <div class="legal-content">
-
+        <div class="wrap">
+            <div class="legal prose" data-reveal>
                 <h2>1. Datenschutz auf einen Blick</h2>
-                <p>Die folgenden Hinweise geben einen einfachen &Uuml;berblick dar&uuml;ber, was mit deinen personenbezogenen Daten passiert, wenn du diese Website besuchst. Personenbezogene Daten sind alle Daten, mit denen du pers&ouml;nlich identifiziert werden kannst. Ausf&uuml;hrliche Informationen zum Thema Datenschutz entnimmst du unserer nachfolgenden Datenschutzerkl&auml;rung.</p>
-                <p>Wenn du diese Website nutzt, werden verschiedene personenbezogene Daten erhoben. Die vorliegende Datenschutzerkl&auml;rung erl&auml;utert, welche Daten wir erheben und wof&uuml;r wir sie nutzen. Sie erl&auml;utert auch, wie und zu welchem Zweck das geschieht.</p>
-                <p>Wir weisen darauf hin, dass die Daten&uuml;bertragung im Internet (z.&nbsp;B. bei der Kommunikation per E-Mail) Sicherheitsl&uuml;cken aufweisen kann. Ein l&uuml;ckenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht m&ouml;glich.</p>
+                <p>Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit deinen personenbezogenen Daten passiert, wenn du diese Website besuchst. Personenbezogene Daten sind alle Daten, mit denen du persönlich identifiziert werden kannst. Ausführliche Informationen zum Thema Datenschutz entnimmst du unserer nachfolgenden Datenschutzerklärung.</p>
+                <p>Wenn du diese Website nutzt, werden verschiedene personenbezogene Daten erhoben. Die vorliegende Datenschutzerklärung erläutert, welche Daten wir erheben und wofür wir sie nutzen. Sie erläutert auch, wie und zu welchem Zweck das geschieht.</p>
+                <p>Wir weisen darauf hin, dass die Datenübertragung im Internet (z. B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.</p>
 
                 <h2>2. Verantwortliche Stelle</h2>
-                <p>Die verantwortliche Stelle f&uuml;r die Datenverarbeitung auf dieser Website ist:</p>
-                <p>
-                    Erkelenzer Volleyball Verein 2000 e.V.<br>
-                    Krefelder Stra&szlig;e<br>
-                    41812 Erkelenz
-                </p>
-                <p>
-                    E-Mail: <a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a>
-                </p>
-                <p>Verantwortliche Stelle ist die nat&uuml;rliche oder juristische Person, die allein oder gemeinsam mit anderen &uuml;ber die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten (z.&nbsp;B. Namen, E-Mail-Adressen o.&nbsp;&Auml;.) entscheidet.</p>
+                <p>Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:</p>
+                <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Krefelder Straße<br>41812 Erkelenz</p>
+                <p>E-Mail: <a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></p>
+                <p>Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam mit anderen über die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten (z. B. Namen, E-Mail-Adressen o. Ä.) entscheidet.</p>
 
                 <h2>3. Datenerfassung auf dieser Website</h2>
-
                 <h3>Cookies und LocalStorage</h3>
-                <p>Diese Website verwendet ausschlie&szlig;lich technisch notwendige Cookies und LocalStorage. Diese dienen der Funktionsf&auml;higkeit der Website, insbesondere f&uuml;r Buchungsanfragen der Beachanlage. Es werden keine Tracking-Cookies oder Analyse-Cookies eingesetzt. Eine gesonderte Einwilligung ist f&uuml;r technisch notwendige Cookies nicht erforderlich, da sie auf der Grundlage von Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO verarbeitet werden.</p>
-
+                <p>Diese Website verwendet ausschließlich technisch notwendige Cookies und LocalStorage. Diese dienen der Funktionsfähigkeit der Website, insbesondere für Buchungsanfragen der Beachanlage. Es werden keine Tracking-Cookies oder Analyse-Cookies eingesetzt. Eine gesonderte Einwilligung ist für technisch notwendige Cookies nicht erforderlich, da sie auf der Grundlage von Art. 6 Abs. 1 lit. f DSGVO verarbeitet werden.</p>
                 <h3>Kontaktformular</h3>
-                <p>Wenn du uns per Kontaktformular Anfragen zukommen l&auml;sst, werden deine Angaben aus dem Anfrageformular inklusive der von dir dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und f&uuml;r den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne deine Einwilligung weiter. Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b DSGVO, sofern deine Anfrage mit der Erf&uuml;llung eines Vertrags zusammenh&auml;ngt oder zur Durchf&uuml;hrung vorvertraglicher Ma&szlig;nahmen erforderlich ist. In allen &uuml;brigen F&auml;llen beruht die Verarbeitung auf unserem berechtigten Interesse an der effektiven Bearbeitung der an uns gerichteten Anfragen (Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO).</p>
-
+                <p>Wenn du uns per Kontaktformular Anfragen zukommen lässt, werden deine Angaben aus dem Anfrageformular inklusive der von dir dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne deine Einwilligung weiter. Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO, sofern deine Anfrage mit der Erfüllung eines Vertrags zusammenhängt oder zur Durchführung vorvertraglicher Maßnahmen erforderlich ist. In allen übrigen Fällen beruht die Verarbeitung auf unserem berechtigten Interesse an der effektiven Bearbeitung der an uns gerichteten Anfragen (Art. 6 Abs. 1 lit. f DSGVO).</p>
                 <h3>Mitgliedsantrag</h3>
-                <p>Die im Mitgliedsantragsformular eingegebenen Daten (Name, Adresse, Geburtsdatum, Kontaktdaten, gew&uuml;nschte Mannschaft) werden per E-Mail an den Vereinsvorstand &uuml;bermittelt und zum Zweck der Mitgliederverwaltung verarbeitet. Die Verarbeitung erfolgt auf Grundlage von Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b DSGVO zur Erf&uuml;llung des Mitgliedschaftsvertrags. Die Daten werden f&uuml;r die Dauer der Mitgliedschaft und dar&uuml;ber hinaus gem&auml;&szlig; den gesetzlichen Aufbewahrungsfristen gespeichert.</p>
+                <p>Die im Mitgliedsantragsformular eingegebenen Daten (Name, Adresse, Geburtsdatum, Kontaktdaten, Bankverbindung, gewünschte Mannschaft) werden zum Zweck der Mitgliederverwaltung gespeichert und verarbeitet. Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO zur Erfüllung des Mitgliedschaftsvertrags. Die Daten werden für die Dauer der Mitgliedschaft und darüber hinaus gemäß den gesetzlichen Aufbewahrungsfristen gespeichert.</p>
 
                 <h2>4. Hosting</h2>
-                <p>Diese Website wird bei Vercel Inc. (340 S Lemon Ave #4133, Walnut, CA 91789, USA) gehostet. Wenn du unsere Website besuchst, werden durch Vercel automatisch Informationen in sogenannten Server-Log-Dateien erfasst, die dein Browser automatisch &uuml;bermittelt. Dies umfasst unter anderem deine IP-Adresse, Datum und Uhrzeit des Zugriffs, die aufgerufene Seite sowie den verwendeten Browser und das Betriebssystem.</p>
-                <p>Vercel kann Daten in die USA &uuml;bertragen. Die Daten&uuml;bertragung in die USA wird auf Grundlage des EU-U.S. Data Privacy Framework gest&uuml;tzt. Weitere Informationen findest du in der Datenschutzerkl&auml;rung von Vercel unter <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">vercel.com/legal/privacy-policy</a>.</p>
-                <p>Die Nutzung von Vercel erfolgt auf Grundlage von Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO. Wir haben ein berechtigtes Interesse an einer zuverl&auml;ssigen und schnellen Darstellung unserer Website.</p>
+                <p>Diese Website wird bei Vercel Inc. (340 S Lemon Ave #4133, Walnut, CA 91789, USA) gehostet. Wenn du unsere Website besuchst, werden durch Vercel automatisch Informationen in sogenannten Server-Log-Dateien erfasst, die dein Browser automatisch übermittelt. Dies umfasst unter anderem deine IP-Adresse, Datum und Uhrzeit des Zugriffs, die aufgerufene Seite sowie den verwendeten Browser und das Betriebssystem.</p>
+                <p>Vercel kann Daten in die USA übertragen. Die Datenübertragung in die USA wird auf Grundlage des EU-U.S. Data Privacy Framework gestützt. Weitere Informationen findest du in der Datenschutzerklärung von Vercel unter <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">vercel.com/legal/privacy-policy</a>.</p>
+                <p>Die Nutzung von Vercel erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Wir haben ein berechtigtes Interesse an einer zuverlässigen und schnellen Darstellung unserer Website.</p>
 
                 <h2>5. Externe Dienste</h2>
-
                 <h3>Google Fonts</h3>
-                <p>Diese Website nutzt zur einheitlichen Darstellung von Schriftarten sogenannte Google Fonts, die von Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) bereitgestellt werden. Beim Aufrufen einer Seite l&auml;dt dein Browser die ben&ouml;tigten Schriftarten in deinen Browser-Cache, um Texte und Schriftarten korrekt anzuzeigen. Zu diesem Zweck muss der von dir verwendete Browser Verbindung zu den Servern von Google aufnehmen. Hierdurch erlangt Google Kenntnis dar&uuml;ber, dass &uuml;ber deine IP-Adresse unsere Website aufgerufen wurde.</p>
-                <p>Die Nutzung von Google Fonts erfolgt auf Grundlage von Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO. Wir haben ein berechtigtes Interesse an einer einheitlichen und ansprechenden Darstellung unserer Website. Weitere Informationen zu Google Fonts findest du unter <a href="https://fonts.google.com" target="_blank" rel="noopener">fonts.google.com</a> und in der Datenschutzerkl&auml;rung von Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
-
-                <h3>Font Awesome</h3>
-                <p>Diese Website nutzt zur Darstellung von Icons den Dienst Font Awesome. Die Icons werden von cdnjs.cloudflare.com geladen. Beim Aufrufen einer Seite l&auml;dt dein Browser die ben&ouml;tigten Icon-Dateien von den Servern von Cloudflare (101 Townsend St, San Francisco, CA 94107, USA). Hierbei wird deine IP-Adresse an Cloudflare &uuml;bermittelt.</p>
-                <p>Die Nutzung von Font Awesome erfolgt auf Grundlage von Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO. Wir haben ein berechtigtes Interesse an einer ansprechenden Darstellung unserer Website.</p>
-
+                <p>Diese Website nutzt zur einheitlichen Darstellung von Schriftarten sogenannte Google Fonts, die von Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) bereitgestellt werden. Beim Aufrufen einer Seite lädt dein Browser die benötigten Schriftarten in deinen Browser-Cache, um Texte und Schriftarten korrekt anzuzeigen. Zu diesem Zweck muss der von dir verwendete Browser Verbindung zu den Servern von Google aufnehmen. Hierdurch erlangt Google Kenntnis darüber, dass über deine IP-Adresse unsere Website aufgerufen wurde.</p>
+                <p>Die Nutzung von Google Fonts erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Wir haben ein berechtigtes Interesse an einer einheitlichen und ansprechenden Darstellung unserer Website. Weitere Informationen zu Google Fonts findest du unter <a href="https://fonts.google.com" target="_blank" rel="noopener">fonts.google.com</a> und in der Datenschutzerklärung von Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
+                <h3>Google Maps</h3>
+                <p>Auf der Kontaktseite und der Seite der Beachanlage binden wir eine Karte von Google Maps (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland) ein. Beim Laden der Karte werden Daten, insbesondere deine IP-Adresse, an Google übermittelt. Die Nutzung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO – wir haben ein berechtigtes Interesse an einer leichten Auffindbarkeit unserer Standorte. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
                 <h3>Supabase</h3>
-                <p>F&uuml;r unser Buchungssystem und die Verwaltung von Vereinsdaten nutzen wir Supabase (Supabase Inc., 970 Toa Payoh North #07-04, Singapore 318992). Supabase stellt die Datenbank-Infrastruktur f&uuml;r Buchungsanfragen, Veranstaltungsdaten und Vereinsinformationen bereit. Bei der Nutzung des Buchungssystems werden Daten an Supabase-Server &uuml;bermittelt und dort verarbeitet.</p>
-                <p>Die Nutzung von Supabase erfolgt auf Grundlage von Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b DSGVO (Vertragserf&uuml;llung) sowie Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO (berechtigtes Interesse). Weitere Informationen findest du in der Datenschutzerkl&auml;rung von Supabase unter <a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a>.</p>
-
+                <p>Für unser Buchungssystem und die Verwaltung von Vereinsdaten nutzen wir Supabase (Supabase Inc., 970 Toa Payoh North #07-04, Singapore 318992). Supabase stellt die Datenbank-Infrastruktur für Buchungsanfragen, Veranstaltungsdaten und Vereinsinformationen bereit. Bei der Nutzung des Buchungssystems werden Daten an Supabase-Server übermittelt und dort verarbeitet.</p>
+                <p>Die Nutzung von Supabase erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse). Weitere Informationen findest du in der Datenschutzerklärung von Supabase unter <a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a>.</p>
                 <h3>Stripe</h3>
-                <p>F&uuml;r die Abwicklung von Online-Zahlungen (z.&nbsp;B. Buchungen der Beachanlage) nutzen wir den Zahlungsdienstleister Stripe (Stripe Inc., 354 Oyster Point Blvd, South San Francisco, CA 94080, USA). Bei der Durchf&uuml;hrung einer Zahlung werden deine Zahlungsdaten direkt an Stripe &uuml;bermittelt und dort verarbeitet. Wir selbst speichern keine vollst&auml;ndigen Zahlungsdaten.</p>
-                <p>Die Verarbeitung erfolgt auf Grundlage von Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b DSGVO (Vertragserf&uuml;llung). Weitere Informationen findest du in der Datenschutzerkl&auml;rung von Stripe unter <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener">stripe.com/de/privacy</a>.</p>
+                <p>Für die Abwicklung von Online-Zahlungen (z. B. Turnieranmeldungen oder Buchungen der Beachanlage) nutzen wir den Zahlungsdienstleister Stripe (Stripe Inc., 354 Oyster Point Blvd, South San Francisco, CA 94080, USA). Bei der Durchführung einer Zahlung werden deine Zahlungsdaten direkt an Stripe übermittelt und dort verarbeitet. Wir selbst speichern keine vollständigen Zahlungsdaten.</p>
+                <p>Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung). Weitere Informationen findest du in der Datenschutzerklärung von Stripe unter <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener">stripe.com/de/privacy</a>.</p>
 
                 <h2>6. Beachanlage-Buchungen</h2>
-                <p>Bei der Buchung eines Beachfeldes &uuml;ber unser Online-Buchungssystem werden folgende personenbezogene Daten erfasst und verarbeitet:</p>
+                <p>Bei der Anfrage oder Buchung eines Beachfeldes über unsere Website werden folgende personenbezogene Daten erfasst und verarbeitet:</p>
                 <ul>
                     <li>Name des Buchenden</li>
                     <li>E-Mail-Adresse</li>
                     <li>Telefonnummer</li>
-                    <li>Buchungsdetails (gew&uuml;nschtes Feld, Datum, Uhrzeit, Dauer)</li>
+                    <li>Buchungsdetails (gewünschtes Feld, Datum, Uhrzeit, Dauer)</li>
                     <li>Zahlungsinformationen (werden direkt von Stripe verarbeitet)</li>
                 </ul>
-                <p>Diese Daten werden zur Durchf&uuml;hrung und Verwaltung der Buchung ben&ouml;tigt und auf Grundlage von Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b DSGVO (Vertragserf&uuml;llung) verarbeitet. Die Buchungsdaten werden f&uuml;r die Dauer der Buchungsabwicklung sowie dar&uuml;ber hinaus gem&auml;&szlig; den gesetzlichen Aufbewahrungsfristen gespeichert.</p>
+                <p>Diese Daten werden zur Durchführung und Verwaltung der Buchung benötigt und auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) verarbeitet. Die Buchungsdaten werden für die Dauer der Buchungsabwicklung sowie darüber hinaus gemäß den gesetzlichen Aufbewahrungsfristen gespeichert.</p>
 
                 <h2>7. Deine Rechte</h2>
-                <p>Du hast im Rahmen der geltenden gesetzlichen Bestimmungen jederzeit das Recht auf unentgeltliche Auskunft &uuml;ber deine gespeicherten personenbezogenen Daten, deren Herkunft und Empf&auml;nger und den Zweck der Datenverarbeitung sowie ggf. ein Recht auf Berichtigung, Sperrung oder L&ouml;schung dieser Daten. Im Einzelnen stehen dir folgende Rechte zu:</p>
+                <p>Du hast im Rahmen der geltenden gesetzlichen Bestimmungen jederzeit das Recht auf unentgeltliche Auskunft über deine gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung sowie ggf. ein Recht auf Berichtigung, Sperrung oder Löschung dieser Daten. Im Einzelnen stehen dir folgende Rechte zu:</p>
                 <ul>
-                    <li><strong>Recht auf Auskunft (Art.&nbsp;15 DSGVO):</strong> Du hast das Recht, Auskunft &uuml;ber deine von uns verarbeiteten personenbezogenen Daten zu verlangen.</li>
-                    <li><strong>Recht auf Berichtigung (Art.&nbsp;16 DSGVO):</strong> Du hast das Recht, die Berichtigung unrichtiger oder die Vervollst&auml;ndigung unvollst&auml;ndiger personenbezogener Daten zu verlangen.</li>
-                    <li><strong>Recht auf L&ouml;schung (Art.&nbsp;17 DSGVO):</strong> Du hast das Recht, die L&ouml;schung deiner personenbezogenen Daten zu verlangen, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</li>
-                    <li><strong>Recht auf Einschr&auml;nkung der Verarbeitung (Art.&nbsp;18 DSGVO):</strong> Du hast das Recht, die Einschr&auml;nkung der Verarbeitung deiner personenbezogenen Daten zu verlangen.</li>
-                    <li><strong>Recht auf Daten&uuml;bertragbarkeit (Art.&nbsp;20 DSGVO):</strong> Du hast das Recht, die dich betreffenden personenbezogenen Daten in einem strukturierten, g&auml;ngigen und maschinenlesbaren Format zu erhalten.</li>
-                    <li><strong>Recht auf Widerspruch (Art.&nbsp;21 DSGVO):</strong> Du hast das Recht, aus Gr&uuml;nden, die sich aus deiner besonderen Situation ergeben, jederzeit gegen die Verarbeitung deiner personenbezogenen Daten Widerspruch einzulegen.</li>
+                    <li><strong>Recht auf Auskunft (Art. 15 DSGVO):</strong> Du hast das Recht, Auskunft über deine von uns verarbeiteten personenbezogenen Daten zu verlangen.</li>
+                    <li><strong>Recht auf Berichtigung (Art. 16 DSGVO):</strong> Du hast das Recht, die Berichtigung unrichtiger oder die Vervollständigung unvollständiger personenbezogener Daten zu verlangen.</li>
+                    <li><strong>Recht auf Löschung (Art. 17 DSGVO):</strong> Du hast das Recht, die Löschung deiner personenbezogenen Daten zu verlangen, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</li>
+                    <li><strong>Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO):</strong> Du hast das Recht, die Einschränkung der Verarbeitung deiner personenbezogenen Daten zu verlangen.</li>
+                    <li><strong>Recht auf Datenübertragbarkeit (Art. 20 DSGVO):</strong> Du hast das Recht, die dich betreffenden personenbezogenen Daten in einem strukturierten, gängigen und maschinenlesbaren Format zu erhalten.</li>
+                    <li><strong>Recht auf Widerspruch (Art. 21 DSGVO):</strong> Du hast das Recht, aus Gründen, die sich aus deiner besonderen Situation ergeben, jederzeit gegen die Verarbeitung deiner personenbezogenen Daten Widerspruch einzulegen.</li>
                 </ul>
-                <p>Zur Aus&uuml;bung deiner Rechte kannst du dich jederzeit an uns wenden unter: <a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></p>
-                <p>Du hast zudem das Recht, dich bei einer Datenschutz-Aufsichtsbeh&ouml;rde &uuml;ber die Verarbeitung deiner personenbezogenen Daten zu beschweren.</p>
+                <p>Zur Ausübung deiner Rechte kannst du dich jederzeit an uns wenden unter: <a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></p>
+                <p>Du hast zudem das Recht, dich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung deiner personenbezogenen Daten zu beschweren.</p>
 
-                <h2>8. SSL-/TLS-Verschl&uuml;sselung</h2>
-                <p>Diese Seite nutzt aus Sicherheitsgr&uuml;nden und zum Schutz der &Uuml;bertragung vertraulicher Inhalte, wie zum Beispiel Buchungsanfragen, Kontaktanfragen oder Mitgliedsantr&auml;ge, eine SSL- bzw. TLS-Verschl&uuml;sselung. Eine verschl&uuml;sselte Verbindung erkennst du daran, dass die Adresszeile des Browsers von &bdquo;http://&ldquo; auf &bdquo;https://&ldquo; wechselt und an dem Schloss-Symbol in deiner Browserzeile.</p>
-                <p>Wenn die SSL- bzw. TLS-Verschl&uuml;sselung aktiviert ist, k&ouml;nnen die Daten, die du an uns &uuml;bermittelst, nicht von Dritten mitgelesen werden.</p>
-
+                <h2>8. SSL-/TLS-Verschlüsselung</h2>
+                <p>Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, wie zum Beispiel Buchungsanfragen, Kontaktanfragen oder Mitgliedsanträge, eine SSL- bzw. TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennst du daran, dass die Adresszeile des Browsers von „http://" auf „https://" wechselt und an dem Schloss-Symbol in deiner Browserzeile.</p>
+                <p>Wenn die SSL- bzw. TLS-Verschlüsselung aktiviert ist, können die Daten, die du an uns übermittelst, nicht von Dritten mitgelesen werden.</p>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+<!-- @chrome:footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="wrap">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
-                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
                 </div>
-                <div class="footer-links">
+                <div>
                     <h4>Verein</h4>
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
-                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Angebote</h4>
-                    <ul>
-                        <li><a href="beachanlage.html">Beachanlage</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>Rechtliches</h4>
+                <div>
+                    <h4>Mitmachen</h4>
                     <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
-                        <li><a href="#">Vereinssatzung</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
-    <script src="js/main.js"></script>
+    <script src="js/matchday.js"></script>
 </body>
 </html>

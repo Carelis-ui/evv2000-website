@@ -3,177 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Neuigkeiten, Spielberichte und Aktuelles vom Erkelenzer Volleyball Verein 2000 e.V.">
+    <meta name="description" content="Aktuelles vom EVV 2000 – Spielberichte, Aufstiege, Camps und Neuigkeiten aus dem Vereinsleben.">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta property="og:title" content="Aktuelles | EVV 2000">
-    <meta property="og:description" content="Neuigkeiten und Spielberichte aus dem Vereinsleben des EVV 2000.">
+    <meta property="og:description" content="Spielberichte, Aufstiege und Neuigkeiten aus dem Vereinsleben des EVV 2000.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://evv2000-website.vercel.app/aktuelles">
-    <meta property="og:image" content="https://evv2000-website.vercel.app/img/hero-bg.jpg">
-    <title>Neuigkeiten &amp; Spielberichte | EVV 2000</title>
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/team-haie-26-27.jpg">
+    <title>Aktuelles | EVV 2000</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar scrolled" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
-                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+<body data-page="aktuelles" data-mode="halle">
+
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
             </a>
-            <div class="mode-switch">
-                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
-                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
-                <div class="mode-slider"></div>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
             </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
-                <li><a href="events.html" class="nav-link">Events</a></li>
-                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
-                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
-                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
-                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
-                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
-            </ul>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
-    </nav>
+    </header>
+<!-- @chrome:/header -->
 
-    <!-- Page Hero -->
     <section class="page-hero">
-        <div class="container">
-            <span class="section-tag">Aktuelles</span>
-            <h1>Neuigkeiten &amp; Spielberichte</h1>
+        <div class="wrap">
+            <p class="kicker" data-reveal>Aktuelles</p>
+            <h1 data-reveal="2">Neues aus<br>dem Verein.</h1>
+            <p class="lead" data-reveal="3">Spielberichte, Aufstiege, Camps und alles, was beim EVV 2000 gerade passiert.</p>
         </div>
     </section>
 
-    <!-- News Content -->
-    <section class="section news">
-        <div class="container">
-            <div class="news-grid" id="newsGrid">
-                <div class="news-loading"><div class="news-spinner"></div><p>Lade Neuigkeiten...</p></div>
+    <section class="section">
+        <div class="wrap">
+            <div class="toolbar" data-reveal>
+                <div class="pills" id="tagFilter" role="group" aria-label="Kategorie"></div>
+                <span class="count" id="newsCount"></span>
+            </div>
+            <div id="newsFeatured" data-reveal></div>
+            <div class="article-grid" id="newsList" data-reveal>
+                <div class="empty-note">Beiträge werden geladen…</div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+<!-- @chrome:footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="wrap">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
-                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
                 </div>
-                <div class="footer-links">
+                <div>
                     <h4>Verein</h4>
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
-                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Angebote</h4>
-                    <ul>
-                        <li><a href="beachanlage.html">Beachanlage</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>Rechtliches</h4>
+                <div>
+                    <h4>Mitmachen</h4>
                     <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
-                        <li><a href="#">Vereinssatzung</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
-    <script src="js/main.js"></script>
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/matchday.js"></script>
     <script>
-    (async function() {
-        var grid = document.getElementById('newsGrid');
+    (async function () {
+        var MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+        var featured = document.getElementById('newsFeatured');
+        var list = document.getElementById('newsList');
+        var pills = document.getElementById('tagFilter');
+        var items = [];
+        var filter = 'all';
+
+        function esc(s) {
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        function fmtDate(iso) {
+            if (!iso) return '';
+            var d = new Date(iso);
+            return d.getUTCDate() + '. ' + MONTHS[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+        }
+        function paragraphs(text) {
+            var t = String(text || '').replace(/<[^>]+>/g, '').trim();
+            if (!t) return '';
+            return t.split(/\n{2,}/).map(function (p) { return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>'; }).join('');
+        }
+        function label(n) { return n.tag_label || (n.tag === 'success' ? 'Neuigkeit' : 'Info'); }
+
+        function article(n, big) {
+            var media = n.image_url ? '<div class="article-media"><img src="' + esc(n.image_url) + '" alt="" loading="lazy"></div>' : '';
+            return '<article class="article' + (big ? ' article--featured' : '') + '" id="' + esc(n.id) + '">' +
+                media +
+                '<div class="article-body">' +
+                    '<div class="news-meta"><span class="tag">' + esc(label(n)) + '</span><span>' + esc(fmtDate(n.published_at)) + '</span></div>' +
+                    '<h2>' + esc(n.title) + '</h2>' +
+                    '<div class="prose">' + paragraphs(n.content || n.excerpt) + '</div>' +
+                '</div>' +
+            '</article>';
+        }
+
+        function render() {
+            var shown = items.filter(function (n) { return filter === 'all' || label(n) === filter; });
+            document.getElementById('newsCount').textContent = shown.length + (shown.length === 1 ? ' Beitrag' : ' Beiträge');
+            if (!shown.length) {
+                featured.innerHTML = '';
+                list.innerHTML = '<div class="empty-note">Noch keine Beiträge in dieser Kategorie.</div>';
+                return;
+            }
+            var first = shown[0], rest = shown.slice(1);
+            featured.innerHTML = article(first, true);
+            list.innerHTML = rest.map(function (n) { return article(n, false); }).join('');
+            if (location.hash) {
+                var target = document.getElementById(location.hash.slice(1));
+                if (target) setTimeout(function () { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
+            }
+        }
 
         try {
             await ErkaSupabase.init();
             var sb = ErkaSupabase.client;
-
-            if (!sb) {
-                grid.innerHTML = '<div class="news-empty"><div class="news-empty-icon"><i class="fas fa-newspaper"></i></div><h3>Noch keine Neuigkeiten</h3><p>Bald gibt es hier Spielberichte, Aufstiege und alles rund um den EVV 2000.</p></div>';
+            if (!sb) throw new Error('offline');
+            var res = await sb.from('public_news').select('*').order('published_at', { ascending: false });
+            if (res.error) throw res.error;
+            items = res.data || [];
+            if (!items.length) {
+                list.innerHTML = '<div class="empty-note">Noch keine Beiträge – bald gibt es hier Spielberichte, Aufstiege und alles rund um den EVV 2000.</div>';
                 return;
             }
-
-            var { data: news, error } = await sb
-                .from('public_news')
-                .select('*')
-                .order('published_at', { ascending: false });
-
-            if (error) throw error;
-
-            if (!news || news.length === 0) {
-                grid.innerHTML = '<div class="news-empty"><div class="news-empty-icon"><i class="fas fa-newspaper"></i></div><h3>Noch keine Neuigkeiten</h3><p>Bald gibt es hier Spielberichte, Aufstiege und alles rund um den EVV 2000.</p></div>';
-                return;
-            }
-
-            var monthNames = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-
-            grid.innerHTML = news.map(function(item) {
-                // Format date
-                var dateStr = '';
-                if (item.published_at) {
-                    var d = new Date(item.published_at);
-                    dateStr = d.getUTCDate() + '. ' + monthNames[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
-                }
-
-                // Tag styling
-                var tagClass = item.tag || 'info';
-                var tagLabel = item.tag_label || (tagClass === 'success' ? 'Neuigkeit' : 'Info');
-
-                // Highlight card for success tags
-                var cardClass = 'news-card';
-                if (tagClass === 'success') {
-                    cardClass += ' highlight-card';
-                }
-
-                var imgHtml = item.image_url
-                    ? '<div class="news-card-img"><img src="' + item.image_url + '" alt="" loading="lazy"></div>'
-                    : '';
-
-                return '<div class="' + cardClass + '">' +
-                    imgHtml +
-                    '<div class="news-tag ' + tagClass + '">' + tagLabel + '</div>' +
-                    '<h3>' + (item.title || '') + '</h3>' +
-                    (dateStr ? '<p class="news-date">' + dateStr + '</p>' : '') +
-                    '<p>' + (item.content || item.excerpt || '') + '</p>' +
-                '</div>';
-            }).join('');
-
-        } catch (err) {
-            console.error('News load error:', err);
-            grid.innerHTML = '<div class="news-empty"><div class="news-empty-icon"><i class="fas fa-newspaper"></i></div><h3>Noch keine Neuigkeiten</h3><p>Bald gibt es hier Spielberichte, Aufstiege und alles rund um den EVV 2000.</p></div>';
+            var labels = [];
+            items.forEach(function (n) { var l = label(n); if (labels.indexOf(l) === -1) labels.push(l); });
+            pills.innerHTML = '<button class="pill is-active" data-filter="all" type="button">Alle</button>' +
+                labels.map(function (l) { return '<button class="pill" data-filter="' + esc(l) + '" type="button">' + esc(l) + '</button>'; }).join('');
+            pills.querySelectorAll('.pill').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    pills.querySelectorAll('.pill').forEach(function (x) { x.classList.remove('is-active'); });
+                    b.classList.add('is-active');
+                    filter = b.getAttribute('data-filter');
+                    render();
+                });
+            });
+            render();
+        } catch (e) {
+            console.warn('News konnten nicht geladen werden', e);
+            list.innerHTML = '<div class="empty-note">Die Beiträge konnten gerade nicht geladen werden. Bitte später erneut versuchen.</div>';
         }
     })();
     </script>
-    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
 </body>
 </html>

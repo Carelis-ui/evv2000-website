@@ -3,198 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Events und Turniere des EVV 2000 – Midsommar-Cup, SNBFM-Turnier, ERKA-Turnier und mehr.">
+    <meta name="description" content="Events und Turniere des EVV 2000 – ERKA-Turnier, Beachturniere, Camps. Termine, Infos und Anmeldung.">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <meta property="og:title" content="Events & Turniere | EVV 2000">
-    <meta property="og:description" content="Unsere Highlights – Midsommar-Cup, SNBFM-Turnier und ERKA-Turnier.">
+    <meta property="og:title" content="Events &amp; Turniere | EVV 2000">
+    <meta property="og:description" content="Turniere und Events des EVV 2000 – Termine, Infos und Anmeldung.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://evv2000-website.vercel.app/events">
-    <meta property="og:image" content="https://evv2000-website.vercel.app/img/hero-bg.jpg">
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/team-haie-26-27.jpg">
     <title>Events &amp; Turniere | EVV 2000</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar scrolled" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">
-                <img src="img/logo.svg" alt="EVV 2000 Logo" class="nav-logo-img">
-                <span class="logo-evv">EVV</span><span class="logo-2000">2000</span>
+<body data-page="events" data-mode="halle">
+
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer Volleyball-Verein</small></span>
             </a>
-            <div class="mode-switch">
-                <a href="index.html" class="mode-btn mode-active" data-mode="halle"><i class="fas fa-volleyball-ball"></i> Halle</a>
-                <a href="beachanlage.html" class="mode-btn" data-mode="beach"><i class="fas fa-umbrella-beach"></i> Beach</a>
-                <div class="mode-slider"></div>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
             </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Navigation umschalten">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="mannschaften.html" class="nav-link">Mannschaften</a></li>
-                <li><a href="events.html" class="nav-link">Events</a></li>
-                <li><a href="kalender.html" class="nav-link">Kalender</a></li>
-                <li><a href="aktuelles.html" class="nav-link">Aktuelles</a></li>
-                <li><a href="sponsoren.html" class="nav-link">Sponsoren</a></li>
-                <li><a href="kontakt.html" class="nav-link">Kontakt</a></li>
-                <li><a href="mitgliedschaft.html" class="nav-link nav-cta">Mitglied werden</a></li>
-            </ul>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
-    </nav>
+    </header>
+<!-- @chrome:/header -->
 
-    <!-- Page Hero -->
     <section class="page-hero">
-        <div class="container">
-            <span class="section-tag">Events &amp; Turniere</span>
-            <h1>Unsere Highlights</h1>
-            <p>Tradition trifft auf Begeisterung &ndash; unsere j&auml;hrlichen Turniere sind fester Bestandteil des regionalen Volleyballkalenders.</p>
+        <div class="wrap">
+            <p class="kicker" data-reveal>Events &amp; Turniere</p>
+            <h1 data-reveal="2">Unsere<br>Highlights.</h1>
+            <p class="lead" data-reveal="3">ERKA-Turnier, Beachturniere, Camps – die Termine, bei denen der ganze Verein zusammenkommt. Anmeldung direkt online.</p>
         </div>
     </section>
 
-    <!-- Events Content -->
-    <section class="section events">
-        <div class="container">
-            <div class="events-grid" id="eventsGrid">
-                <p style="text-align:center;color:var(--gray-500);grid-column:1/-1">Lade Turniere...</p>
+    <section class="section">
+        <div class="wrap">
+            <div class="toolbar" data-reveal>
+                <div class="pills" id="typeFilter" role="group" aria-label="Art">
+                    <button class="pill is-active" data-filter="all" type="button">Alle</button>
+                    <button class="pill" data-filter="upcoming" type="button">Anstehend</button>
+                    <button class="pill" data-filter="beach" type="button">Beach</button>
+                    <button class="pill" data-filter="halle" type="button">Halle</button>
+                </div>
+                <span class="count" id="eventCount"></span>
+            </div>
+            <div class="event-grid" id="eventsGrid" data-reveal>
+                <div class="empty-note">Turniere werden geladen…</div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <section class="join">
+        <div class="wrap join-inner">
+            <div data-reveal>
+                <h2>Turnier bei uns<br>ausrichten?</h2>
+                <p>Halle oder Beachanlage – wir haben Platz für Firmen-Cups, Schulturniere und Freundschaftsspiele. Schreib uns einfach.</p>
+            </div>
+            <div class="join-actions" data-reveal="2">
+                <a class="btn btn-white btn-lg" href="kontakt.html">Anfrage senden</a>
+                <a class="btn btn-ghost btn-lg" href="beachanlage.html">ERKA Beach</a>
+            </div>
+        </div>
+    </section>
+
+<!-- @chrome:footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="wrap">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div class="footer-logo"><img src="img/logo.svg" alt="EVV 2000 Logo" class="footer-logo-img"></div>
-                    <p>Erkelenzer Volleyball Verein 2000 e.V.<br>Volleyball f&uuml;r alle &ndash; seit &uuml;ber 25 Jahren.</p>
-                    <div class="footer-social">
-                        <a href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
                 </div>
-                <div class="footer-links">
+                <div>
                     <h4>Verein</h4>
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
-                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
-                        <li><a href="kontakt.html">Kontakt</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Angebote</h4>
-                    <ul>
-                        <li><a href="beachanlage.html">Beachanlage</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h4>Rechtliches</h4>
+                <div>
+                    <h4>Mitmachen</h4>
                     <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
-                        <li><a href="#">Vereinssatzung</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Erkelenzer Volleyball Verein 2000 e.V. Alle Rechte vorbehalten.</p>
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
             </div>
         </div>
     </footer>
+<!-- @chrome:/footer -->
 
-    <script src="js/main.js"></script>
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/matchday.js"></script>
     <script>
-    (async function() {
-        const grid = document.getElementById('eventsGrid');
+    (async function () {
+        var MONTHS = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+        var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>';
+        var grid = document.getElementById('eventsGrid');
+        var items = [];
+        var filter = 'all';
+
+        function esc(s) {
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        function dOf(v) { return v ? new Date(String(v).length <= 10 ? v + 'T00:00:00' : v) : null; }
+        function range(t) {
+            var a = dOf(t.date_start), b = dOf(t.date_end);
+            if (!a) return '';
+            var s = a.getDate() + '. ' + MONTHS[a.getMonth()] + ' ' + a.getFullYear();
+            if (b && b.toDateString() !== a.toDateString()) s = a.getDate() + '.–' + b.getDate() + '. ' + MONTHS[b.getMonth()] + ' ' + b.getFullYear();
+            return s;
+        }
+
+        function render() {
+            var today = new Date(); today.setHours(0, 0, 0, 0);
+            var shown = items.filter(function (t) {
+                var type = (t.type || '').toLowerCase();
+                if (filter === 'beach') return type === 'beach';
+                if (filter === 'halle') return type !== 'beach';
+                if (filter === 'upcoming') { var end = dOf(t.date_end) || dOf(t.date_start); return end && end >= today; }
+                return true;
+            });
+            document.getElementById('eventCount').textContent = shown.length + (shown.length === 1 ? ' Turnier' : ' Turniere');
+            if (!shown.length) { grid.innerHTML = '<div class="empty-note">Aktuell sind keine Turniere in dieser Auswahl geplant.</div>'; return; }
+            grid.innerHTML = shown.map(function (t) {
+                var a = dOf(t.date_start);
+                var isBeach = (t.type || '').toLowerCase() === 'beach';
+                var end = dOf(t.date_end) || a;
+                var past = end && end < today;
+                var features = [isBeach ? 'Beach · Outdoor' : 'Halle'];
+                if (t.max_teams) features.push(t.max_teams + ' Teams');
+                if (t.has_trophy) features.push('Wanderpokal');
+                if (t.is_wvv) features.push('WVV');
+                var desc = String(t.description || '').replace(/<[^>]+>/g, '');
+                if (desc.length > 170) desc = desc.slice(0, 167).replace(/\s+\S*$/, '') + '…';
+                var media = t.image_url ? '<div class="event-media"><img src="' + esc(t.image_url) + '" alt="" loading="lazy"></div>' : '';
+                return '<a class="event-card' + (t.featured ? ' featured' : '') + (past ? ' past' : '') + '" href="turnier.html?id=' + esc(t.id) + '">' +
+                    '<div class="event-date"><b>' + (a ? a.getDate() : '–') + '</b><span>' + (a ? MONTHS[a.getMonth()] + ' ' + String(a.getFullYear()).slice(2) : '') + '</span></div>' +
+                    '<div class="event-body">' + media +
+                        '<div class="news-meta"><span class="tag' + (isBeach ? '' : ' tag--ghost') + '">' + (isBeach ? 'Beachturnier' : 'Hallenturnier') + '</span><span>' + esc(range(t)) + (past ? ' · vorbei' : '') + '</span></div>' +
+                        '<h3>' + esc(t.name) + '</h3>' +
+                        (desc ? '<p>' + esc(desc) + '</p>' : '') +
+                        '<div class="event-features">' + features.map(function (f) { return '<span>' + esc(f) + '</span>'; }).join('') + '</div>' +
+                        '<span class="link-arrow">' + (past ? 'Rückblick' : 'Details & Anmeldung') + ' ' + ARROW + '</span>' +
+                    '</div>' +
+                '</a>';
+            }).join('');
+        }
+
+        document.querySelectorAll('#typeFilter .pill').forEach(function (b) {
+            b.addEventListener('click', function () {
+                document.querySelectorAll('#typeFilter .pill').forEach(function (x) { x.classList.remove('is-active'); });
+                b.classList.add('is-active');
+                filter = b.getAttribute('data-filter');
+                render();
+            });
+        });
 
         try {
             await ErkaSupabase.init();
-            const sb = ErkaSupabase.client;
-
-            if (!sb) {
-                grid.innerHTML = '<p style="text-align:center;color:var(--gray-500);grid-column:1/-1">Turniere konnten nicht geladen werden. Bitte versuche es sp&auml;ter erneut.</p>';
-                return;
-            }
-
-            const { data: tournaments, error } = await sb
-                .from('public_tournaments')
-                .select('*')
-                .order('date_start', { ascending: true });
-
-            if (error) throw error;
-
-            if (!tournaments || tournaments.length === 0) {
-                grid.innerHTML = '<p style="text-align:center;color:var(--gray-500);grid-column:1/-1">Aktuell sind keine Turniere geplant.</p>';
-                return;
-            }
-
-            const monthNames = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-
-            grid.innerHTML = tournaments.map(function(t) {
-                var d = new Date(t.date_start);
-                var month = monthNames[d.getUTCMonth()];
-                var year = d.getUTCFullYear();
-                var isBeach = (t.type || '').toLowerCase() === 'beach';
-                var badgeText = isBeach ? 'Beachturnier' : 'Hallenturnier';
-                var isFeatured = t.featured ? ' featured' : '';
-
-                // Build features
-                var features = [];
-                if (isBeach) {
-                    features.push('<span><i class="fas fa-sun"></i> Outdoor</span>');
-                } else {
-                    features.push('<span><i class="fas fa-volleyball-ball"></i> Halle</span>');
-                }
-                if (t.max_teams) {
-                    features.push('<span><i class="fas fa-users"></i> ' + t.max_teams + ' Teams</span>');
-                }
-                if (t.has_trophy) {
-                    features.push('<span><i class="fas fa-trophy"></i> Wanderpokal</span>');
-                }
-                if (t.is_wvv) {
-                    features.push('<span><i class="fas fa-check-circle"></i> WVV</span>');
-                }
-
-                var desc = t.description || '';
-                if (desc.length > 150) desc = desc.substring(0, 147) + '...';
-
-                var detailBtn = '<a href="turnier.html?id=' + t.id + '" style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-family:var(--font-heading);font-size:0.85rem;font-weight:600;color:var(--primary);transition:var(--transition)">' +
-                    'Details &amp; Anmeldung <i class="fas fa-arrow-right" style="font-size:0.75rem"></i></a>';
-
-                var imgHtml = t.image_url
-                    ? '<div class="event-card-img"><img src="' + t.image_url + '" alt="" loading="lazy"></div>'
-                    : '';
-
-                return '<div class="event-card' + isFeatured + '">' +
-                    '<div class="event-date">' +
-                        '<span class="event-month">' + month + '</span>' +
-                        '<span class="event-day">' + year + '</span>' +
-                    '</div>' +
-                    '<div class="event-content">' +
-                        imgHtml +
-                        '<div class="event-badge">' + badgeText + '</div>' +
-                        '<h3>' + t.name + '</h3>' +
-                        (desc ? '<p>' + desc + '</p>' : '') +
-                        '<div class="event-features">' + features.join('') + '</div>' +
-                        detailBtn +
-                    '</div>' +
-                '</div>';
-            }).join('');
-
-        } catch (err) {
-            console.error('Events load error:', err);
-            grid.innerHTML = '<p style="text-align:center;color:var(--gray-500);grid-column:1/-1">Turniere konnten nicht geladen werden. Bitte versuche es sp&auml;ter erneut.</p>';
+            var sb = ErkaSupabase.client;
+            if (!sb) throw new Error('offline');
+            var res = await sb.from('public_tournaments').select('*').order('date_start', { ascending: true });
+            if (res.error) throw res.error;
+            items = res.data || [];
+            render();
+        } catch (e) {
+            console.warn('Turniere konnten nicht geladen werden', e);
+            grid.innerHTML = '<div class="empty-note">Die Turniere konnten gerade nicht geladen werden. Bitte später erneut versuchen.</div>';
         }
     })();
     </script>
-    <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
 </body>
 </html>

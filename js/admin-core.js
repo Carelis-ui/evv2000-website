@@ -245,19 +245,58 @@
             }
         },
 
-        /* ── Bild-Upload ────────────────────────────────────────────────── */
-        uploadImage: async function (file, folder) {
-            if (!file) throw new Error('Keine Datei gewählt.');
-            if (file.size > 8 * 1024 * 1024) throw new Error('Bild ist zu groß (max. 8 MB).');
-            var okTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
-            if (okTypes.indexOf(file.type) === -1) throw new Error('Nur Bilder (JPG, PNG, WebP, GIF, SVG) erlaubt.');
+        /* ── Bild verkleinern (Browser, Canvas) ─────────────────────────────
+           Handy-Fotos sind 3–8 MB — vor dem Upload auf Web-Größe bringen.
+           opts: { maxW, maxH, quality, type } · Rückgabe: File (JPEG) oder Original (SVG/GIF/klein) */
+        resizeImage: function (file, opts) {
+            opts = opts || {};
+            var maxW = opts.maxW || 1600, maxH = opts.maxH || 1600, quality = opts.quality || 0.85;
+            var keep = ['image/svg+xml', 'image/gif'];
+            if (keep.indexOf(file.type) !== -1) return Promise.resolve(file);
+            return new Promise(function (resolve) {
+                var url = URL.createObjectURL(file);
+                var img = new Image();
+                img.onload = function () {
+                    var w = img.naturalWidth, h = img.naturalHeight;
+                    var scale = Math.min(1, maxW / w, maxH / h);
+                    if (scale === 1 && file.size < 600 * 1024 && file.type === 'image/jpeg') { URL.revokeObjectURL(url); resolve(file); return; }
+                    var cw = Math.round(w * scale), ch = Math.round(h * scale);
+                    var canvas = document.createElement('canvas');
+                    canvas.width = cw; canvas.height = ch;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, cw, ch);
+                    URL.revokeObjectURL(url);
+                    canvas.toBlob(function (blob) {
+                        if (!blob) { resolve(file); return; }
+                        var name = (file.name || 'bild').replace(/\.[^.]+$/, '') + '.jpg';
+                        resolve(new File([blob], name, { type: 'image/jpeg' }));
+                    }, 'image/jpeg', quality);
+                };
+                img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+                img.src = url;
+            });
+        },
 
-            var ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+        /* ── Bild-Upload ────────────────────────────────────────────────── */
+        uploadImage: async function (file, folder, opts) {
+            if (!file) throw new Error('Keine Datei gewählt.');
+            var okTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/heic', 'image/heif'];
+            if (okTypes.indexOf(file.type) === -1 && !/\.(jpe?g|png|webp|gif|svg|heic|heif)$/i.test(file.name || '')) {
+                throw new Error('Nur Bilder (JPG, PNG, WebP, GIF, SVG) erlaubt.');
+            }
+            if (file.size > 25 * 1024 * 1024) throw new Error('Bild ist zu groß (max. 25 MB).');
+
+            // Automatisch verkleinern (Standard: max. 1600 px, JPEG 85 %)
+            var prepared = await AdminCore.resizeImage(file, opts);
+            if (prepared.size > 8 * 1024 * 1024) throw new Error('Bild ist auch nach dem Verkleinern zu groß.');
+
+            var ext = (prepared.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
             var path = (folder || 'misc') + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
 
-            var up = await ErkaSupabase.client.storage.from('images').upload(path, file, {
+            var up = await ErkaSupabase.client.storage.from('images').upload(path, prepared, {
                 cacheControl: '3600',
-                upsert: false
+                upsert: false,
+                contentType: prepared.type || undefined
             });
             if (up.error) throw up.error;
 

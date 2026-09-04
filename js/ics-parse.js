@@ -164,15 +164,68 @@
         });
         return best;
     }
+    /* SAMS-Titel „Heim vs. Gast, 9/26/26, BeL1M" → { text, league, leagueLabel } */
+    var LEAGUES = { RL: 'Regionalliga', OL: 'Oberliga', VL: 'Verbandsliga', LL: 'Landesliga', BeL: 'Bezirksliga', BL: 'Bezirksliga', BK: 'Bezirksklasse', KL: 'Kreisliga', KK: 'Kreisklasse' };
+    function cleanSummary(summary) {
+        var s = String(summary || '').trim();
+        var league = '';
+        var m = s.match(/^(.*?)(?:,\s*\d{1,2}\/\d{1,2}\/\d{2,4})(?:,\s*([A-Za-z0-9 ]{2,14}))?\s*$/);
+        if (m) { s = m[1].trim(); league = (m[2] || '').replace(/\s+/g, ''); }
+        var label = '';
+        if (league) {
+            var lm = league.match(/^([A-Za-z]+?)(\d+)?([MFWmfw])?$/);
+            if (lm && LEAGUES[lm[1]]) {
+                label = LEAGUES[lm[1]] + (lm[2] ? ' ' + lm[2] : '') + (lm[3] ? (/m/i.test(lm[3]) ? ' Männer' : ' Frauen') : '');
+            }
+        }
+        return { text: s, league: league, leagueLabel: label };
+    }
+
     /* „A - B" / „A vs B" / „A : B" → Gegner + Heim, wenn eine Seite der eigene Verein ist */
     function guessMatch(summary, clubPattern) {
         var m = String(summary || '').match(/^(.+?)\s+(?:-|–|vs\.?|:)\s+(.+)$/i);
         if (!m) return null;
         var a = m[1].trim(), b = m[2].trim();
         var aOwn = clubPattern.test(a), bOwn = clubPattern.test(b);
-        if (aOwn && !bOwn) return { opponent: b, is_home: 'ja' };
-        if (bOwn && !aOwn) return { opponent: a, is_home: 'nein' };
+        if (aOwn && !bOwn) return { opponent: b, is_home: 'ja', own: a };
+        if (bOwn && !aOwn) return { opponent: a, is_home: 'nein', own: b };
         return null;
+    }
+
+    /* Eigene Mannschaft aus „Erkelenzer VV II" + Ligakürzel (…M = Männer, …F/W = Frauen) → Team aus der Liste */
+    var ROMAN = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6 };
+    function resolveOwnTeam(ownStr, league, teams) {
+        if (!ownStr || !teams || !teams.length) return '';
+        var s = String(ownStr).trim();
+        var num = null, rm = s.match(/\b(I{1,3}|IV|VI?)\s*$/);
+        if (rm) num = ROMAN[rm[1]]; else { var am = s.match(/\b(\d)\s*$/); if (am) num = +am[1]; }
+        var age = null, ag = s.match(/U\s?(\d{2})/i); if (ag) age = ag[1];
+        var gender = '';
+        var lg = (league || '').match(/([MFWmfw])$/);
+        if (lg) gender = /m/i.test(lg[1]) ? 'm' : 'w';
+        else if (/\b(w|weiblich|damen|frauen)\b/i.test(s)) gender = 'w';
+        else if (/\b(m|männlich|herren|männer)\b/i.test(s)) gender = 'm';
+        if (num === null && !age) num = 1;          // SAMS: erste Mannschaft ohne Zusatz („Erkelenzer VV")
+        var best = '', bestScore = 0, secondScore = 0;
+        teams.forEach(function (t) {
+            var n = norm(t.name), score = 0;
+            if (age) {
+                if (n.indexOf('u' + age) !== -1) score += 3;
+                if (gender && n.charAt(0) === gender) score += 1;
+                if (num !== null && n.indexOf('u' + age + num) !== -1) score += 1;
+            } else {
+                var isM = /manner|herren/.test(n), isW = /frauen|damen/.test(n);
+                if (gender === 'm' && isM) score += 2;
+                if (gender === 'w' && isW) score += 2;
+                if (!gender && (isM || isW)) score += 1;
+                if (num !== null && new RegExp('(manner|herren|frauen|damen)' + num + '($|[^0-9])').test(n)) score += 2;
+                else if (num === 1 && /^(manner|herren|frauen|damen)$/.test(n)) score += 1;
+            }
+            if (score > bestScore) { secondScore = bestScore; bestScore = score; best = t.name; }
+            else if (score > secondScore) secondScore = score;
+        });
+        // Gleichstand (z.B. Herren 3 / Damen 3 ohne Geschlecht im Ligakürzel) → lieber offen lassen
+        return bestScore >= 3 && bestScore > secondScore ? best : '';
     }
 
     /* ── Haupt-Parser ───────────────────────────────────────────────────── */
@@ -209,11 +262,12 @@
             var P = ev.props;
             var start = parseDateProp(P.DTSTART);
             if (!start) return;
-            var title = unescapeText(P.SUMMARY ? P.SUMMARY.value : '') || 'Termin';
+            var rawTitle = unescapeText(P.SUMMARY ? P.SUMMARY.value : '') || 'Termin';
+            var cs = cleanSummary(rawTitle);
+            var title = cs.text || rawTitle;
             var location = unescapeText(P.LOCATION ? P.LOCATION.value : '');
             var description = unescapeText(P.DESCRIPTION ? P.DESCRIPTION.value : '');
             var categories = unescapeText(P.CATEGORIES ? P.CATEGORIES.value : '');
-            if (description.length > 1000) description = description.slice(0, 997) + '…';
             if (/cancelled/i.test(P.STATUS ? P.STATUS.value : '')) return;
 
             // Dauer bestimmen
@@ -226,8 +280,18 @@
             var typ = guessType(title + ' ' + categories);
             var match = guessMatch(title, clubPattern);
             if (match && !typ) typ = 'Spiel';
-            // Mannschaft: erst Titel, dann Beschreibung, zuletzt Kalendername (z.B. „Spielplan Männer 1")
-            var team = guessTeam(title, opts.teams) || guessTeam(description, opts.teams) || guessTeam(calName, opts.teams);
+            // Mannschaft: eigene Seite des Spiels („Erkelenzer VV II" + Ligakürzel), sonst Titel → Beschreibung → Kalendername
+            var team = (match ? resolveOwnTeam(match.own, cs.league, opts.teams) : '') ||
+                guessTeam(title, opts.teams) || guessTeam(description, opts.teams) || guessTeam(calName, opts.teams);
+            // Spiele bekommen einen lesbaren Titel; Original + Liga wandern in die Beschreibung
+            if (match) {
+                var extra = [rawTitle !== title ? rawTitle : title, cs.leagueLabel ? cs.leagueLabel + (cs.league ? ' (' + cs.league + ')' : '') : (cs.league ? 'Liga: ' + cs.league : '')].filter(Boolean).join(' · ');
+                description = [extra, description].filter(Boolean).join('\n');
+                title = (match.is_home === 'ja' ? 'Heimspiel gegen ' : 'Auswärtsspiel bei ') + match.opponent;
+            } else if (cs.leagueLabel) {
+                description = [cs.leagueLabel + ' (' + cs.league + ')', description].filter(Boolean).join('\n');
+            }
+            if (description.length > 1000) description = description.slice(0, 997) + '…';
 
             var series = expandRule(start.utc, P.RRULE ? P.RRULE.value : '', ev.exdates, start.allDay, opts);
             series.dates.forEach(function (occUtc, idx) {
@@ -257,7 +321,7 @@
         return { events: recs, calendarName: calName, count: events.length };
     }
 
-    var api = { parse: parse, _internal: { parseDateProp: parseDateProp, expandRule: expandRule, guessMatch: guessMatch, guessTeam: guessTeam } };
+    var api = { parse: parse, _internal: { parseDateProp: parseDateProp, expandRule: expandRule, guessMatch: guessMatch, guessTeam: guessTeam, cleanSummary: cleanSummary, resolveOwnTeam: resolveOwnTeam } };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     if (typeof window !== 'undefined') window.IcsParse = api;
 })();

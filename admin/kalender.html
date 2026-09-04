@@ -699,6 +699,26 @@
         /* ══════════ CSV-IMPORT ══════════ */
         var csvRows = [];   // validierte, importierbare Termine
         var lastRecs = null, importKind = 'CSV';
+        var existingEvents = [];   // Termine im Import-Zeitraum (Duplikat-Erkennung)
+
+        async function loadExisting(recs) {
+            existingEvents = [];
+            var dates = recs.map(function (r) { return parseGermanDate(r.date); }).filter(Boolean).sort();
+            if (!dates.length) return;
+            var res = await sb.from('calendar_events').select('id,date,time_start,title,opponent,team_id')
+                .gte('date', dates[0]).lte('date', dates[dates.length - 1]);
+            if (!res.error) existingEvents = res.data || [];
+        }
+        function simplify(x) { return String(x || '').toLowerCase().replace(/[^a-z0-9äöüß]/g, ''); }
+        function isDuplicate(row) {
+            return existingEvents.some(function (e) {
+                if (e.date !== row.date) return false;
+                var sameTime = (e.time_start || '') === (row.time_start || '');
+                var sameOpp = row.opponent && e.opponent && simplify(e.opponent) === simplify(row.opponent);
+                var sameTitle = simplify(e.title) === simplify(row.title);
+                return sameTime && (sameOpp || sameTitle);
+            });
+        }
 
         document.getElementById('csvImportBtn').addEventListener('click', function () {
             if (!canTermine) { AdminCore.toast('Keine Berechtigung für Termine.', 'error'); return; }
@@ -843,7 +863,7 @@
                 return rec;
             });
             importKind = 'CSV';
-            buildPreview(recs);
+            loadExisting(recs).then(function () { buildPreview(recs); });
         }
 
         /* ICS/iCal-Datei → gleiche Zeilenstruktur wie CSV */
@@ -854,7 +874,7 @@
                 return;
             }
             importKind = 'ICS';
-            buildPreview(res.events);
+            loadExisting(res.events).then(function () { buildPreview(res.events); });
         }
 
         /* Vorschau + Validierung (gemeinsam für CSV und ICS) */
@@ -881,6 +901,10 @@
 
                 var typ = normType(rec.type, !!(rec.opponent || '').trim());
                 var valid = !!(date && title);
+                if (valid && isDuplicate({ date: date, time_start: parseTime(rec.time_start), title: title, opponent: (rec.opponent || '').trim() })) {
+                    valid = false;
+                    problems.push('bereits vorhanden – wird übersprungen');
+                }
 
                 if (valid) {
                     okCount++;
@@ -919,7 +943,7 @@
             document.getElementById('csvPreviewBody').innerHTML = previewHtml;
             document.getElementById('csvSummary').innerHTML =
                 '<span class="tag tag-success">' + okCount + ' importierbar</span> ' +
-                (errCount ? '<span class="tag tag-danger" style="margin-left:6px">' + errCount + ' fehlerhaft (werden übersprungen)</span>' : '');
+                (errCount ? '<span class="tag tag-warning" style="margin-left:6px">' + errCount + ' übersprungen (fehlerhaft oder schon vorhanden)</span>' : '');
             document.getElementById('csvPreviewWrap').style.display = '';
             document.getElementById('csvConfirmBtn').disabled = okCount === 0;
         }

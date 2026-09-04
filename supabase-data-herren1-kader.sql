@@ -41,4 +41,4 @@ SELECT name, jsonb_array_length(players) AS kader_groesse FROM teams WHERE slug 
 -- Teambild Herren 1: echtes Teamfoto „Erkelenzer Haie 26/27"
 -- ersetzt das bisherige KI-Poster (Datei liegt im Repo unter img/).
 -- ------------------------------------------------------------
-UPDATE teams SET image_url = 'img/team-haie-26-27.jpg' WHERE slug = 'maenner-1';
+UPDATE teams SET image_url = 'img/team-herren-1.jpg' WHERE slug = 'maenner-1';

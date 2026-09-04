@@ -240,11 +240,13 @@
     <script src="js/matchday.js"></script>
     <script>
         // WISO MeinVerein: Link zum digitalen Mitgliedsantrag (aus dem Vereinsprofil). Leer lassen, solange er nicht eingerichtet ist.
+        // Wird im Admin unter „Startseite“ gepflegt (site_settings.meinverein.antrag_url); Konstante nur als Notlösung
         window.MEINVEREIN_ANTRAG_URL = '';
         (function () {
-            var u = window.MEINVEREIN_ANTRAG_URL;
             var box = document.getElementById('mvAntrag'), a = document.getElementById('mvAntragLink');
-            if (u && box && a) { a.href = u; box.hidden = false; }
+            function show(u) { if (u && box && a) { a.href = u; box.hidden = false; } }
+            show(window.MEINVEREIN_ANTRAG_URL);
+            loadSiteSetting('meinverein').then(function (v) { show(v && v.antrag_url); });
         })();
     </script>
     <script>

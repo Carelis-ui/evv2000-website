@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Startseite verwalten</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .slot-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+        .slot { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+        .slot-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .slot-head h3 { font-size: 1.05rem; }
+        .slot-head small { display: block; color: var(--text-muted); font-family: var(--font-body); font-weight: 500; font-size: 0.78rem; margin-top: 2px; }
+        .slot-move { display: flex; gap: 4px; }
+        .slot-move button { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; }
+        .slot-move button:hover:not(:disabled) { color: #fff; border-color: var(--primary); }
+        .slot-move button:disabled { opacity: 0.3; cursor: default; }
+        .slot .form-group { margin: 0; }
+        .slot .img-picker-preview img { height: 150px; }
+        .slot--feature .img-picker-preview img { object-fit: contain; background: #000; }
+        .save-bar { position: sticky; bottom: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 20px; padding: 14px 18px; background: var(--navy-deep); border: 1px solid var(--border); border-radius: var(--radius); }
+        .save-bar .hint { color: var(--text-muted); font-size: 0.85rem; }
+        .setup-note { padding: 14px 16px; margin-bottom: 18px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; font-size: 0.88rem; }
+        .setup-note code { background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 4px; }
+        @media (max-width: 1100px) { .slot-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Startseite</h1>
+            <div class="topbar-actions">
+                <a href="../index.html#mannschaften" target="_blank" rel="noopener" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-up-right-from-square"></i> Startseite ansehen</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="setupNote" class="setup-note" style="display:none">
+                <i class="fas fa-triangle-exclamation"></i> Die Tabelle <code>site_settings</code> fehlt noch. Bitte einmal <code>supabase-migration-v7-site-settings.sql</code> im Supabase SQL-Editor ausführen – danach kann hier gespeichert werden.
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Mannschafts-Header</h2>
+                <span style="color:var(--text-muted);font-size:0.85rem">Die drei Kacheln unter „Vierzehn Teams. Ein Verein.“ – Mannschaft wählen, Bild tauschen, Texte anpassen. Mit den Pfeilen die Anordnung ändern.</span>
+            </div>
+
+            <div class="slot-grid" id="slotGrid"></div>
+
+            <div class="section-header" style="margin-top:32px">
+                <h2 class="section-title">WISO MeinVerein</h2>
+            </div>
+            <div class="slot" style="max-width:720px">
+                <div class="form-group">
+                    <label>Link zum digitalen Mitgliedsantrag (aus dem MeinVerein-Vereinsprofil)</label>
+                    <input type="url" class="form-input" id="mvUrl" placeholder="https://…">
+                    <div class="form-hint">Sobald hier ein Link steht, zeigt die Seite „Mitgliedschaft“ einen Hinweiskasten „Antrag online stellen“ über dem Formular. Leer lassen = kein Hinweis.</div>
+                </div>
+            </div>
+
+            <div class="save-bar">
+                <span class="hint"><i class="fas fa-circle-info"></i> Änderungen sind nach dem Speichern sofort auf der Website sichtbar (Seite neu laden).</span>
+                <button class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'startseite.html', perm: 'teams' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+
+        var SLOT_META = [
+            { label: 'Großes Bild', hint: 'links, Bild wird komplett gezeigt (ideal 4:3 bis 3:2)', cls: 'slot--feature' },
+            { label: 'Rechts oben', hint: 'Bildkarte, Foto wird zugeschnitten' },
+            { label: 'Rechts unten', hint: 'Bildkarte, Foto wird zugeschnitten' }
+        ];
+        var DEFAULT = {
+            slots: [
+                { team_slug: 'maenner-1', image: 'img/team-herren-1.jpg', title: 'Herren 1', badge: 'Verbandsliga', sub: 'Erkelenzer Haie · Aufstieg 2026 · Karl-Fischer-Halle' },
+                { team_slug: 'frauen-1', image: 'img/damen.jpg', title: 'Damen 1', badge: 'Bezirksliga', sub: 'Aufstieg 2026' },
+                { team_slug: '', image: 'img/jugend.jpg', title: 'Jugend', badge: '7 Jugendteams', sub: 'U12 bis U20 · 3. Platz Bezirksfinale U14', href: 'mannschaften.html' }
+            ]
+        };
+
+        var teams = [];
+        var cfg = null;
+        var pickers = [];
+        var tableOk = true;
+
+        /* relative Website-Pfade für die Vorschau aus /admin/ heraus auflösen */
+        function previewUrl(u) { return !u ? '' : (/^([a-z][a-z0-9+.-]*:|\/\/)/i.test(u) ? u : '../' + u.replace(/^\//, '')); }
+        function storeUrl(u) { return !u ? '' : u.replace(/^\.\.\//, ''); }
+
+        /* ── Laden ── */
+        var tRes = await sb.from('teams').select('id,slug,name,league,badge_text,image_url,category').order('sort_order', { ascending: true });
+        teams = tRes.data || [];
+
+        var sRes = await sb.from('site_settings').select('key,value').in('key', ['home_teams', 'meinverein']);
+        if (sRes.error) {
+            tableOk = false;
+            document.getElementById('setupNote').style.display = '';
+            document.getElementById('saveBtn').disabled = true;
+        }
+        var rows = sRes.data || [];
+        var homeRow = rows.find(function (r) { return r.key === 'home_teams'; });
+        var mvRow = rows.find(function (r) { return r.key === 'meinverein'; });
+        cfg = homeRow && homeRow.value && homeRow.value.slots && homeRow.value.slots.length === 3
+            ? JSON.parse(JSON.stringify(homeRow.value))
+            : JSON.parse(JSON.stringify(DEFAULT));
+        document.getElementById('mvUrl').value = (mvRow && mvRow.value && mvRow.value.antrag_url) || '';
+
+        /* ── Slots rendern ── */
+        function teamOptions(sel) {
+            var groups = { herren: 'Herren', damen: 'Damen', jugend: 'Jugend', hobby: 'Hobby' };
+            var html = '<option value="">— Kein Team (Link zur Mannschaftsübersicht) —</option>';
+            Object.keys(groups).forEach(function (g) {
+                var list = teams.filter(function (t) { return (t.category || '').toLowerCase() === g; });
+                if (!list.length) return;
+                html += '<optgroup label="' + groups[g] + '">' + list.map(function (t) {
+                    return '<option value="' + esc(t.slug) + '"' + (t.slug === sel ? ' selected' : '') + '>' + esc(t.name) + '</option>';
+                }).join('') + '</optgroup>';
+            });
+            return html;
+        }
+
+        function render() {
+            var grid = document.getElementById('slotGrid');
+            pickers = [];
+            grid.innerHTML = cfg.slots.map(function (s, i) {
+                var m = SLOT_META[i];
+                return '<div class="slot ' + (m.cls || '') + '" data-i="' + i + '">' +
+                    '<div class="slot-head"><h3>' + (i + 1) + '. ' + m.label + '<small>' + m.hint + '</small></h3>' +
+                    '<div class="slot-move">' +
+                    '<button type="button" data-move="-1" title="Nach vorne" ' + (i === 0 ? 'disabled' : '') + '><i class="fas fa-arrow-left"></i></button>' +
+                    '<button type="button" data-move="1" title="Nach hinten" ' + (i === 2 ? 'disabled' : '') + '><i class="fas fa-arrow-right"></i></button>' +
+                    '</div></div>' +
+                    '<div class="form-group"><label>Mannschaft</label><select class="form-select" data-f="team_slug">' + teamOptions(s.team_slug || '') + '</select></div>' +
+                    '<div class="form-group"><label>Bild</label><div class="slot-picker"></div></div>' +
+                    '<div class="form-group"><label>Titel</label><input type="text" class="form-input" data-f="title" value="' + esc(s.title || '') + '" placeholder="z. B. Herren 1"></div>' +
+                    '<div class="form-group"><label>Badge (kleines Label)</label><input type="text" class="form-input" data-f="badge" value="' + esc(s.badge || '') + '" placeholder="z. B. Verbandsliga"></div>' +
+                    '<div class="form-group"><label>Unterzeile</label><input type="text" class="form-input" data-f="sub" value="' + esc(s.sub || '') + '" placeholder="z. B. Aufstieg 2026"></div>' +
+                    (s.team_slug ? '' : '<div class="form-group"><label>Link (ohne Team)</label><input type="text" class="form-input" data-f="href" value="' + esc(s.href || 'mannschaften.html') + '"></div>') +
+                    '</div>';
+            }).join('');
+
+            grid.querySelectorAll('.slot').forEach(function (el) {
+                var i = parseInt(el.dataset.i, 10);
+                var picker = AdminCore.imagePicker(el.querySelector('.slot-picker'), 'startseite', previewUrl(cfg.slots[i].image));
+                pickers[i] = picker;
+
+                el.querySelectorAll('[data-f]').forEach(function (inp) {
+                    inp.addEventListener('input', function () { cfg.slots[i][inp.dataset.f] = inp.value; });
+                });
+                el.querySelector('[data-f="team_slug"]').addEventListener('change', function () {
+                    var slug = this.value;
+                    cfg.slots[i].team_slug = slug;
+                    var t = teams.find(function (x) { return x.slug === slug; });
+                    if (t) {
+                        // Felder aus der Mannschaft vorbelegen (kann danach angepasst werden)
+                        cfg.slots[i].title = t.name;
+                        cfg.slots[i].badge = t.league || cfg.slots[i].badge || '';
+                        if (t.badge_text) cfg.slots[i].sub = t.badge_text;
+                        if (t.image_url) cfg.slots[i].image = t.image_url;
+                        delete cfg.slots[i].href;
+                    } else if (!cfg.slots[i].href) {
+                        cfg.slots[i].href = 'mannschaften.html';
+                    }
+                    render();
+                });
+                el.querySelectorAll('[data-move]').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var j = i + parseInt(btn.dataset.move, 10);
+                        if (j < 0 || j > 2) return;
+                        // Bild aus dem Picker mitnehmen, bevor getauscht wird
+                        cfg.slots.forEach(function (s, k) { s.image = storeUrl(pickers[k].getUrl()); });
+                        var tmp = cfg.slots[i]; cfg.slots[i] = cfg.slots[j]; cfg.slots[j] = tmp;
+                        render();
+                    });
+                });
+            });
+        }
+        render();
+
+        /* ── Speichern ── */
+        document.getElementById('saveBtn').addEventListener('click', async function () {
+            if (!tableOk) return;
+            var btn = this;
+            cfg.slots.forEach(function (s, k) { s.image = storeUrl(pickers[k].getUrl()); });
+            var bad = cfg.slots.findIndex(function (s) { return !s.title || !s.image; });
+            if (bad >= 0) { AdminCore.toast('Kachel ' + (bad + 1) + ': Titel und Bild werden benötigt.', 'error'); return; }
+            var mvUrl = document.getElementById('mvUrl').value.trim();
+            if (mvUrl && !/^https?:\/\//i.test(mvUrl)) { AdminCore.toast('Der MeinVerein-Link muss mit https:// beginnen.', 'error'); return; }
+
+            btn.disabled = true;
+            try {
+                var res = await sb.from('site_settings').upsert([
+                    { key: 'home_teams', value: cfg },
+                    { key: 'meinverein', value: { antrag_url: mvUrl } }
+                ], { onConflict: 'key' });
+                if (res.error) throw res.error;
+                await AdminCore.audit('update', 'site_settings', 'home_teams', 'Startseite: Mannschafts-Header', null);
+                AdminCore.toast('Gespeichert – die Startseite zeigt jetzt die neue Anordnung.', 'success');
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler beim Speichern: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

@@ -151,3 +151,57 @@
     document.querySelectorAll('select').forEach(enhance);
     window.MatchdayDropdown = { enhance: enhance };
 })();
+
+/* =============================================================================
+   Mannschafts-Header (Startseite + Mannschaften): 3 Kacheln aus site_settings
+   (key "home_teams", pflegbar im Admin unter „Startseite"). Ohne Einstellungen
+   bleibt das statische Markup stehen.
+   ============================================================================= */
+(function () {
+    var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>';
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function href(s) { return s.team_slug ? 'mannschaft.html?team=' + encodeURIComponent(s.team_slug) : (s.href || 'mannschaften.html'); }
+    function src(u) { return !u ? '' : (/^([a-z][a-z0-9+.-]*:|\/\/)/i.test(u) ? u : u.replace(/^\//, '')); }
+
+    window.renderHomeTeams = function (cfg) {
+        var grid = document.querySelector('.team-grid[data-home-teams]');
+        if (!grid || !cfg || !cfg.slots || cfg.slots.length < 3) return;
+        var f = cfg.slots[0];
+        var html =
+            '<a class="team-feature in" data-reveal href="' + esc(href(f)) + '">' +
+                '<div class="team-feature-media"><img src="' + esc(src(f.image)) + '" alt="' + esc(f.title) + '"></div>' +
+                '<div class="team-feature-caption">' +
+                    '<div>' + (f.badge ? '<span class="tag">' + esc(f.badge) + '</span>' : '') + '<h3>' + esc(f.title) + '</h3></div>' +
+                    (f.sub ? '<p>' + esc(f.sub) + '</p>' : '<p></p>') +
+                    '<span class="link-arrow">Zur Mannschaft ' + ARROW + '</span>' +
+                '</div>' +
+            '</a>';
+        cfg.slots.slice(1, 3).forEach(function (s, i) {
+            html += '<a class="team-card in" data-reveal="' + (i + 2) + '" href="' + esc(href(s)) + '">' +
+                '<img src="' + esc(src(s.image)) + '" alt="' + esc(s.title) + '">' +
+                '<div class="team-card-body">' +
+                    (s.badge ? '<span class="tag' + (s.team_slug ? '' : ' tag--ghost') + '">' + esc(s.badge) + '</span>' : '') +
+                    '<h3>' + esc(s.title) + '</h3>' +
+                    (s.sub ? '<p>' + esc(s.sub) + '</p>' : '') +
+                '</div>' +
+            '</a>';
+        });
+        grid.innerHTML = html;
+    };
+
+    /* Einstellungen laden, sobald Supabase bereit ist (Seiten rufen das selbst auf) */
+    window.loadSiteSetting = async function (key) {
+        try {
+            // supabase-client.js kann nach matchday.js geladen sein → bis zum Seitenende warten
+            if (!window.ErkaSupabase && document.readyState !== 'complete') {
+                await new Promise(function (res) { window.addEventListener('load', res, { once: true }); });
+            }
+            if (!window.ErkaSupabase) return null;
+            await ErkaSupabase.init();
+            var sb = ErkaSupabase.client;
+            if (!sb) return null;
+            var r = await sb.from('site_settings').select('value').eq('key', key).maybeSingle();
+            return r.error ? null : (r.data ? r.data.value : null);
+        } catch (e) { return null; }
+    };
+})();

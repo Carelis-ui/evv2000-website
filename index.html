@@ -73,10 +73,7 @@
             <div class="homecal-side">
                 <p class="kicker" data-reveal>Termine</p>
                 <h2 data-reveal="2">Was ansteht.</h2>
-                <div class="homecal-next" data-reveal="3">
-                    <div class="matchday-event" id="nextEvent"><span class="md-empty">Termine werden geladen…</span></div>
-                    <div class="md-more" id="moreEvents"></div>
-                </div>
+                <p data-reveal="3">Spiele, Turniere und Events auf einen Blick. Markierte Tage antippen, um die Termine zu sehen.</p>
             </div>
             <div class="hc-card" id="homeCal" data-reveal="2">
                 <div class="hc-head">
@@ -291,43 +288,15 @@
                 ]);
 
                 var allEvents = res[0].data || [];
-                renderEvents(allEvents.filter(function (e) { return (e.date_end || e.date) >= today; }).slice(0, 4));
                 renderHomeCal(allEvents, today);
                 renderNews(res[1].data || []);
                 renderSponsors(res[2].data || []);
             } catch (e) {
                 console.warn('Daten konnten nicht geladen werden', e);
-                document.getElementById('nextEvent').innerHTML = '<span class="md-empty">Termine aktuell nicht verfügbar.</span>';
                 document.getElementById('hcList').innerHTML = '<div class="hc-empty">Kalender aktuell nicht verfügbar.</div>';
                 document.getElementById('newsGrid').innerHTML = '';
             }
         })();
-
-        function renderEvents(list) {
-            var host = document.getElementById('nextEvent');
-            var more = document.getElementById('moreEvents');
-            if (!list.length) {
-                host.innerHTML = '<span class="md-empty">Aktuell keine anstehenden Termine – der Spielplan folgt in Kürze.</span>';
-                more.innerHTML = '<a class="link-arrow" href="kalender.html">Kalender ' + ARROW + '</a>';
-                return;
-            }
-            var ev = list[0], dt = d(ev.date);
-            var meta = [];
-            meta.push('<span class="tag" style="background:transparent;padding:0;margin:0">' + esc(TYPE[ev.event_type] || ev.event_type) + '</span>');
-            meta.push(esc(fmtRange(ev)));
-            if (ev.time_start) meta.push(esc(fmtTime(ev)));
-            if (ev.location) meta.push(esc(ev.location));
-            if (ev.opponent) meta.push((ev.is_home ? 'Heim vs. ' : 'Auswärts bei ') + esc(ev.opponent));
-            host.innerHTML =
-                '<div class="md-date"><b>' + dt.getDate() + '</b><span>' + MONTHS[dt.getMonth()] + '</span></div>' +
-                '<div class="md-body"><div class="md-title">' + esc(ev.team_name ? ev.team_name + ' · ' : '') + esc(ev.title) + '</div>' +
-                '<div class="md-meta">' + meta.join('<span style="opacity:.35">·</span>') + '</div></div>';
-            var rest = list.slice(1, 3).map(function (e2) {
-                var x = d(e2.date);
-                return '<div><b>' + x.getDate() + '. ' + MONTHS[x.getMonth()] + '</b> · ' + esc(e2.title) + '</div>';
-            });
-            more.innerHTML = rest.join('') + '<a class="link-arrow" href="kalender.html">Alle Termine ' + ARROW + '</a>';
-        }
 
         /* ---------- Mini-Kalender (iPhone-Stil): nur Tage mit eingetragenen Terminen sind markiert ---------- */
         var MONTHS_LONG = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];

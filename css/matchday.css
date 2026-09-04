@@ -243,9 +243,7 @@ p { margin: 0; }
 .homecal { background: var(--navy); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .homecal-inner { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, 460px); gap: clamp(32px, 6vw, 96px); align-items: center; justify-content: space-between; padding: clamp(44px, 6vw, 80px) 0; }
 .homecal-side h2 { font-size: clamp(40px, 5vw, 68px); margin-top: 12px; }
-.homecal-next { margin-top: 26px; }
-.homecal-next .matchday-event { align-items: center; }
-.homecal-next .md-more { margin-top: 18px; flex-wrap: wrap; align-items: center; }
+.homecal-side p { margin-top: 18px; color: var(--muted); font-size: 17px; line-height: 1.6; max-width: 440px; }
 .hc-card { background: rgba(255, 255, 255, 0.035); border: 1px solid var(--line-strong); border-radius: 22px; padding: 18px 18px 14px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35); }
 .hc-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .hc-title { font-family: var(--font-display); font-weight: 800; font-size: 24px; text-transform: uppercase; letter-spacing: 0.02em; color: var(--white); }

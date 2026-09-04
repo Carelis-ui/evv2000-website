@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Sponsoren verwalten</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .drag-handle { transition: color 0.15s; }
+        .drag-handle:hover { color: var(--accent, #22d3ee) !important; }
+        .drag-handle:active { cursor: grabbing !important; }
+        .sort-ghost { opacity: 0.35; background: rgba(59,130,246,0.15) !important; }
+        .sort-chosen { background: rgba(59,130,246,0.08) !important; box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
+        .publish-toggle:disabled { opacity: 0.5; cursor: wait; }
+        .publish-toggle:hover:not(:disabled) { filter: brightness(1.2); }
+        .sponsor-logo-preview {
+            width: 90px; height: 55px;
+            background: #fff;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        .sponsor-logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .sponsor-logo-empty {
+            width: 90px; height: 55px;
+            background: rgba(255,255,255,0.04);
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-700);
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Sponsoren</h1>
+            <div class="topbar-actions">
+                <button class="btn btn-primary" id="newBtn"><i class="fas fa-plus"></i> Neuer Sponsor</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="sortHint" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.35);color:#93c5fd;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:0.85rem">
+                <i class="fas fa-info-circle"></i> Ziehe Zeilen am <i class="fas fa-grip-vertical"></i>-Griff, um die Reihenfolge auf der Website zu ändern.
+            </div>
+
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="width:32px"></th>
+                            <th style="width:120px">Logo</th>
+                            <th>Name</th>
+                            <th>Website</th>
+                            <th style="width:110px">Status</th>
+                            <th style="width:100px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="modalTitle">Neuer Sponsor</h3>
+                <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Name *</label>
+                        <input type="text" class="form-input" id="fName" placeholder="z.B. Sparkasse Erkelenz">
+                    </div>
+                    <div class="form-group full">
+                        <label>Website (optional)</label>
+                        <input type="url" class="form-input" id="fWebsite" placeholder="https://…">
+                        <div class="form-hint">Wird als Link auf der öffentlichen Seite hinterlegt.</div>
+                    </div>
+                    <div class="form-group full" style="display:flex;gap:24px">
+                        <label class="form-check"><input type="checkbox" id="fPublished" checked> Auf der Website sichtbar</label>
+                    </div>
+                    <div class="form-group full">
+                        <label>Logo</label>
+                        <div id="imgPicker"></div>
+                        <div class="form-hint">Empfohlen: PNG mit transparentem Hintergrund oder heller Untergrund, ca. 400 × 200 px.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close>Abbrechen</button>
+                <button class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'sponsoren.html', perm: 'sponsors' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var editingId = null;
+        var itemsCache = [];
+        var sortable = null;
+        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'sponsors');
+
+        document.querySelectorAll('[data-close]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });
+        });
+        document.getElementById('newBtn').addEventListener('click', function () { openEditor(null); });
+
+        function val(id) { return document.getElementById(id).value; }
+        function setVal(id, v) { document.getElementById(id).value = v == null ? '' : v; }
+
+        function openEditor(item) {
+            editingId = item ? item.id : null;
+            document.getElementById('modalTitle').textContent = item ? 'Sponsor bearbeiten' : 'Neuer Sponsor';
+            setVal('fName', item && item.name);
+            setVal('fWebsite', item && item.website_url);
+            document.getElementById('fPublished').checked = item ? item.is_visible !== false : true;
+            picker.setUrl(item ? item.logo_url : '');
+            AdminCore.openModal('editModal');
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', async function () {
+            var name = val('fName').trim();
+            if (!name) { AdminCore.toast('Bitte einen Namen eingeben.', 'error'); return; }
+
+            var payload = {
+                name: name,
+                website_url: val('fWebsite').trim() || null,
+                is_visible: document.getElementById('fPublished').checked,
+                logo_url: picker.getUrl() || null,
+                tier: 'Partner'
+            };
+
+            var btn = this;
+            btn.disabled = true;
+            try {
+                if (editingId) {
+                    var up = await sb.from('sponsors').update(payload).eq('id', editingId);
+                    if (up.error) throw up.error;
+                    await AdminCore.audit('update', 'sponsor', editingId, name, null);
+                    AdminCore.toast('Sponsor aktualisiert.', 'success');
+                } else {
+                    payload.sort_order = (itemsCache.length + 1) * 10;
+                    var ins = await sb.from('sponsors').insert(payload).select().single();
+                    if (ins.error) throw ins.error;
+                    await AdminCore.audit('create', 'sponsor', ins.data.id, name, null);
+                    AdminCore.toast('Sponsor erstellt.', 'success');
+                }
+                AdminCore.closeModal('editModal');
+                load();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler beim Speichern: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        window.editItem = function (id) {
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (item) openEditor(item);
+        };
+
+        window.deleteItem = async function (id) {
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (!confirm('Sponsor "' + (item ? item.name : '') + '" wirklich löschen?')) return;
+            var del = await sb.from('sponsors').delete().eq('id', id);
+            if (del.error) {
+                AdminCore.toast('Fehler beim Löschen: ' + del.error.message, 'error');
+            } else {
+                await AdminCore.audit('delete', 'sponsor', id, item ? item.name : null, null);
+                AdminCore.toast('Sponsor gelöscht.', 'success');
+                load();
+            }
+        };
+
+        function render() {
+            var body = document.getElementById('listBody');
+            if (sortable) { sortable.destroy(); sortable = null; }
+
+            if (!itemsCache.length) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-handshake"></i>Noch keine Sponsoren angelegt.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = itemsCache.map(function (s) {
+                var logo = s.logo_url
+                    ? '<div class="sponsor-logo-preview"><img src="' + esc(s.logo_url) + '" alt=""></div>'
+                    : '<div class="sponsor-logo-empty"><i class="far fa-image"></i></div>';
+                var pub = s.is_visible !== false;
+                var toggle = '<button class="publish-toggle tag ' + (pub ? 'tag-success' : 'tag-muted') +
+                    '" data-id="' + esc(s.id) + '" data-state="' + (pub ? '1' : '0') +
+                    '" title="Klicken zum ' + (pub ? 'Verstecken' : 'Anzeigen') +
+                    '" style="border:none;cursor:pointer;font-family:inherit">' +
+                    '<i class="fas fa-' + (pub ? 'eye' : 'eye-slash') + '"></i> ' +
+                    (pub ? 'Sichtbar' : 'Versteckt') + '</button>';
+                var web = s.website_url
+                    ? '<a href="' + esc(s.website_url) + '" target="_blank" rel="noopener" style="color:var(--accent,#22d3ee);text-decoration:none">' +
+                        esc(s.website_url.replace(/^https?:\/\//, '').replace(/\/$/, '')) +
+                        ' <i class="fas fa-external-link-alt" style="font-size:0.7em"></i></a>'
+                    : '<span style="color:var(--gray-700)">—</span>';
+                return '<tr data-id="' + esc(s.id) + '">' +
+                    '<td class="drag-handle" title="Ziehen zum Sortieren" style="cursor:grab;color:var(--gray-500);text-align:center"><i class="fas fa-grip-vertical"></i></td>' +
+                    '<td>' + logo + '</td>' +
+                    '<td><strong style="color:#fff">' + esc(s.name) + '</strong></td>' +
+                    '<td style="font-size:0.85rem">' + web + '</td>' +
+                    '<td>' + toggle + '</td>' +
+                    '<td>' +
+                        '<button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + s.id + '\')"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + s.id + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+
+            body.querySelectorAll('.publish-toggle').forEach(function (btn) {
+                btn.addEventListener('click', function () { togglePublish(btn); });
+            });
+
+            if (window.Sortable) {
+                sortable = window.Sortable.create(body, {
+                    handle: '.drag-handle',
+                    animation: 160,
+                    ghostClass: 'sort-ghost',
+                    chosenClass: 'sort-chosen',
+                    onEnd: onSortEnd
+                });
+            }
+        }
+
+        async function togglePublish(btn) {
+            var id = btn.dataset.id;
+            var newState = btn.dataset.state !== '1';
+            btn.disabled = true;
+            var up = await sb.from('sponsors').update({ is_visible: newState }).eq('id', id);
+            if (up.error) {
+                AdminCore.toast('Fehler: ' + up.error.message, 'error');
+                btn.disabled = false;
+                return;
+            }
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (item) item.is_visible = newState;
+            await AdminCore.audit('update', 'sponsor', id, item ? item.name : id, { is_visible: newState });
+            AdminCore.toast(newState ? 'Sichtbar auf der Website.' : 'Auf der Website versteckt.', 'success');
+            render();
+        }
+
+        async function onSortEnd() {
+            var rows = document.querySelectorAll('#listBody tr[data-id]');
+            var updates = [];
+            rows.forEach(function (row, idx) {
+                var id = row.dataset.id;
+                var newOrder = (idx + 1) * 10;
+                var item = itemsCache.find(function (t) { return t.id === id; });
+                if (item && item.sort_order !== newOrder) {
+                    item.sort_order = newOrder;
+                    updates.push({ id: id, sort_order: newOrder });
+                }
+            });
+            itemsCache.sort(function (a, b) { return (a.sort_order || 0) - (b.sort_order || 0); });
+            if (!updates.length) return;
+
+            try {
+                var results = await Promise.all(updates.map(function (u) {
+                    return sb.from('sponsors').update({ sort_order: u.sort_order }).eq('id', u.id);
+                }));
+                var firstErr = results.find(function (r) { return r.error; });
+                if (firstErr) throw firstErr.error;
+                AdminCore.toast('Reihenfolge gespeichert (' + updates.length + ' geändert).', 'success');
+            } catch (e) {
+                AdminCore.toast('Fehler beim Sortieren: ' + (e.message || e), 'error');
+                load();
+            }
+        }
+
+        async function load() {
+            var body = document.getElementById('listBody');
+            var res = await sb.from('sponsors').select('*').order('sort_order', { ascending: true }).order('name', { ascending: true });
+            if (res.error) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state">Fehler: ' + esc(res.error.message) + '</td></tr>';
+                return;
+            }
+            itemsCache = res.data || [];
+            render();
+        }
+
+        await load();
+    })();
+    </script>
+</body>
+</html>

@@ -55,10 +55,11 @@
         </div>
     </section>
 
-    <!-- Sponsors Showcase -->
+    <!-- Sponsors Showcase (dynamisch via Supabase — Placeholder-Slots als Fallback) -->
     <section class="section">
         <div class="container">
-            <div class="sponsors-showcase">
+            <div id="sponsorsTiers"></div>
+            <div class="sponsors-showcase" id="sponsorsFallback">
                 <div class="sponsor-slot">
                     <div class="sponsor-placeholder">
                         <i class="fas fa-handshake"></i>
@@ -162,6 +163,48 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script>
+    /* Sponsoren aus Supabase — einheitliches Grid. Placeholder bleibt bei 0 Einträgen. */
+    (async function () {
+        function esc(s) {
+            if (s == null) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        try {
+            await ErkaSupabase.init();
+            var sb = ErkaSupabase.client;
+            if (!sb) return;
+
+            var res = await sb.from('sponsors')
+                .select('id, name, logo_url, website_url')
+                .eq('is_visible', true)
+                .order('sort_order', { ascending: true })
+                .order('name', { ascending: true });
+
+            var sponsors = res.data || [];
+            if (res.error || !sponsors.length) return;
+
+            document.getElementById('sponsorsFallback').style.display = 'none';
+
+            var cards = sponsors.map(function (s) {
+                var img = s.logo_url
+                    ? '<img src="' + esc(s.logo_url) + '" alt="' + esc(s.name) + '" loading="lazy">'
+                    : '<span class="sponsor-name-fallback">' + esc(s.name) + '</span>';
+                var body = '<div class="sponsor-logo-card" title="' + esc(s.name) + '">' + img + '</div>';
+                return s.website_url
+                    ? '<a href="' + esc(s.website_url) + '" target="_blank" rel="noopener sponsored">' + body + '</a>'
+                    : body;
+            }).join('');
+
+            document.getElementById('sponsorsTiers').innerHTML =
+                '<div class="sponsors-logo-row">' + cards + '</div>';
+        } catch (e) { /* Fallback bleibt */ }
+    })();
+    </script>
     <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
 </body>
 </html>

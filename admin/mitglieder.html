@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Mitglieder verwalten</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .search-bar {
+            display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;
+        }
+        .search-bar .search-input {
+            flex: 1; min-width: 220px;
+            background: var(--dark-card); border: 1px solid var(--border);
+            color: var(--white); padding: 10px 14px; border-radius: 8px; font-size: 0.9rem;
+        }
+        .kpi-row {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px; margin-bottom: 20px;
+        }
+        .kpi-tile {
+            background: var(--dark-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px 18px;
+        }
+        .kpi-value { font-family: var(--font-heading); font-size: 1.7rem; font-weight: 800; color: var(--white); line-height: 1.1; }
+        .kpi-label { font-size: 0.78rem; color: var(--gray-500); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+        .csv-preview-table {
+            width: 100%; border-collapse: collapse; font-size: 0.78rem;
+            background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden;
+        }
+        .csv-preview-table th, .csv-preview-table td {
+            padding: 8px 10px; border-bottom: 1px solid var(--border);
+            text-align: left; white-space: nowrap;
+        }
+        .csv-preview-table th { background: rgba(59,130,246,0.12); color: var(--white); font-weight: 600; }
+        .csv-preview-table td { color: var(--gray-500); }
+        .csv-map-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px; margin-bottom: 20px;
+        }
+        .csv-map-grid label {
+            font-size: 0.78rem; color: var(--gray-500); display: block; margin-bottom: 4px;
+        }
+        .csv-map-grid select {
+            width: 100%; background: var(--dark-card); border: 1px solid var(--border);
+            color: var(--white); padding: 7px 10px; border-radius: 6px; font-size: 0.82rem;
+        }
+        .fee-toggle {
+            border: none; cursor: pointer; font-family: inherit; padding: 4px 10px;
+        }
+        .fee-toggle:disabled { opacity: 0.5; cursor: wait; }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Mitglieder</h1>
+            <div class="topbar-actions">
+                <button class="btn btn-ghost" id="csvBtn"><i class="fas fa-file-import"></i> CSV importieren</button>
+                <button class="btn btn-ghost" id="exportBtn"><i class="fas fa-file-export"></i> CSV exportieren</button>
+                <button class="btn btn-primary" id="newBtn"><i class="fas fa-user-plus"></i> Neues Mitglied</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="kpi-row" id="kpiRow"></div>
+
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Suche: Name, E-Mail, Mitgliedsnummer…">
+                <select class="search-input" id="typeFilter" style="flex:0 0 160px">
+                    <option value="all">Alle Typen</option>
+                    <option value="aktiv">Aktiv</option>
+                    <option value="passiv">Passiv</option>
+                    <option value="jugend">Jugend</option>
+                    <option value="familie">Familie</option>
+                    <option value="ehrenmitglied">Ehrenmitglied</option>
+                </select>
+                <select class="search-input" id="feeFilter" style="flex:0 0 180px">
+                    <option value="all">Alle Beiträge</option>
+                    <option value="offen">Beitrag offen</option>
+                    <option value="gezahlt">Beitrag gezahlt</option>
+                    <option value="gemahnt">Gemahnt</option>
+                    <option value="erlassen">Erlassen</option>
+                </select>
+                <select class="search-input" id="activeFilter" style="flex:0 0 140px">
+                    <option value="active">Nur aktive</option>
+                    <option value="all">Aktive + inaktive</option>
+                    <option value="inactive">Nur inaktive</option>
+                </select>
+            </div>
+
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="width:80px">Nr.</th>
+                            <th>Name</th>
+                            <th>Kontakt</th>
+                            <th>Typ</th>
+                            <th>Beitrag</th>
+                            <th style="width:120px">Status</th>
+                            <th style="width:100px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="7" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="rowCount" style="margin-top:12px;font-size:0.82rem;color:var(--gray-500);text-align:right"></div>
+        </div>
+    </div>
+
+    <!-- Modal: Mitglied bearbeiten -->
+    <div class="modal" id="editModal">
+        <div class="modal-box" style="max-width:800px">
+            <div class="modal-head">
+                <h3 id="modalTitle">Neues Mitglied</h3>
+                <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group"><label>Mitgliedsnummer</label><input type="text" class="form-input" id="fMemberNo" placeholder="optional"></div>
+                    <div class="form-group"><label>Anrede</label>
+                        <select class="form-select" id="fSalutation">
+                            <option value="">—</option><option>Frau</option><option>Herr</option><option>Divers</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Vorname *</label><input type="text" class="form-input" id="fFirst"></div>
+                    <div class="form-group"><label>Nachname *</label><input type="text" class="form-input" id="fLast"></div>
+                    <div class="form-group"><label>E-Mail</label><input type="email" class="form-input" id="fEmail"></div>
+                    <div class="form-group"><label>Telefon</label><input type="tel" class="form-input" id="fPhone"></div>
+                    <div class="form-group"><label>Geburtsdatum</label><input type="date" class="form-input" id="fBirthdate"></div>
+                    <div class="form-group"><label>Mitglied seit</label><input type="date" class="form-input" id="fJoined"></div>
+                    <div class="form-group full"><label>Straße & Hausnr.</label><input type="text" class="form-input" id="fStreet"></div>
+                    <div class="form-group"><label>PLZ</label><input type="text" class="form-input" id="fPlz"></div>
+                    <div class="form-group"><label>Ort</label><input type="text" class="form-input" id="fCity"></div>
+                    <div class="form-group"><label>Mitgliedschaft</label>
+                        <select class="form-select" id="fType">
+                            <option value="aktiv">Aktiv</option>
+                            <option value="passiv">Passiv</option>
+                            <option value="jugend">Jugend</option>
+                            <option value="familie">Familie</option>
+                            <option value="ehrenmitglied">Ehrenmitglied</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Team (optional)</label>
+                        <select class="form-select" id="fTeam"><option value="">—</option></select>
+                    </div>
+                    <div class="form-group"><label>Jahresbeitrag (€)</label><input type="number" step="0.01" class="form-input" id="fFee" placeholder="0,00"></div>
+                    <div class="form-group"><label>Beitragsstatus</label>
+                        <select class="form-select" id="fFeeStatus">
+                            <option value="offen">Offen</option>
+                            <option value="gezahlt">Gezahlt</option>
+                            <option value="gemahnt">Gemahnt</option>
+                            <option value="erlassen">Erlassen</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>IBAN</label><input type="text" class="form-input" id="fIban" placeholder="DE…"></div>
+                    <div class="form-group"><label>BIC</label><input type="text" class="form-input" id="fBic"></div>
+                    <div class="form-group"><label>SEPA-Mandat-ID</label><input type="text" class="form-input" id="fMandate"></div>
+                    <div class="form-group"><label>SEPA unterschrieben am</label><input type="date" class="form-input" id="fMandateDate"></div>
+                    <div class="form-group"><label>Austritt am</label><input type="date" class="form-input" id="fLeft"></div>
+                    <div class="form-group"><label class="form-check" style="margin-top:26px"><input type="checkbox" id="fActive" checked> Aktives Mitglied</label></div>
+                    <div class="form-group full"><label>Notizen</label><textarea class="form-textarea" id="fNotes"></textarea></div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close>Abbrechen</button>
+                <button class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: CSV-Import -->
+    <div class="modal" id="csvModal">
+        <div class="modal-box" style="max-width:1000px">
+            <div class="modal-head">
+                <h3>CSV-Import</h3>
+                <button class="modal-close" data-close-csv><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="csvStep1">
+                    <p style="color:var(--gray-500)">Wähle eine CSV-Datei — Encoding UTF-8, Trennzeichen wird automatisch erkannt (Komma, Semikolon, Tab).</p>
+                    <div id="csvDrop" class="img-picker" style="min-height:140px">
+                        <div class="img-picker-empty"><i class="fas fa-file-csv" style="font-size:2rem;color:#22d3ee"></i>
+                            <span><strong>CSV-Datei hier ablegen</strong><br>oder zum Auswählen klicken</span>
+                        </div>
+                        <input type="file" accept=".csv,.tsv,.txt" id="csvInput" style="display:none">
+                    </div>
+                    <details style="margin-top:16px">
+                        <summary style="color:var(--gray-500);cursor:pointer">Beispiel-CSV herunterladen</summary>
+                        <p style="margin-top:12px"><a href="#" id="csvSampleLink">📥 vorlage-mitglieder.csv</a> — enthält alle Spalten mit einem Beispiel-Datensatz.</p>
+                    </details>
+                </div>
+                <div id="csvStep2" style="display:none">
+                    <h4 style="color:#fff;margin:0 0 6px">1. Spalten zuordnen</h4>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:12px">Ordne jede CSV-Spalte einem Feld zu. Vorname und Nachname sind Pflicht — alles andere kannst du auf „—" lassen.</p>
+                    <div class="csv-map-grid" id="csvMapGrid"></div>
+
+                    <h4 style="color:#fff;margin:20px 0 6px">2. Vorschau (erste 5 Zeilen)</h4>
+                    <div style="overflow-x:auto">
+                        <table class="csv-preview-table" id="csvPreviewTable"></table>
+                    </div>
+
+                    <div style="margin-top:16px;padding:12px 14px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;color:#fbbf24;font-size:0.85rem">
+                        <i class="fas fa-info-circle"></i> Insgesamt <strong id="csvRowCount">–</strong> Zeilen. Es werden alle importiert — bei Duplikaten (gleiche E-Mail) legt Supabase trotzdem einen neuen Eintrag an.
+                    </div>
+                </div>
+                <div id="csvStep3" style="display:none">
+                    <div style="text-align:center;padding:40px 20px">
+                        <div id="csvProgressWrap">
+                            <div class="spinner" style="margin:0 auto 20px"></div>
+                            <p style="color:var(--gray-500)">Importiere <strong id="csvProgress">0</strong> von <strong id="csvTotal">0</strong>…</p>
+                        </div>
+                        <div id="csvDoneWrap" style="display:none">
+                            <i class="fas fa-check-circle" style="font-size:3rem;color:#10b981"></i>
+                            <h4 style="color:#fff;margin:16px 0 8px">Import fertig!</h4>
+                            <p style="color:var(--gray-500)"><strong id="csvSuccess">0</strong> Mitglieder importiert, <strong id="csvErrors">0</strong> Fehler.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close-csv>Abbrechen</button>
+                <button class="btn btn-primary" id="csvNextBtn" style="display:none"><i class="fas fa-arrow-right"></i> Weiter zur Zuordnung</button>
+                <button class="btn btn-primary" id="csvImportBtn" style="display:none"><i class="fas fa-download"></i> Alle importieren</button>
+                <button class="btn btn-primary" id="csvDoneBtn" style="display:none">Fertig</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'mitglieder.html', perm: 'members' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var editingId = null;
+        var itemsCache = [];
+        var teamsCache = [];
+
+        // ── Feld-Definition für CSV-Mapping + Auto-Match Aliase ──
+        var FIELDS = [
+            { key: 'member_no',       label: 'Mitglieds-Nr.',       aliases: ['nr', 'nummer', 'mitgliedsnummer', 'mitglieds-nr', 'member no', 'mnr'] },
+            { key: 'salutation',      label: 'Anrede',              aliases: ['anrede'] },
+            { key: 'first_name',      label: 'Vorname *',           aliases: ['vorname', 'first name', 'given name'] },
+            { key: 'last_name',       label: 'Nachname *',          aliases: ['nachname', 'name', 'last name', 'family name'] },
+            { key: 'email',           label: 'E-Mail',              aliases: ['email', 'e-mail', 'mail'] },
+            { key: 'phone',           label: 'Telefon',             aliases: ['telefon', 'tel', 'phone', 'handy', 'mobil', 'mobile'] },
+            { key: 'birthdate',       label: 'Geburtsdatum',        aliases: ['geburtsdatum', 'geburtstag', 'birthday', 'birthdate', 'dob'] },
+            { key: 'street',          label: 'Straße',              aliases: ['strasse', 'straße', 'street', 'adresse'] },
+            { key: 'postal_code',     label: 'PLZ',                 aliases: ['plz', 'zip', 'postal', 'postleitzahl'] },
+            { key: 'city',            label: 'Ort',                 aliases: ['ort', 'stadt', 'city'] },
+            { key: 'country',         label: 'Land',                aliases: ['land', 'country'] },
+            { key: 'iban',            label: 'IBAN',                aliases: ['iban'] },
+            { key: 'bic',             label: 'BIC',                 aliases: ['bic', 'swift'] },
+            { key: 'sepa_mandate_id', label: 'SEPA-Mandat-ID',      aliases: ['sepa', 'mandat', 'mandatsreferenz'] },
+            { key: 'membership_type', label: 'Mitgliedschaftstyp',  aliases: ['typ', 'type', 'mitgliedschaftstyp', 'mitgliedsart'] },
+            { key: 'fee_year',        label: 'Jahresbeitrag (€)',   aliases: ['beitrag', 'jahresbeitrag', 'fee'] },
+            { key: 'fee_status',      label: 'Beitragsstatus',      aliases: ['status', 'beitragsstatus', 'zahlungsstatus'] },
+            { key: 'joined_on',       label: 'Mitglied seit',       aliases: ['mitglied seit', 'eintritt', 'joined'] },
+            { key: 'notes',           label: 'Notizen',             aliases: ['notiz', 'notizen', 'bemerkung'] }
+        ];
+
+        var TYPE_LABEL = { aktiv: 'Aktiv', passiv: 'Passiv', jugend: 'Jugend', familie: 'Familie', ehrenmitglied: 'Ehrenmitglied' };
+        var TYPE_TAG = { aktiv: 'tag-blue', passiv: 'tag-muted', jugend: 'tag-success', familie: 'tag-cyan', ehrenmitglied: 'tag-warning' };
+        var FEE_LABEL = { offen: 'Offen', gezahlt: 'Gezahlt', gemahnt: 'Gemahnt', erlassen: 'Erlassen' };
+        var FEE_TAG = { offen: 'tag-warning', gezahlt: 'tag-success', gemahnt: 'tag-danger', erlassen: 'tag-muted' };
+        // Deutsche Datumsformate: dd.mm.yyyy / yyyy-mm-dd
+        function normDate(v) {
+            if (!v) return null;
+            v = String(v).trim();
+            var m = v.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2,4})$/);
+            if (m) {
+                var d = m[1].padStart(2, '0'), mo = m[2].padStart(2, '0'), y = m[3];
+                if (y.length === 2) y = (parseInt(y, 10) > 30 ? '19' : '20') + y;
+                return y + '-' + mo + '-' + d;
+            }
+            m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+            return m ? m[0] : null;
+        }
+        function normNum(v) {
+            if (v == null || v === '') return null;
+            v = String(v).replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '');
+            var n = parseFloat(v);
+            return isFinite(n) ? n : null;
+        }
+
+        // ── Modal-Close ──
+        document.querySelectorAll('[data-close]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });
+        });
+        document.querySelectorAll('[data-close-csv]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal('csvModal'); resetCsv(); });
+        });
+        document.getElementById('newBtn').addEventListener('click', function () { openEditor(null); });
+        document.getElementById('csvBtn').addEventListener('click', function () { AdminCore.openModal('csvModal'); });
+        document.getElementById('exportBtn').addEventListener('click', exportCsv);
+
+        // ── Filter ──
+        ['searchInput', 'typeFilter', 'feeFilter', 'activeFilter'].forEach(function (id) {
+            document.getElementById(id).addEventListener('input', render);
+            document.getElementById(id).addEventListener('change', render);
+        });
+
+        function val(id) { return document.getElementById(id).value; }
+        function setVal(id, v) { document.getElementById(id).value = v == null ? '' : v; }
+
+        function openEditor(item) {
+            editingId = item ? item.id : null;
+            document.getElementById('modalTitle').textContent = item ? 'Mitglied bearbeiten' : 'Neues Mitglied';
+            setVal('fMemberNo', item && item.member_no);
+            setVal('fSalutation', item && item.salutation);
+            setVal('fFirst', item && item.first_name);
+            setVal('fLast', item && item.last_name);
+            setVal('fEmail', item && item.email);
+            setVal('fPhone', item && item.phone);
+            setVal('fBirthdate', item && item.birthdate);
+            setVal('fJoined', item ? item.joined_on : new Date().toISOString().slice(0, 10));
+            setVal('fStreet', item && item.street);
+            setVal('fPlz', item && item.postal_code);
+            setVal('fCity', item && item.city);
+            setVal('fType', item ? (item.membership_type || 'aktiv') : 'aktiv');
+            setVal('fTeam', item && item.team_id || '');
+            setVal('fFee', item && item.fee_year);
+            setVal('fFeeStatus', item ? (item.fee_status || 'offen') : 'offen');
+            setVal('fIban', item && item.iban);
+            setVal('fBic', item && item.bic);
+            setVal('fMandate', item && item.sepa_mandate_id);
+            setVal('fMandateDate', item && item.sepa_signed_at);
+            setVal('fLeft', item && item.left_on);
+            document.getElementById('fActive').checked = item ? item.is_active !== false : true;
+            setVal('fNotes', item && item.notes);
+            AdminCore.openModal('editModal');
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', async function () {
+            var first = val('fFirst').trim(), last = val('fLast').trim();
+            if (!first || !last) { AdminCore.toast('Bitte Vor- und Nachname eingeben.', 'error'); return; }
+
+            var payload = {
+                member_no: val('fMemberNo').trim() || null,
+                salutation: val('fSalutation') || null,
+                first_name: first,
+                last_name: last,
+                email: val('fEmail').trim() || null,
+                phone: val('fPhone').trim() || null,
+                birthdate: val('fBirthdate') || null,
+                joined_on: val('fJoined') || null,
+                street: val('fStreet').trim() || null,
+                postal_code: val('fPlz').trim() || null,
+                city: val('fCity').trim() || null,
+                membership_type: val('fType'),
+                team_id: val('fTeam') || null,
+                fee_year: normNum(val('fFee')) || 0,
+                fee_status: val('fFeeStatus'),
+                iban: val('fIban').replace(/\s+/g, '').toUpperCase() || null,
+                bic: val('fBic').trim().toUpperCase() || null,
+                sepa_mandate_id: val('fMandate').trim() || null,
+                sepa_signed_at: val('fMandateDate') || null,
+                left_on: val('fLeft') || null,
+                is_active: document.getElementById('fActive').checked,
+                notes: val('fNotes').trim() || null
+            };
+
+            var btn = this; btn.disabled = true;
+            try {
+                if (editingId) {
+                    var up = await sb.from('members').update(payload).eq('id', editingId);
+                    if (up.error) throw up.error;
+                    await AdminCore.audit('update', 'member', editingId, first + ' ' + last, null);
+                    AdminCore.toast('Mitglied aktualisiert.', 'success');
+                } else {
+                    var ins = await sb.from('members').insert(payload).select().single();
+                    if (ins.error) throw ins.error;
+                    await AdminCore.audit('create', 'member', ins.data.id, first + ' ' + last, null);
+                    AdminCore.toast('Mitglied angelegt.', 'success');
+                }
+                AdminCore.closeModal('editModal');
+                load();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler beim Speichern: ' + (e.message || e), 'error');
+            } finally { btn.disabled = false; }
+        });
+
+        window.editItem = function (id) {
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (item) openEditor(item);
+        };
+        window.deleteItem = async function (id) {
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (!confirm('Mitglied "' + (item ? item.first_name + ' ' + item.last_name : '') + '" wirklich löschen?')) return;
+            var del = await sb.from('members').delete().eq('id', id);
+            if (del.error) { AdminCore.toast('Fehler: ' + del.error.message, 'error'); return; }
+            await AdminCore.audit('delete', 'member', id, item ? item.first_name + ' ' + item.last_name : null, null);
+            AdminCore.toast('Mitglied gelöscht.', 'success');
+            load();
+        };
+        window.toggleFee = async function (id) {
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (!item) return;
+            var next = item.fee_status === 'gezahlt' ? 'offen' : 'gezahlt';
+            var up = await sb.from('members').update({ fee_status: next }).eq('id', id);
+            if (up.error) { AdminCore.toast('Fehler: ' + up.error.message, 'error'); return; }
+            item.fee_status = next;
+            await AdminCore.audit('update', 'member', id, item.first_name + ' ' + item.last_name, { fee_status: next });
+            render();
+        };
+
+        function filtered() {
+            var q = val('searchInput').toLowerCase().trim();
+            var t = val('typeFilter'), f = val('feeFilter'), a = val('activeFilter');
+            return itemsCache.filter(function (m) {
+                if (a === 'active' && m.is_active === false) return false;
+                if (a === 'inactive' && m.is_active !== false) return false;
+                if (t !== 'all' && (m.membership_type || 'aktiv') !== t) return false;
+                if (f !== 'all' && (m.fee_status || 'offen') !== f) return false;
+                if (q) {
+                    var hay = (m.first_name + ' ' + m.last_name + ' ' + (m.email || '') + ' ' + (m.member_no || '')).toLowerCase();
+                    if (hay.indexOf(q) === -1) return false;
+                }
+                return true;
+            });
+        }
+
+        function renderKpis() {
+            var total = itemsCache.length;
+            var active = itemsCache.filter(function (m) { return m.is_active !== false; }).length;
+            var open = itemsCache.filter(function (m) { return (m.fee_status || 'offen') === 'offen' && m.is_active !== false; }).length;
+            var revenue = itemsCache.filter(function (m) { return m.is_active !== false; })
+                .reduce(function (s, m) { return s + (parseFloat(m.fee_year) || 0); }, 0);
+            document.getElementById('kpiRow').innerHTML =
+                '<div class="kpi-tile"><div class="kpi-value">' + total + '</div><div class="kpi-label">Alle Einträge</div></div>' +
+                '<div class="kpi-tile"><div class="kpi-value">' + active + '</div><div class="kpi-label">Aktiv</div></div>' +
+                '<div class="kpi-tile"><div class="kpi-value" style="color:#f59e0b">' + open + '</div><div class="kpi-label">Beitrag offen</div></div>' +
+                '<div class="kpi-tile"><div class="kpi-value" style="color:#10b981">' + revenue.toFixed(0) + ' €</div><div class="kpi-label">Beitragssumme/Jahr</div></div>';
+        }
+
+        function render() {
+            var body = document.getElementById('listBody');
+            var list = filtered();
+            document.getElementById('rowCount').textContent = list.length + ' von ' + itemsCache.length + ' Mitgliedern';
+
+            if (!list.length) {
+                body.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-user-slash"></i>Keine Mitglieder mit diesen Filtern.</td></tr>';
+                return;
+            }
+            body.innerHTML = list.map(function (m) {
+                var typ = m.membership_type || 'aktiv';
+                var fee = m.fee_status || 'offen';
+                var contact = [];
+                if (m.email) contact.push('<a href="mailto:' + esc(m.email) + '" style="color:var(--accent,#22d3ee)">' + esc(m.email) + '</a>');
+                if (m.phone) contact.push('<span style="color:var(--gray-500);font-size:0.82rem">' + esc(m.phone) + '</span>');
+                var feeEuro = parseFloat(m.fee_year) || 0;
+                return '<tr>' +
+                    '<td style="font-family:monospace;color:var(--gray-500)">' + esc(m.member_no || '—') + '</td>' +
+                    '<td><strong style="color:#fff">' + esc(m.last_name) + ', ' + esc(m.first_name) + '</strong>' +
+                        (m.city ? '<br><small style="color:var(--gray-500)">' + esc(m.postal_code || '') + ' ' + esc(m.city) + '</small>' : '') + '</td>' +
+                    '<td style="font-size:0.85rem">' + contact.join('<br>') + '</td>' +
+                    '<td><span class="tag ' + (TYPE_TAG[typ] || 'tag-muted') + '">' + (TYPE_LABEL[typ] || typ) + '</span></td>' +
+                    '<td><strong style="color:#fff">' + feeEuro.toFixed(2).replace('.', ',') + ' €</strong></td>' +
+                    '<td><button class="fee-toggle tag ' + (FEE_TAG[fee] || 'tag-muted') + '" onclick="toggleFee(\'' + m.id + '\')" title="Klick zum Umschalten (offen/gezahlt)">' +
+                        (FEE_LABEL[fee] || fee) + '</button>' +
+                        (m.is_active === false ? '<br><small style="color:var(--gray-500)">inaktiv</small>' : '') +
+                    '</td>' +
+                    '<td>' +
+                        '<button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + m.id + '\')"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + m.id + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        async function load() {
+            var res = await Promise.all([
+                sb.from('members').select('*').order('last_name', { ascending: true }).order('first_name', { ascending: true }),
+                sb.from('teams').select('id, name').order('name', { ascending: true })
+            ]);
+            if (res[0].error) {
+                document.getElementById('listBody').innerHTML =
+                    '<tr><td colspan="7" class="empty-state">Fehler: ' + esc(res[0].error.message) + '<br><small>Wurde supabase-migration-v6-members.sql ausgeführt?</small></td></tr>';
+                return;
+            }
+            itemsCache = res[0].data || [];
+            teamsCache = res[1].data || [];
+            var teamSel = document.getElementById('fTeam');
+            teamSel.innerHTML = '<option value="">—</option>' + teamsCache.map(function (t) {
+                return '<option value="' + esc(t.id) + '">' + esc(t.name) + '</option>';
+            }).join('');
+            renderKpis();
+            render();
+        }
+
+        // ── CSV Export ──
+        function exportCsv() {
+            if (!itemsCache.length) { AdminCore.toast('Keine Mitglieder zum Exportieren.', 'error'); return; }
+            var headers = FIELDS.map(function (f) { return f.label.replace(' *', ''); });
+            var keys = FIELDS.map(function (f) { return f.key; });
+            var rows = [headers].concat(itemsCache.map(function (m) {
+                return keys.map(function (k) {
+                    var v = m[k];
+                    if (v == null) return '';
+                    v = String(v);
+                    return /[";,\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+                });
+            }));
+            var csv = rows.map(function (r) { return r.join(';'); }).join('\r\n');
+            var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'evv2000-mitglieder-' + new Date().toISOString().slice(0, 10) + '.csv';
+            a.click();
+        }
+
+        // ── CSV Import ──
+        var csvParsed = null;
+        var csvHeaders = [];
+        var csvMapping = {};
+        var csvInput = document.getElementById('csvInput');
+        var csvDrop = document.getElementById('csvDrop');
+
+        csvDrop.querySelector('.img-picker-empty').addEventListener('click', function () { csvInput.click(); });
+        csvInput.addEventListener('change', function () { handleCsvFile(csvInput.files[0]); csvInput.value = ''; });
+        ['dragover', 'dragenter'].forEach(function (ev) {
+            csvDrop.addEventListener(ev, function (e) { e.preventDefault(); csvDrop.classList.add('dragover'); });
+        });
+        ['dragleave', 'drop'].forEach(function (ev) {
+            csvDrop.addEventListener(ev, function (e) { e.preventDefault(); csvDrop.classList.remove('dragover'); });
+        });
+        csvDrop.addEventListener('drop', function (e) {
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) handleCsvFile(e.dataTransfer.files[0]);
+        });
+
+        document.getElementById('csvSampleLink').addEventListener('click', function (e) {
+            e.preventDefault();
+            var sample =
+                'Vorname;Nachname;E-Mail;Telefon;Geburtsdatum;PLZ;Ort;Straße;Mitgliedschaftstyp;Jahresbeitrag;IBAN\r\n' +
+                'Max;Mustermann;max@example.de;0151 1234567;15.05.1990;41812;Erkelenz;Beispielweg 1;aktiv;120,00;DE89370400440532013000\r\n';
+            var blob = new Blob(['﻿' + sample], { type: 'text/csv;charset=utf-8;' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'vorlage-mitglieder.csv';
+            a.click();
+        });
+
+        function handleCsvFile(file) {
+            if (!file) return;
+            window.Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                encoding: 'UTF-8',
+                delimitersToGuess: [';', ',', '\t', '|'],
+                complete: function (result) {
+                    if (!result.data.length) { AdminCore.toast('CSV enthält keine Zeilen.', 'error'); return; }
+                    csvParsed = result.data;
+                    csvHeaders = result.meta.fields || [];
+                    autoMap();
+                    showCsvStep(2);
+                    renderMapping();
+                    renderPreview();
+                },
+                error: function (err) { AdminCore.toast('CSV-Fehler: ' + err.message, 'error'); }
+            });
+        }
+
+        function autoMap() {
+            csvMapping = {};
+            FIELDS.forEach(function (f) {
+                var match = csvHeaders.find(function (h) {
+                    var hn = (h || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (hn === f.key.replace(/_/g, '')) return true;
+                    return f.aliases.some(function (a) { return hn === a.replace(/[^a-z0-9]/g, ''); });
+                });
+                if (match) csvMapping[f.key] = match;
+            });
+        }
+
+        function renderMapping() {
+            var opts = '<option value="">—</option>' + csvHeaders.map(function (h) {
+                return '<option value="' + esc(h) + '">' + esc(h) + '</option>';
+            }).join('');
+            document.getElementById('csvMapGrid').innerHTML = FIELDS.map(function (f) {
+                return '<div><label>' + f.label + '</label>' +
+                    '<select data-field="' + f.key + '">' + opts + '</select></div>';
+            }).join('');
+            document.querySelectorAll('#csvMapGrid select').forEach(function (sel) {
+                var key = sel.dataset.field;
+                if (csvMapping[key]) sel.value = csvMapping[key];
+                sel.addEventListener('change', function () {
+                    csvMapping[key] = sel.value || null;
+                    renderPreview();
+                });
+            });
+        }
+
+        function renderPreview() {
+            var head = '<thead><tr>' + FIELDS.map(function (f) {
+                return '<th>' + f.label + '</th>';
+            }).join('') + '</tr></thead>';
+            var rows = csvParsed.slice(0, 5).map(function (row) {
+                return '<tr>' + FIELDS.map(function (f) {
+                    var src = csvMapping[f.key];
+                    var v = src ? (row[src] || '') : '';
+                    return '<td>' + esc(v) + '</td>';
+                }).join('') + '</tr>';
+            }).join('');
+            document.getElementById('csvPreviewTable').innerHTML = head + '<tbody>' + rows + '</tbody>';
+            document.getElementById('csvRowCount').textContent = csvParsed.length;
+        }
+
+        document.getElementById('csvImportBtn').addEventListener('click', doImport);
+
+        async function doImport() {
+            if (!csvParsed || !csvParsed.length) return;
+            if (!csvMapping.first_name || !csvMapping.last_name) {
+                AdminCore.toast('Bitte Vorname und Nachname zuordnen.', 'error'); return;
+            }
+            showCsvStep(3);
+            document.getElementById('csvTotal').textContent = csvParsed.length;
+
+            var ok = 0, fail = 0;
+            var payloads = csvParsed.map(function (row) {
+                var p = {};
+                FIELDS.forEach(function (f) {
+                    var src = csvMapping[f.key];
+                    if (!src) return;
+                    var v = row[src];
+                    if (v == null || v === '') return;
+                    if (f.key === 'birthdate' || f.key === 'joined_on') v = normDate(v);
+                    else if (f.key === 'fee_year') v = normNum(v);
+                    else if (f.key === 'iban') v = String(v).replace(/\s+/g, '').toUpperCase();
+                    else if (typeof v === 'string') v = v.trim();
+                    if (v != null && v !== '') p[f.key] = v;
+                });
+                if (!p.first_name || !p.last_name) return null;
+                if (!p.membership_type) p.membership_type = 'aktiv';
+                if (!p.fee_status) p.fee_status = 'offen';
+                return p;
+            }).filter(Boolean);
+
+            // Batchweise in 50er-Paketen
+            for (var i = 0; i < payloads.length; i += 50) {
+                var batch = payloads.slice(i, i + 50);
+                var ins = await sb.from('members').insert(batch).select('id');
+                if (ins.error) {
+                    fail += batch.length;
+                    console.error(ins.error);
+                } else {
+                    ok += batch.length;
+                }
+                document.getElementById('csvProgress').textContent = Math.min(i + 50, payloads.length);
+            }
+
+            await AdminCore.audit('import', 'member', null, ok + ' Mitglieder importiert', { imported: ok, failed: fail });
+            document.getElementById('csvProgressWrap').style.display = 'none';
+            document.getElementById('csvDoneWrap').style.display = '';
+            document.getElementById('csvSuccess').textContent = ok;
+            document.getElementById('csvErrors').textContent = fail;
+            document.getElementById('csvImportBtn').style.display = 'none';
+            document.getElementById('csvDoneBtn').style.display = '';
+            load();
+        }
+
+        document.getElementById('csvDoneBtn').addEventListener('click', function () {
+            AdminCore.closeModal('csvModal');
+            resetCsv();
+        });
+
+        function showCsvStep(n) {
+            for (var i = 1; i <= 3; i++) {
+                document.getElementById('csvStep' + i).style.display = i === n ? '' : 'none';
+            }
+            document.getElementById('csvNextBtn').style.display = 'none';
+            document.getElementById('csvImportBtn').style.display = n === 2 ? '' : 'none';
+            document.getElementById('csvDoneBtn').style.display = 'none';
+        }
+
+        function resetCsv() {
+            csvParsed = null; csvHeaders = []; csvMapping = {};
+            showCsvStep(1);
+            document.getElementById('csvProgressWrap').style.display = '';
+            document.getElementById('csvDoneWrap').style.display = 'none';
+        }
+
+        await load();
+    })();
+    </script>
+</body>
+</html>

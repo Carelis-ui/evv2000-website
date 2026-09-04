@@ -87,6 +87,48 @@
                 <span><i style="background:#f59e0b"></i> Training</span>
             </div>
 
+            <!-- Kalender abonnieren -->
+            <div class="kal-subscribe">
+                <div class="kal-subscribe-head">
+                    <i class="fas fa-calendar-plus"></i>
+                    <div>
+                        <h3>Kalender abonnieren</h3>
+                        <p>Alle Termine automatisch in deinem Kalender (Google, Apple, Outlook, Thunderbird). Neue Termine erscheinen automatisch — kein manuelles Nachtragen mehr.</p>
+                    </div>
+                </div>
+                <div class="kal-subscribe-actions">
+                    <a class="btn btn-primary" id="calGoogle" href="#" target="_blank" rel="noopener"><i class="fab fa-google"></i> Google Kalender</a>
+                    <a class="btn btn-primary" id="calWebcal" href="#"><i class="fab fa-apple"></i> Apple Kalender</a>
+                    <a class="btn btn-primary" id="calOutlook" href="#" target="_blank" rel="noopener"><i class="fab fa-microsoft"></i> Outlook</a>
+                </div>
+                <details class="kal-subscribe-help">
+                    <summary>Anleitung für Google / Apple / Outlook</summary>
+                    <div class="kal-help-grid">
+                        <div>
+                            <strong><i class="fab fa-google"></i> Google Kalender</strong>
+                            <ol>
+                                <li>Klick oben auf <em>„Google Kalender"</em> — öffnet Google mit Add-by-URL.</li>
+                                <li>Oder: Google Kalender → Andere Kalender → <em>Per URL</em> → Feed-URL einfügen.</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <strong><i class="fab fa-apple"></i> Apple Kalender (Mac/iOS)</strong>
+                            <ol>
+                                <li>Klick oben auf <em>„Apple Kalender"</em> — öffnet die Abo-Dialog.</li>
+                                <li>Oder: Datei → Neues Kalender-Abo → Feed-URL einfügen.</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <strong><i class="fas fa-envelope"></i> Outlook / Thunderbird</strong>
+                            <ol>
+                                <li>Outlook: Kalender hinzufügen → Aus dem Internet → URL einfügen.</li>
+                                <li>Thunderbird: Neuer Kalender → Im Netzwerk → iCalendar → URL einfügen.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
             <!-- Terminliste -->
             <div class="section-header" style="text-align:left;margin-bottom:20px">
                 <h2 style="font-size:1.4rem" id="listTitle">Termine</h2>
@@ -144,6 +186,17 @@
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script>
+    /* Kalender-Abo: 3 Direktlinks — Google, Apple (webcal), Outlook */
+    (function () {
+        var feed = window.location.origin + '/api/calendar.ics';
+        var webcal = feed.replace(/^https?:/, 'webcal:');
+        var name = 'EVV 2000 - Vereinskalender';
+        document.getElementById('calGoogle').href  = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(feed);
+        document.getElementById('calWebcal').href  = webcal;
+        document.getElementById('calOutlook').href = 'https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(feed) + '&name=' + encodeURIComponent(name);
+    })();
+    </script>
     <script>
     (async function () {
         var MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];

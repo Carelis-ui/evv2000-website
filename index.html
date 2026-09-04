@@ -248,6 +248,21 @@
         </div>
     </section>
 
+    <!-- Sponsoren-Sektion (dynamisch, versteckt sich bei 0 Sponsoren) -->
+    <section class="section sponsors-strip" id="sponsorsStrip" style="display:none">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Partner &amp; Sponsoren</span>
+                <h2>Gemeinsam stärker</h2>
+                <p class="section-description">Diese Firmen unterstützen den Volleyballsport in Erkelenz.</p>
+            </div>
+            <div class="sponsors-logo-row" id="sponsorsRow"></div>
+            <div style="text-align:center;margin-top:36px">
+                <a href="sponsoren.html" class="btn btn-outline">Alle Partner ansehen <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -294,6 +309,50 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script>
+    /* Sponsoren dynamisch von Supabase — Sektion versteckt sich, wenn 0 Einträge */
+    (async function () {
+        function esc(s) {
+            if (s == null) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        try {
+            await ErkaSupabase.init();
+            var sb = ErkaSupabase.client;
+            if (!sb) return;
+
+            var res = await sb.from('sponsors')
+                .select('id, name, logo_url, website_url, tier')
+                .eq('is_visible', true)
+                .order('sort_order', { ascending: true })
+                .order('name', { ascending: true });
+
+            var sponsors = res.data || [];
+            if (res.error || !sponsors.length) return;
+
+            var strip = document.getElementById('sponsorsStrip');
+            var row = document.getElementById('sponsorsRow');
+
+            row.innerHTML = sponsors.map(function (s) {
+                var img = s.logo_url
+                    ? '<img src="' + esc(s.logo_url) + '" alt="' + esc(s.name) + '" loading="lazy">'
+                    : '<span class="sponsor-name-fallback">' + esc(s.name) + '</span>';
+                var inner = '<div class="sponsor-logo-card" title="' + esc(s.name) +
+                    (s.tier ? ' — ' + esc(s.tier) : '') + '">' + img + '</div>';
+                return s.website_url
+                    ? '<a href="' + esc(s.website_url) + '" target="_blank" rel="noopener sponsored">' + inner + '</a>'
+                    : inner;
+            }).join('');
+
+            strip.style.display = '';
+        } catch (e) {
+            /* Silent — Sektion bleibt versteckt */
+        }
+    })();
+    </script>
     <button class="scroll-top" id="scrollTop" aria-label="Nach oben"><i class="fas fa-chevron-up"></i></button>
 </body>
 </html>

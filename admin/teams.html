@@ -11,6 +11,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="admin.css">
+    <style>
+        .drag-handle { transition: color 0.15s; }
+        .drag-handle:hover { color: var(--accent, #22d3ee) !important; }
+        .drag-handle:active { cursor: grabbing !important; }
+        .sort-ghost { opacity: 0.35; background: rgba(59,130,246,0.15) !important; }
+        .sort-chosen { background: rgba(59,130,246,0.08) !important; box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
+        .publish-toggle:disabled { opacity: 0.5; cursor: wait; }
+        .publish-toggle:hover:not(:disabled) { filter: brightness(1.2); }
+    </style>
 </head>
 <body>
     <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
@@ -35,22 +44,27 @@
                 <button class="filter-pill" data-cat="hobby">Hobby</button>
             </div>
 
+            <div id="sortHint" style="display:none;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.35);color:#93c5fd;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:0.85rem">
+                <i class="fas fa-info-circle"></i> Ziehe Zeilen am <i class="fas fa-grip-vertical"></i>-Griff, um die Reihenfolge zu ändern — nur in <strong>„Alle"</strong> möglich.
+            </div>
+
             <div class="table-wrap">
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th style="width:32px"></th>
                             <th>Bild</th>
                             <th>Name</th>
                             <th>Kategorie</th>
                             <th>Liga</th>
                             <th>Trainer</th>
                             <th>Training</th>
-                            <th>Status</th>
+                            <th style="width:110px">Status</th>
                             <th style="width:100px">Aktionen</th>
                         </tr>
                     </thead>
                     <tbody id="listBody">
-                        <tr><td colspan="8" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                        <tr><td colspan="9" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -150,6 +164,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="../js/supabase-client.js"></script>
     <script src="../js/admin-core.js"></script>
@@ -167,6 +182,7 @@
 
         var CAT_LABELS = { herren: 'Herren', damen: 'Damen', jugend: 'Jugend', hobby: 'Hobby' };
         var CAT_TAGS = { herren: 'tag-blue', damen: 'tag-cyan', jugend: 'tag-success', hobby: 'tag-warning' };
+        var sortable = null;
 
         document.querySelectorAll('[data-close]').forEach(function (b) {
             b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });
@@ -309,12 +325,18 @@
 
         function render() {
             var body = document.getElementById('listBody');
-            var items = activeCat === 'all'
+            var hint = document.getElementById('sortHint');
+            var sortEnabled = activeCat === 'all';
+            hint.style.display = sortEnabled ? '' : 'none';
+
+            var items = sortEnabled
                 ? itemsCache
                 : itemsCache.filter(function (t) { return (t.category || '').toLowerCase() === activeCat; });
 
+            if (sortable) { sortable.destroy(); sortable = null; }
+
             if (!items.length) {
-                body.innerHTML = '<tr><td colspan="8" class="empty-state"><i class="fas fa-users"></i>Keine Mannschaften in dieser Kategorie.</td></tr>';
+                body.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-users"></i>Keine Mannschaften in dieser Kategorie.</td></tr>';
                 return;
             }
             body.innerHTML = items.map(function (t) {
@@ -322,7 +344,18 @@
                     ? '<img class="table-thumb" src="' + esc(t.image_url.indexOf('http') === 0 ? t.image_url : '../' + t.image_url) + '" alt="">'
                     : '<div class="table-thumb-empty"><i class="far fa-image"></i></div>';
                 var cat = (t.category || '').toLowerCase();
-                return '<tr>' +
+                var handleCell = sortEnabled
+                    ? '<td class="drag-handle" title="Ziehen zum Sortieren" style="cursor:grab;color:var(--gray-500);text-align:center"><i class="fas fa-grip-vertical"></i></td>'
+                    : '<td style="color:var(--gray-700);text-align:center;opacity:0.35"><i class="fas fa-grip-vertical"></i></td>';
+                var pub = t.is_published !== false;
+                var toggle = '<button class="publish-toggle tag ' + (pub ? 'tag-success' : 'tag-muted') +
+                    '" data-id="' + esc(t.id) + '" data-state="' + (pub ? '1' : '0') +
+                    '" title="Klicken zum ' + (pub ? 'Verstecken' : 'Veröffentlichen') +
+                    '" style="border:none;cursor:pointer;font-family:inherit">' +
+                    '<i class="fas fa-' + (pub ? 'eye' : 'eye-slash') + '"></i> ' +
+                    (pub ? 'Öffentlich' : 'Entwurf') + '</button>';
+                return '<tr data-id="' + esc(t.id) + '">' +
+                    handleCell +
                     '<td>' + thumb + '</td>' +
                     '<td><strong style="color:#fff">' + esc(t.name) + '</strong>' +
                         (t.badge_text ? ' <span class="tag tag-' + (t.badge_type || 'info') + '">' + esc(t.badge_text) + '</span>' : '') + '</td>' +
@@ -330,14 +363,71 @@
                     '<td>' + esc(t.league || '—') + '</td>' +
                     '<td>' + esc(t.trainer || '—') + '</td>' +
                     '<td style="font-size:0.8rem">' + esc(t.training || '—') + '</td>' +
-                    '<td>' + (t.is_published !== false
-                        ? '<span class="tag tag-success">Öffentlich</span>'
-                        : '<span class="tag tag-muted">Entwurf</span>') + '</td>' +
+                    '<td>' + toggle + '</td>' +
                     '<td>' +
                         '<button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + t.id + '\')"><i class="fas fa-edit"></i></button>' +
                         '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + t.id + '\')"><i class="fas fa-trash"></i></button>' +
                     '</td></tr>';
             }).join('');
+
+            body.querySelectorAll('.publish-toggle').forEach(function (btn) {
+                btn.addEventListener('click', function () { togglePublish(btn); });
+            });
+
+            if (sortEnabled && window.Sortable) {
+                sortable = window.Sortable.create(body, {
+                    handle: '.drag-handle',
+                    animation: 160,
+                    ghostClass: 'sort-ghost',
+                    chosenClass: 'sort-chosen',
+                    onEnd: onSortEnd
+                });
+            }
+        }
+
+        async function togglePublish(btn) {
+            var id = btn.dataset.id;
+            var newState = btn.dataset.state !== '1';
+            btn.disabled = true;
+            var up = await sb.from('teams').update({ is_published: newState }).eq('id', id);
+            if (up.error) {
+                AdminCore.toast('Fehler: ' + up.error.message, 'error');
+                btn.disabled = false;
+                return;
+            }
+            var item = itemsCache.find(function (t) { return t.id === id; });
+            if (item) item.is_published = newState;
+            await AdminCore.audit('update', 'team', id, item ? item.name : id, { is_published: newState });
+            AdminCore.toast(newState ? 'Sichtbar auf der Website.' : 'Als Entwurf versteckt.', 'success');
+            render();
+        }
+
+        async function onSortEnd() {
+            var rows = document.querySelectorAll('#listBody tr[data-id]');
+            var updates = [];
+            rows.forEach(function (row, idx) {
+                var id = row.dataset.id;
+                var newOrder = (idx + 1) * 10;
+                var item = itemsCache.find(function (t) { return t.id === id; });
+                if (item && item.sort_order !== newOrder) {
+                    item.sort_order = newOrder;
+                    updates.push({ id: id, sort_order: newOrder });
+                }
+            });
+            itemsCache.sort(function (a, b) { return (a.sort_order || 0) - (b.sort_order || 0); });
+            if (!updates.length) return;
+
+            try {
+                var results = await Promise.all(updates.map(function (u) {
+                    return sb.from('teams').update({ sort_order: u.sort_order }).eq('id', u.id);
+                }));
+                var firstErr = results.find(function (r) { return r.error; });
+                if (firstErr) throw firstErr.error;
+                AdminCore.toast('Reihenfolge gespeichert (' + updates.length + ' geändert).', 'success');
+            } catch (e) {
+                AdminCore.toast('Fehler beim Sortieren: ' + (e.message || e), 'error');
+                load();
+            }
         }
 
         async function load() {

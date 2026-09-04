@@ -247,9 +247,10 @@
         }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
         document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
         // Above-the-fold sofort zeigen – nicht auf den Observer warten
-        requestAnimationFrame(function () {
+        // (setTimeout statt rAF: feuert auch in Hintergrund-Tabs/Prerender)
+        setTimeout(function () {
             document.querySelectorAll('.hero [data-reveal]').forEach(function (el) { el.classList.add('in'); });
-        });
+        }, 60);
 
         /* ---------- Helfer ---------- */
         var MONTHS = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];

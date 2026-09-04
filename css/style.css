@@ -594,14 +594,15 @@ img {
     transform: scale(1.05);
 }
 
-/* Breites Team-Lineup (2:1, schwarzer Studio-Hintergrund): komplett zeigen statt beschneiden,
-   Bildunterschrift sitzt auf dem schwarzen Bereich darunter */
+/* Team-Grafik "Erkelenzer Haie 26/27" (eigener Schriftzug im Bild): komplett zeigen,
+   keine eigene Beschriftung darüber legen */
 .showcase-card--lineup { background: #000; }
 .showcase-card--lineup img {
     object-fit: contain;
-    object-position: center top;
+    object-position: center;
 }
 .showcase-card--lineup:hover img { transform: scale(1.02); }
+.showcase-card--lineup .showcase-overlay { display: none; }
 
 .showcase-overlay {
     position: absolute;

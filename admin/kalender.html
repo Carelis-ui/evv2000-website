@@ -40,7 +40,7 @@
                         <button class="btn btn-ghost btn-sm" id="calToday">Heute</button>
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap">
-                        <button class="btn btn-ghost" id="csvImportBtn"><i class="fas fa-file-csv"></i> CSV-Import</button>
+                        <button class="btn btn-ghost" id="csvImportBtn"><i class="fas fa-file-import"></i> Import (CSV / ICS)</button>
                         <button class="btn btn-primary" id="newEventBtn"><i class="fas fa-plus"></i> Neuer Termin</button>
                     </div>
                 </div>
@@ -159,21 +159,25 @@
     <div class="modal" id="csvModal">
         <div class="modal-box">
             <div class="modal-head">
-                <h3>Termine per CSV importieren</h3>
+                <h3>Termine importieren (CSV oder ICS)</h3>
                 <button class="modal-close" data-close="csvModal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <p style="font-size:0.87rem;color:var(--text-muted);margin-bottom:14px">
-                    Lade eine CSV-Datei hoch (z.B. aus Excel: „Speichern unter → CSV").
-                    Pflichtspalten: <strong style="color:#fff">Datum</strong> und <strong style="color:#fff">Titel</strong> —
-                    optional: Typ, Mannschaft, Von, Bis, Ort, Gegner, Heim, Beschreibung, Enddatum.
-                    Trennzeichen (<code>;</code> oder <code>,</code>) wird automatisch erkannt.
+                <p style="font-size:0.87rem;color:var(--text-muted);margin-bottom:10px">
+                    <strong style="color:#fff">ICS / iCal</strong> (Kalender-Export aus SAMS, Google, Apple, Outlook, Verbandsportal): Termine, Zeiten, Ort und Wiederholungen werden übernommen,
+                    Typ, Gegner und Mannschaft nach Möglichkeit aus dem Titel erkannt.<br>
+                    <strong style="color:#fff">CSV</strong> (z.B. aus Excel: „Speichern unter → CSV"): Pflichtspalten <strong style="color:#fff">Datum</strong> und <strong style="color:#fff">Titel</strong>,
+                    optional Typ, Mannschaft, Von, Bis, Ort, Gegner, Heim, Beschreibung, Enddatum. Trennzeichen wird erkannt.
                 </p>
+                <div class="form-grid" style="margin-bottom:14px">
+                    <div class="form-group" style="margin:0"><label>Mannschaft, falls nicht erkennbar</label><select class="form-select" id="impTeam"><option value="">— keine —</option></select></div>
+                    <div class="form-group" style="margin:0"><label>Typ, falls nicht erkennbar</label><select class="form-select" id="impType"><option value="event">Event</option><option value="spiel">Spiel</option><option value="turnier">Turnier</option><option value="training">Training</option></select></div>
+                </div>
                 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
                     <button class="btn btn-ghost btn-sm" id="csvTemplateBtn"><i class="fas fa-download"></i> Vorlage herunterladen</button>
                     <label class="btn btn-primary btn-sm" style="cursor:pointer">
-                        <i class="fas fa-folder-open"></i> CSV-Datei wählen
-                        <input type="file" id="csvFile" accept=".csv,.txt" style="display:none">
+                        <i class="fas fa-folder-open"></i> Datei wählen (CSV oder ICS)
+                        <input type="file" id="csvFile" accept=".csv,.txt,.ics,.ical,.ifb,text/calendar,text/csv" style="display:none">
                     </label>
                 </div>
                 <div id="csvPreviewWrap" style="display:none">
@@ -245,6 +249,7 @@
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="../js/supabase-client.js"></script>
     <script src="../js/admin-core.js"></script>
+    <script src="../js/ics-parse.js"></script>
     <script>
     (async function () {
         var me = await AdminCore.init({ page: 'kalender.html', perm: ['kalender', 'beach'] });
@@ -693,11 +698,14 @@
 
         /* ══════════ CSV-IMPORT ══════════ */
         var csvRows = [];   // validierte, importierbare Termine
+        var lastRecs = null, importKind = 'CSV';
 
         document.getElementById('csvImportBtn').addEventListener('click', function () {
             if (!canTermine) { AdminCore.toast('Keine Berechtigung für Termine.', 'error'); return; }
-            csvRows = [];
+            csvRows = []; lastRecs = null;
             document.getElementById('csvFile').value = '';
+            var ts = document.getElementById('impTeam');
+            ts.innerHTML = '<option value="">— keine —</option>' + teamsCache.map(function (t) { return '<option value="' + esc(t.name) + '">' + esc(t.name) + '</option>'; }).join('');
             document.getElementById('csvPreviewWrap').style.display = 'none';
             document.getElementById('csvConfirmBtn').disabled = true;
             AdminCore.openModal('csvModal');
@@ -794,7 +802,9 @@
             if (['turnier', 'cup'].indexOf(s) !== -1) return 'turnier';
             if (['training', 'probetraining'].indexOf(s) !== -1) return 'training';
             if (['event', 'fest', 'veranstaltung', 'sonstiges'].indexOf(s) !== -1) return 'event';
-            return hasOpponent ? 'spiel' : (s ? 'event' : 'event');
+            if (hasOpponent) return 'spiel';
+            var fb = document.getElementById('impType');
+            return (fb && fb.value) || 'event';
         }
 
         function parseBool(s) {
@@ -825,19 +835,44 @@
                 return;
             }
 
-            csvRows = [];
-            var previewHtml = '';
-            var okCount = 0, errCount = 0;
-
-            rows.slice(1).forEach(function (cells) {
+            var recs = rows.slice(1).map(function (cells) {
                 var rec = {};
                 headers.forEach(function (key, i) {
                     if (key && cells[i] !== undefined) rec[key] = cells[i].trim();
                 });
+                return rec;
+            });
+            importKind = 'CSV';
+            buildPreview(recs);
+        }
+
+        /* ICS/iCal-Datei → gleiche Zeilenstruktur wie CSV */
+        function processIcs(text) {
+            var res = IcsParse.parse(text, { teams: teamsCache });
+            if (!res.events.length) {
+                AdminCore.toast('In der ICS-Datei wurden keine Termine gefunden.', 'error');
+                return;
+            }
+            importKind = 'ICS';
+            buildPreview(res.events);
+        }
+
+        /* Vorschau + Validierung (gemeinsam für CSV und ICS) */
+        function buildPreview(recsIn) {
+            lastRecs = recsIn;
+            var defaultTeam = document.getElementById('impTeam').value;
+            csvRows = [];
+            var previewHtml = '';
+            var okCount = 0, errCount = 0;
+
+            recsIn.forEach(function (recSrc) {
+                var rec = Object.assign({}, recSrc);
+                if (!(rec.team || '').trim() && defaultTeam) rec.team = defaultTeam;
 
                 var date = parseGermanDate(rec.date);
                 var title = (rec.title || '').trim();
                 var problems = [];
+                if (rec.hint) problems.push(rec.hint);
                 if (!date) problems.push('Datum ungültig');
                 if (!title) problems.push('Titel fehlt');
 
@@ -895,6 +930,10 @@
             var reader = new FileReader();
             reader.onload = function () {
                 var text = reader.result;
+                if (/\.(ics|ical|ifb)$/i.test(file.name) || /BEGIN:VCALENDAR/i.test(text.slice(0, 2000))) {
+                    processIcs(text);
+                    return;
+                }
                 // Excel speichert CSV oft als Windows-1252 — bei kaputten Umlauten neu einlesen
                 if (text.indexOf('�') !== -1) {
                     var r2 = new FileReader();
@@ -907,6 +946,10 @@
             reader.readAsText(file, 'utf-8');
         });
 
+        ['impTeam', 'impType'].forEach(function (id) {
+            document.getElementById(id).addEventListener('change', function () { if (lastRecs) buildPreview(lastRecs); });
+        });
+
         document.getElementById('csvConfirmBtn').addEventListener('click', async function () {
             if (!csvRows.length) return;
             var btn = this;
@@ -916,7 +959,7 @@
                 var ins = await sb.from('calendar_events').insert(csvRows).select();
                 if (ins.error) throw ins.error;
                 await AdminCore.audit('create', 'termin', null,
-                    'CSV-Import: ' + csvRows.length + ' Termine', { anzahl: csvRows.length });
+                    importKind + '-Import: ' + csvRows.length + ' Termine', { anzahl: csvRows.length, format: importKind });
                 AdminCore.toast(csvRows.length + ' Termine importiert.', 'success');
                 AdminCore.closeModal('csvModal');
                 refreshCalendar();

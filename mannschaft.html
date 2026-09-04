@@ -127,12 +127,21 @@
                         <img id="tdImg" src="" alt="">
                     </div>
 
-                    <!-- Players -->
+                    <!-- Players (kompakte Liste — nur ohne Spielerfotos) -->
                     <div class="td-players" id="tdPlayers">
                         <h3><i class="fas fa-users"></i> Kader</h3>
                         <div class="td-player-list" id="tdPlayerList"></div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Kader als Foto-Grid (wird angezeigt, sobald Spielerfotos hinterlegt sind) -->
+            <div class="td-roster" id="tdRoster" style="display:none">
+                <div class="td-roster-head">
+                    <h3><i class="fas fa-users"></i> Kader</h3>
+                    <span class="td-roster-count" id="tdRosterCount"></span>
+                </div>
+                <div class="td-roster-grid" id="tdRosterGrid"></div>
             </div>
         </div>
     </section>
@@ -502,8 +511,43 @@
         // ======= PLAYERS =======
         var playerList = document.getElementById('tdPlayerList');
         var playersWrap = document.getElementById('tdPlayers');
-        if (team.players && team.players.length > 0) {
-            playerList.innerHTML = team.players.map(function(p) {
+        var roster = document.getElementById('tdRoster');
+        var players = team.players || [];
+        var hasPhotos = players.some(function (p) { return p && p.image; });
+        var escHtml = function (s) {
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        };
+
+        if (players.length > 0 && hasPhotos) {
+            // Foto-Grid in voller Breite; kompakte Seitenleisten-Liste ausblenden
+            playersWrap.style.display = 'none';
+            roster.style.display = '';
+            var nPlayers = players.filter(function (p) { return p.number !== null && p.number !== undefined; }).length;
+            var nStaff = players.length - nPlayers;
+            document.getElementById('tdRosterCount').textContent =
+                nPlayers + ' Spieler' + (nStaff ? ' · ' + nStaff + (nStaff === 1 ? ' Trainer' : ' Trainer/Betreuer') : '');
+            document.getElementById('tdRosterGrid').innerHTML = players.map(function (p) {
+                var isStaff = p.number === null || p.number === undefined;
+                var initials = String(p.name || '').split(/\s+/).map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase();
+                var badge = isStaff
+                    ? '<span class="td-roster-num staff" title="Trainer/Betreuer"><i class="fas fa-user-tie"></i></span>'
+                    : '<span class="td-roster-num">' + escHtml(p.number) + '</span>';
+                var photo = p.image
+                    ? '<img src="' + escHtml(p.image) + '" alt="' + escHtml(p.name) + '" loading="lazy">' +
+                      (p.image2 ? '<img class="td-roster-alt" src="' + escHtml(p.image2) + '" alt="" loading="lazy" aria-hidden="true">' : '')
+                    : '<div class="td-roster-ph"><span>' + escHtml(initials) + '</span></div>';
+                return '<div class="td-roster-card' + (p.image ? '' : ' no-photo') + (p.image2 ? ' has-alt' : '') + '">' +
+                    '<div class="td-roster-photo">' + photo + '</div>' +
+                    badge +
+                    '<div class="td-roster-meta">' +
+                        '<span class="td-roster-name">' + escHtml(p.name) + '</span>' +
+                        '<span class="td-roster-role">' + escHtml(p.role || '') + '</span>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        } else if (players.length > 0) {
+            playerList.innerHTML = players.map(function(p) {
                 var numBadge = p.number !== null && p.number !== undefined
                     ? '<span class="td-player-num">#' + p.number + '</span>'
                     : '<span class="td-player-num" style="background:rgba(59,130,246,0.15);color:var(--primary)"><i class="fas fa-user-tie" style="font-size:0.65rem"></i></span>';

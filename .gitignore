@@ -4,3 +4,6 @@ node_modules/
 *.log
 
 .env*
+
+# Unverkleinerte Foto-Originale (nicht deployen, nicht committen)
+_originals/

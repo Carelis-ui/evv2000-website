@@ -1,7 +1,7 @@
 /* =============================================================================
    EVV 2000 — Admin Panel Shared Styles
-   Farbpalette: Primär #1e3a8a royal · #0b1f3a deep navy · #ffffff
-                Sekundär #3b82f6 electric blue · #22d3ee cyan
+   Look wie die Website ("Matchday Editorial"): Schwarz #06090f · Navy #101e38 · Blau #3b82f6
+                Schrift: Barlow Condensed (Titel) · Barlow (Text)
    ============================================================================= */
 
 *, *::before, *::after {
@@ -13,10 +13,10 @@
 :root {
     --royal: #1e3a8a;
     --royal-light: #27479e;
-    --navy: #0b1f3a;
-    --navy-deep: #08182e;
-    --card: #102a4c;
-    --card-hover: #153458;
+    --navy: #0c1424;
+    --navy-deep: #06090f;
+    --card: #121c31;
+    --card-hover: #18243e;
     --primary: #3b82f6;
     --primary-light: #60a5fa;
     --primary-dark: #2563eb;
@@ -32,8 +32,8 @@
     --sidebar-width: 260px;
     --radius: 12px;
     --radius-sm: 8px;
-    --font-heading: 'Montserrat', sans-serif;
-    --font-body: 'Open Sans', sans-serif;
+    --font-heading: 'Barlow Condensed', 'Barlow', sans-serif;
+    --font-body: 'Barlow', system-ui, sans-serif;
 }
 
 body {
@@ -41,6 +41,7 @@ body {
     background: var(--navy);
     color: var(--text);
     min-height: 100vh;
+    font-size: 15px;
 }
 
 h1, h2, h3, h4 { font-family: var(--font-heading); color: #fff; }
@@ -992,3 +993,89 @@ button { font-family: var(--font-body); }
     .cal-day { min-height: 52px; border-radius: 7px; }
     .cal-chip { font-size: 0.58rem; padding: 1px 4px; }
 }
+
+/* ── Kader-Editor (js/admin-roster.js) ───────────────────────────────────── */
+.rp-list { display: flex; flex-direction: column; gap: 10px; }
+.rp-row {
+    display: grid;
+    grid-template-columns: 20px auto minmax(0, 1fr) 36px;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 12px 10px 8px;
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+.rp-row.is-staff { border-color: rgba(34, 211, 238, 0.28); }
+.rp-handle { color: var(--text-muted); cursor: grab; text-align: center; opacity: 0.6; }
+.rp-handle:hover { opacity: 1; color: var(--accent); }
+.rp-handle:active { cursor: grabbing; }
+.rp-photos { display: flex; gap: 8px; align-items: center; }
+.rp-tile {
+    position: relative;
+    width: 72px; height: 90px;
+    border-radius: 8px;
+    border: 2px dashed rgba(255, 255, 255, 0.18);
+    background: var(--navy-deep);
+    cursor: pointer;
+    overflow: hidden;
+    flex: none;
+    transition: border-color 0.2s, transform 0.15s;
+}
+.rp-tile--alt { width: 56px; height: 70px; }
+.rp-tile:hover, .rp-tile.dragover { border-color: var(--accent); }
+.rp-tile.dragover { transform: scale(1.04); }
+.rp-tile.has-img { border-style: solid; border-color: transparent; }
+.rp-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; }
+.rp-tile-ph {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    color: var(--text-muted); font-size: 0.68rem; letter-spacing: 0.3px;
+}
+.rp-tile-ph i { font-size: 1.05rem; color: var(--primary-light); }
+.rp-tile.has-img .rp-tile-ph { opacity: 0; background: rgba(8, 24, 46, 0.72); color: #fff; transition: opacity 0.15s; }
+.rp-tile.has-img .rp-tile-ph i { color: #fff; }
+.rp-tile.has-img:hover .rp-tile-ph { opacity: 1; }
+.rp-tile-busy { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(8, 24, 46, 0.82); }
+.rp-tile.is-uploading .rp-tile-busy { display: flex; }
+.rp-tile-x {
+    position: absolute; top: 3px; right: 3px;
+    width: 20px; height: 20px; border-radius: 6px; border: none;
+    background: rgba(8, 24, 46, 0.85); color: #fff; font-size: 0.6rem; cursor: pointer; display: none;
+}
+.rp-tile.has-img:hover .rp-tile-x { display: block; }
+.rp-tile-x:hover { background: var(--danger); }
+.rp-fields { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr) 72px; gap: 8px; align-items: start; }
+.rp-fields .form-input, .rp-fields .form-select { padding: 9px 10px; font-size: 0.9rem; }
+.rp-role-wrap { display: grid; gap: 6px; }
+.rp-del {
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1px solid var(--border); background: transparent; color: var(--text-muted);
+    cursor: pointer; transition: all 0.15s;
+}
+.rp-del:hover { color: #fff; background: var(--danger); border-color: var(--danger); }
+.rp-empty { padding: 22px; text-align: center; color: var(--text-muted); border: 1px dashed var(--border); border-radius: var(--radius-sm); font-size: 0.88rem; }
+.rp-empty i { margin-right: 6px; color: var(--primary-light); }
+.rp-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+.rp-count { margin-left: auto; color: var(--text-muted); font-size: 0.82rem; }
+.rp-paste { margin-top: 10px; display: grid; gap: 8px; }
+.rp-paste-actions { display: flex; gap: 8px; }
+.rp-hint { margin-top: 10px; }
+.rp-hint i { color: var(--accent); margin-right: 4px; }
+@media (max-width: 640px) {
+    .rp-row { grid-template-columns: 16px auto minmax(0, 1fr) 32px; row-gap: 8px; padding: 10px; }
+    .rp-fields { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) 64px; }
+    .rp-fields .rp-name { grid-column: 1 / -1; }
+    .rp-del { width: 32px; height: 32px; }
+}
+
+/* ── WISO MeinVerein (Hinweisleiste + Dashboard-Karte) ────────────────────── */
+.mv-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px 20px; flex-wrap: wrap; padding: 12px 16px; margin-bottom: 14px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.28); border-radius: var(--radius-sm); font-size: 0.86rem; color: var(--text); }
+.mv-bar-text i { color: var(--primary-light); margin-right: 4px; }
+.mv-bar-text em { font-style: normal; color: var(--text-muted); }
+.mv-bar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.mv-card { display: flex; justify-content: space-between; align-items: center; gap: 16px 28px; flex-wrap: wrap; padding: 20px 22px; margin-bottom: 30px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
+.mv-card-text p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.55; max-width: 680px; }
+.mv-card-text strong { color: #fff; }
+.mv-card-text em { font-style: normal; color: var(--text); }
+.mv-card-actions { display: flex; gap: 8px; flex-wrap: wrap; }

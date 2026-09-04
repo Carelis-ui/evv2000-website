@@ -49,6 +49,7 @@
         { href: 'registrations.html', icon: 'fa-clipboard-list', label: 'Anmeldungen',       perm: ['registrations', 'events'] },
         { href: 'anfragen.html',      icon: 'fa-inbox',          label: 'Anfragen',          perm: 'anfragen' },
         { href: 'dokumente.html',     icon: 'fa-file-arrow-down', label: 'Formulare',        perm: 'dokumente' },
+        { href: 'https://web.meinverein.de/', icon: 'fa-arrow-up-right-from-square', label: 'WISO MeinVerein', perm: ['members', 'anfragen'], external: true },
         { divider: true },
         { href: 'verwaltung.html',    icon: 'fa-user-shield',    label: 'Verwaltung',        superadmin: true },
         { href: 'log.html',           icon: 'fa-history',        label: 'Aktivitätslog',     perm: 'log' },
@@ -184,7 +185,7 @@
 
             el.innerHTML =
                 '<div class="sidebar-header">' +
-                    '<div class="sidebar-logo"><img src="../img/logo.svg" alt="EVV 2000"></div>' +
+                    '<div class="sidebar-logo"><img src="../img/logo-evv.png" alt="EVV 2000"></div>' +
                     '<div class="sidebar-brand">EVV 2000<span>Admin-Panel</span></div>' +
                 '</div>' +
                 '<nav class="sidebar-nav">' + nav + '</nav>' +
@@ -443,6 +444,32 @@
             if (isNaN(dt)) return '—';
             return dt.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
                 ', ' + dt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
+        },
+
+        /* ── CSV-Export (Excel-/MeinVerein-tauglich: Semikolon, BOM, dd.mm.yyyy) ── */
+        fmtDateDE: function (d) {
+            if (!d) return '';
+            var dt = new Date(d);
+            if (isNaN(dt)) return String(d);
+            return String(dt.getDate()).padStart(2, '0') + '.' + String(dt.getMonth() + 1).padStart(2, '0') + '.' + dt.getFullYear();
+        },
+
+        /* rows: Array von Arrays (erste Zeile = Überschriften) */
+        downloadCsv: function (filename, rows) {
+            var csv = rows.map(function (r) {
+                return r.map(function (v) {
+                    if (v === null || v === undefined) return '';
+                    v = String(v);
+                    return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+                }).join(';');
+            }).join('\r\n');
+            var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
         },
 
         dateStr: function (d) {

@@ -8,7 +8,7 @@
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="admin.css">
     <style>
@@ -148,9 +148,8 @@
                         <input type="number" class="form-input" id="fSort" value="0">
                     </div>
                     <div class="form-group full">
-                        <label>Kader — eine Zeile pro Person: <em>Name | Position | Nummer | Foto | Foto-Hover</em></label>
-                        <textarea class="form-textarea" id="fPlayers" placeholder="Max Mustermann | Außenangreifer | 7 | img/spieler/herren-1/max.jpg | img/spieler/herren-1/max-2.jpg&#10;Tom Beispiel | Libero | 12&#10;Anna Trainer | Trainerin |"></textarea>
-                        <div class="form-hint">Nummer leer lassen für Trainer/Betreuer. Die Foto-Spalten sind optional (Pfad relativ zur Website oder volle URL) — sobald mindestens ein Foto hinterlegt ist, zeigt die Team-Seite den Kader als Foto-Grid; „Foto-Hover" erscheint beim Überfahren mit der Maus.</div>
+                        <label>Kader &amp; Spielerfotos</label>
+                        <div id="rosterEditor"></div>
                     </div>
                     <div class="form-group full" style="display:flex;gap:24px">
                         <label class="form-check"><input type="checkbox" id="fPublished" checked> Veröffentlicht</label>
@@ -173,6 +172,7 @@
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="../js/supabase-client.js"></script>
     <script src="../js/admin-core.js"></script>
+    <script src="../js/admin-roster.js"></script>
     <script>
     (async function () {
         var me = await AdminCore.init({ page: 'teams.html', perm: 'teams' });
@@ -184,6 +184,13 @@
         var itemsCache = [];
         var activeCat = 'all';
         var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'teams');
+        // Kader-Editor: Fotos landen im Storage unter spieler/<team-slug>/
+        var roster = AdminCore.rosterEditor(document.getElementById('rosterEditor'), {
+            folder: function () {
+                var cur = editingId && itemsCache.find(function (t) { return t.id === editingId; });
+                return 'spieler/' + ((cur && cur.slug) || slugify(val('fName')) || 'neu');
+            }
+        });
 
         var CAT_LABELS = { herren: 'Herren', damen: 'Damen', jugend: 'Jugend', hobby: 'Hobby' };
         var CAT_TAGS = { herren: 'tag-blue', damen: 'tag-cyan', jugend: 'tag-success', hobby: 'tag-warning' };
@@ -214,33 +221,6 @@
                 .replace(/^-+|-+$/g, '');
         }
 
-        /* Kader-Zeilenformat: Name | Position | Nummer | Foto | Foto-Hover
-           Foto-Spalten sind optional (Pfad relativ zur Website, z.B. img/spieler/herren-1/finn.jpg, oder volle URL). */
-        function playersToText(players) {
-            if (!players || !players.length) return '';
-            return players.map(function (p) {
-                var cols = [p.name || '', p.role || '', p.number == null ? '' : p.number];
-                if (p.image || p.image2) cols.push(p.image || '');
-                if (p.image2) cols.push(p.image2);
-                return cols.join(' | ');
-            }).join('\n');
-        }
-
-        function textToPlayers(text) {
-            return text.split('\n')
-                .map(function (line) { return line.trim(); })
-                .filter(Boolean)
-                .map(function (line) {
-                    var parts = line.split('|').map(function (s) { return s.trim(); });
-                    var num = parts[2] !== undefined && parts[2] !== '' ? parseInt(parts[2], 10) : null;
-                    var p = { name: parts[0] || '', role: parts[1] || '', number: isNaN(num) ? null : num };
-                    if (parts[3]) p.image = parts[3];
-                    if (parts[4]) p.image2 = parts[4];
-                    return p;
-                })
-                .filter(function (p) { return p.name; });
-        }
-
         function openEditor(item) {
             editingId = item ? item.id : null;
             document.getElementById('modalTitle').textContent = item ? 'Mannschaft bearbeiten' : 'Neue Mannschaft';
@@ -258,7 +238,7 @@
             setVal('fMvPhone', item && item.mv_phone);
             setVal('fMvEmail', item && item.mv_email);
             setVal('fSort', item ? (item.sort_order || 0) : (itemsCache.length + 1) * 10);
-            setVal('fPlayers', item ? playersToText(item.players) : '');
+            roster.set(item ? item.players : []);
             document.getElementById('fPublished').checked = item ? item.is_published !== false : true;
             picker.setUrl(item ? item.image_url : '');
             AdminCore.openModal('editModal');
@@ -286,7 +266,7 @@
                 mv_phone: val('fMvPhone').trim() || null,
                 mv_email: val('fMvEmail').trim() || null,
                 sort_order: parseInt(val('fSort'), 10) || 0,
-                players: textToPlayers(val('fPlayers')),
+                players: roster.get(),
                 is_published: document.getElementById('fPublished').checked,
                 image_url: picker.getUrl() || null
             };

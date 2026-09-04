@@ -7,3 +7,6 @@ node_modules/
 
 # Unverkleinerte Foto-Originale (nicht deployen, nicht committen)
 _originals/
+
+# lokale Test-Harnesse
+_test/

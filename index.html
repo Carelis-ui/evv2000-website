@@ -68,25 +68,6 @@
     </section>
 
     <!-- ===== NÄCHSTER TERMIN ===== -->
-    <section class="homecal" id="termine">
-        <div class="wrap homecal-inner">
-            <div class="homecal-side">
-                <p class="kicker" data-reveal>Termine</p>
-                <h2 data-reveal="2">Was ansteht.</h2>
-                <p data-reveal="3">Spiele, Turniere und Events auf einen Blick. Markierte Tage antippen, um die Termine zu sehen.</p>
-            </div>
-            <div class="hc-card" id="homeCal" data-reveal="2">
-                <div class="hc-head">
-                    <button class="hc-arrow" id="hcPrev" type="button" aria-label="Vorheriger Monat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-                    <div class="hc-title" id="hcTitle">Kalender</div>
-                    <button class="hc-arrow" id="hcNext" type="button" aria-label="Nächster Monat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-                </div>
-                <div class="hc-dow"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span></div>
-                <div class="hc-grid" id="hcGrid"></div>
-                <div class="hc-list" id="hcList"><div class="hc-empty">Termine werden geladen…</div></div>
-            </div>
-        </div>
-    </section>
 
     <!-- ===== MANNSCHAFTEN ===== -->
     <section class="section" id="mannschaften">
@@ -127,8 +108,23 @@
         </div>
     </section>
 
+    <section class="homecal" id="termine">
+        <div class="wrap homecal-inner">
+            <div class="homecal-side">
+                <p class="kicker" data-reveal>Termine</p>
+                <h2 data-reveal="2">Was ansteht.</h2>
+                <p data-reveal="3">Spiele, Turniere und Events auf einen Blick – die nächsten Termine unserer Mannschaften. Alles Weitere steht im Kalender.</p>
+                <a class="link-arrow" href="kalender.html" data-reveal="3">Zum Kalender <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+            </div>
+            <div class="hc-card" id="homeCal" data-reveal="2">
+                <div class="hc-head"><div class="hc-title">Nächste Termine</div></div>
+                <div class="hc-list" id="hcList"><div class="hc-empty">Termine werden geladen…</div></div>
+            </div>
+        </div>
+    </section>
+
     <!-- ===== AKTUELLES ===== -->
-    <section class="section" id="aktuelles" style="padding-top:0">
+    <section class="section" id="aktuelles">
         <div class="wrap">
             <div class="section-head" data-reveal>
                 <div>
@@ -299,78 +295,23 @@
             }
         })();
 
-        /* ---------- Mini-Kalender (iPhone-Stil): nur Tage mit eingetragenen Terminen sind markiert ---------- */
-        var MONTHS_LONG = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+        /* ---------- Nächste Termine (Liste; das Tagesraster gibt es nur auf der Kalenderseite) ---------- */
         function renderHomeCal(events, today) {
-            var grid = document.getElementById('hcGrid'), listEl = document.getElementById('hcList'), title = document.getElementById('hcTitle');
-            var prevBtn = document.getElementById('hcPrev'), nextBtn = document.getElementById('hcNext');
-            var now = d(today);
-            var minMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-            var maxMonth = new Date(now.getFullYear(), now.getMonth() + 11, 1);
-            var upcoming = events.filter(function (e) { return (e.date_end || e.date) >= today; });
-            var start = upcoming.length ? d(upcoming[0].date) : now;
-            if (start < minMonth) start = now;
-            var month = new Date(start.getFullYear(), start.getMonth(), 1);
-            var selected = upcoming.length ? (upcoming[0].date >= today ? upcoming[0].date : today) : null;
-
-            function eventsOn(day) { return events.filter(function (e) { return e.date <= day && (e.date_end || e.date) >= day; }); }
-
-            function draw() {
-                var y = month.getFullYear(), m = month.getMonth();
-                title.textContent = MONTHS_LONG[m] + ' ' + y;
-                prevBtn.disabled = month <= minMonth;
-                nextBtn.disabled = month >= maxMonth;
-                var first = new Date(y, m, 1), offset = (first.getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate();
-                var cells = [], i;
-                for (i = 0; i < offset; i++) cells.push('<span class="hc-day is-empty"></span>');
-                for (i = 1; i <= days; i++) {
-                    var day = iso(new Date(y, m, i)), evs = eventsOn(day), has = evs.length > 0;
-                    var cls = 'hc-day' + (has ? ' has' : '') + (day === today ? ' today' : '') + (day < today && !has ? ' past' : '') + (day === selected ? ' sel' : '');
-                    var dots = has ? '<span class="dots">' + evs.slice(0, 3).map(function () { return '<i></i>'; }).join('') + '</span>' : '<span class="dots"></span>';
-                    cells.push(has
-                        ? '<button type="button" class="' + cls + '" data-day="' + day + '" aria-label="' + i + '. ' + MONTHS_LONG[m] + ', ' + evs.length + ' Termin' + (evs.length > 1 ? 'e' : '') + '"><b>' + i + '</b>' + dots + '</button>'
-                        : '<span class="' + cls + '"><b>' + i + '</b>' + dots + '</span>');
-                }
-                while (cells.length % 7) cells.push('<span class="hc-day is-empty"></span>');
-                grid.innerHTML = cells.join('');
-                grid.querySelectorAll('button[data-day]').forEach(function (btn) {
-                    btn.addEventListener('click', function () { selected = btn.dataset.day; draw(); });
-                });
-                drawList(y, m);
+            var listEl = document.getElementById('hcList');
+            var upcoming = events.filter(function (e) { return (e.date_end || e.date) >= today; }).slice(0, 5);
+            if (!upcoming.length) {
+                listEl.innerHTML = '<div class="hc-empty">Aktuell sind keine Termine eingetragen – der Spielplan folgt in Kürze.</div>';
+                return;
             }
-
-            function drawList(y, m) {
-                var monthIso = y + '-' + pad(m + 1);
-                var evs = selected && selected.slice(0, 7) === monthIso ? eventsOn(selected) : [];
-                var head;
-                if (selected && selected.slice(0, 7) === monthIso) {
-                    var sd = d(selected);
-                    head = DAYS[sd.getDay()] + ', ' + sd.getDate() + '. ' + MONTHS_LONG[sd.getMonth()];
-                } else {
-                    var inMonth = events.filter(function (e) { return e.date.slice(0, 7) === monthIso || (e.date_end || e.date).slice(0, 7) === monthIso; });
-                    evs = inMonth.slice(0, 4);
-                    head = inMonth.length ? inMonth.length + ' Termin' + (inMonth.length > 1 ? 'e' : '') + ' im ' + MONTHS_LONG[m] : '';
-                }
-                if (!evs.length) {
-                    listEl.innerHTML = '<div class="hc-empty">Keine Termine im ' + MONTHS_LONG[m] + '.</div>';
-                    return;
-                }
-                listEl.innerHTML = '<div class="hc-list-head">' + esc(head) + '</div>' + evs.map(function (e) {
-                    var time = e.time_start ? e.time_start.slice(0, 5) + (e.time_end ? '–' + e.time_end.slice(0, 5) : '') : 'ganztägig';
-                    var multi = e.date_end && e.date_end !== e.date;
-                    var meta = [TYPE[e.event_type] || e.event_type];
-                    if (multi || !(selected && selected.slice(0, 7) === monthIso)) meta.push(fmtRange(e));
-                    if (e.team_name) meta.push(e.team_name);
-                    if (e.location) meta.push(e.location);
-                    return '<a class="hc-item" href="kalender.html">' +
-                        '<span class="hc-time">' + esc(time) + '</span>' +
-                        '<span><span class="hc-name">' + esc(e.title) + '</span><span class="hc-meta">' + esc(meta.filter(Boolean).join(' · ')) + '</span></span></a>';
-                }).join('');
-            }
-
-            prevBtn.addEventListener('click', function () { if (month > minMonth) { month = new Date(month.getFullYear(), month.getMonth() - 1, 1); draw(); } });
-            nextBtn.addEventListener('click', function () { if (month < maxMonth) { month = new Date(month.getFullYear(), month.getMonth() + 1, 1); draw(); } });
-            draw();
+            listEl.innerHTML = upcoming.map(function (e) {
+                var dt = d(e.date);
+                var time = e.time_start ? e.time_start.slice(0, 5) + (e.time_end ? '–' + e.time_end.slice(0, 5) : '') + ' Uhr' : 'ganztägig';
+                var meta = [TYPE[e.event_type] || e.event_type, fmtRange(e), time, e.team_name, e.location].filter(Boolean);
+                return '<a class="hc-item" href="kalender.html">' +
+                    '<span class="hc-date"><b>' + dt.getDate() + '</b><span>' + MONTHS[dt.getMonth()] + '</span></span>' +
+                    '<span><span class="hc-name">' + esc(e.title) + '</span><span class="hc-meta">' + esc(meta.join(' · ')) + '</span></span>' +
+                    '</a>';
+            }).join('');
         }
 
         function renderNews(list) {

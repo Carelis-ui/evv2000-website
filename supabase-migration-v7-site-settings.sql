@@ -2,7 +2,6 @@
 -- EVV 2000 — Migration V7: Website-Einstellungen (site_settings)
 -- Schlüssel/Wert-Tabelle für Dinge, die Admins ohne Code-Änderung pflegen sollen:
 --   home_teams  → Mannschafts-Header auf der Startseite (3 Kacheln: Mannschaft, Bild, Texte)
---   meinverein  → Link zum digitalen Mitgliedsantrag (WISO MeinVerein)
 -- Öffentlich lesbar (die Website liest die Werte), schreiben dürfen aktive Admins.
 -- Im Supabase SQL-Editor ausführen. Ohne diese Migration zeigt die Website die
 -- eingebauten Standardwerte – nichts geht kaputt.
@@ -42,6 +41,5 @@ INSERT INTO public.site_settings (key, value) VALUES
     { "team_slug": "frauen-1",  "image": "img/damen.jpg",         "title": "Damen 1",  "badge": "Bezirksliga",  "sub": "Aufstieg 2026" },
     { "team_slug": "",          "image": "img/jugend.jpg",        "title": "Jugend",   "badge": "7 Jugendteams", "sub": "U12 bis U20 · 3. Platz Bezirksfinale U14", "href": "mannschaften.html" }
   ]
-}'::jsonb),
-('meinverein', '{ "antrag_url": "" }'::jsonb)
+}'::jsonb)
 ON CONFLICT (key) DO NOTHING;

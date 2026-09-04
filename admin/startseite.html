@@ -57,16 +57,6 @@
 
             <div class="slot-grid" id="slotGrid"></div>
 
-            <div class="section-header" style="margin-top:32px">
-                <h2 class="section-title">WISO MeinVerein</h2>
-            </div>
-            <div class="slot" style="max-width:720px">
-                <div class="form-group">
-                    <label>Link zum digitalen Mitgliedsantrag (aus dem MeinVerein-Vereinsprofil)</label>
-                    <input type="url" class="form-input" id="mvUrl" placeholder="https://…">
-                    <div class="form-hint">Sobald hier ein Link steht, zeigt die Seite „Mitgliedschaft“ einen Hinweiskasten „Antrag online stellen“ über dem Formular. Leer lassen = kein Hinweis.</div>
-                </div>
-            </div>
 
             <div class="save-bar">
                 <span class="hint"><i class="fas fa-circle-info"></i> Änderungen sind nach dem Speichern sofort auf der Website sichtbar (Seite neu laden).</span>
@@ -113,7 +103,7 @@
         var tRes = await sb.from('teams').select('id,slug,name,league,badge_text,image_url,category').order('sort_order', { ascending: true });
         teams = tRes.data || [];
 
-        var sRes = await sb.from('site_settings').select('key,value').in('key', ['home_teams', 'meinverein']);
+        var sRes = await sb.from('site_settings').select('key,value').eq('key', 'home_teams');
         if (sRes.error) {
             tableOk = false;
             document.getElementById('setupNote').style.display = '';
@@ -121,11 +111,9 @@
         }
         var rows = sRes.data || [];
         var homeRow = rows.find(function (r) { return r.key === 'home_teams'; });
-        var mvRow = rows.find(function (r) { return r.key === 'meinverein'; });
         cfg = homeRow && homeRow.value && homeRow.value.slots && homeRow.value.slots.length === 3
             ? JSON.parse(JSON.stringify(homeRow.value))
             : JSON.parse(JSON.stringify(DEFAULT));
-        document.getElementById('mvUrl').value = (mvRow && mvRow.value && mvRow.value.antrag_url) || '';
 
         /* ── Slots rendern ── */
         function teamOptions(sel) {
@@ -206,15 +194,10 @@
             cfg.slots.forEach(function (s, k) { s.image = storeUrl(pickers[k].getUrl()); });
             var bad = cfg.slots.findIndex(function (s) { return !s.title || !s.image; });
             if (bad >= 0) { AdminCore.toast('Kachel ' + (bad + 1) + ': Titel und Bild werden benötigt.', 'error'); return; }
-            var mvUrl = document.getElementById('mvUrl').value.trim();
-            if (mvUrl && !/^https?:\/\//i.test(mvUrl)) { AdminCore.toast('Der MeinVerein-Link muss mit https:// beginnen.', 'error'); return; }
 
             btn.disabled = true;
             try {
-                var res = await sb.from('site_settings').upsert([
-                    { key: 'home_teams', value: cfg },
-                    { key: 'meinverein', value: { antrag_url: mvUrl } }
-                ], { onConflict: 'key' });
+                var res = await sb.from('site_settings').upsert({ key: 'home_teams', value: cfg }, { onConflict: 'key' });
                 if (res.error) throw res.error;
                 await AdminCore.audit('update', 'site_settings', 'home_teams', 'Startseite: Mannschafts-Header', null);
                 AdminCore.toast('Gespeichert – die Startseite zeigt jetzt die neue Anordnung.', 'success');

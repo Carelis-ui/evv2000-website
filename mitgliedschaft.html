@@ -86,10 +86,6 @@
                     </div>
                 </div>
 
-                <div class="notice mv-antrag" id="mvAntrag" hidden>
-                    <div><strong>Online-Antrag über WISO MeinVerein</strong><br><span>Der direkte Weg in unsere Vereinsverwaltung – inklusive SEPA-Mandat, in wenigen Minuten erledigt.</span></div>
-                    <a class="btn btn-solid" id="mvAntragLink" href="#" target="_blank" rel="noopener">Antrag online stellen</a>
-                </div>
                 <div class="form-card" id="membershipFormCard" data-reveal="2">
                     <h2>Mitgliedsantrag</h2>
                     <p class="form-intro">Fülle das Formular aus, um deinen Antrag digital einzureichen. Pflichtfelder sind mit <em style="color:var(--blue);font-style:normal">*</em> gekennzeichnet.</p>
@@ -238,17 +234,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/matchday.js"></script>
-    <script>
-        // WISO MeinVerein: Link zum digitalen Mitgliedsantrag (aus dem Vereinsprofil). Leer lassen, solange er nicht eingerichtet ist.
-        // Wird im Admin unter „Startseite“ gepflegt (site_settings.meinverein.antrag_url); Konstante nur als Notlösung
-        window.MEINVEREIN_ANTRAG_URL = '';
-        (function () {
-            var box = document.getElementById('mvAntrag'), a = document.getElementById('mvAntragLink');
-            function show(u) { if (u && box && a) { a.href = u; box.hidden = false; } }
-            show(window.MEINVEREIN_ANTRAG_URL);
-            loadSiteSetting('meinverein').then(function (v) { show(v && v.antrag_url); });
-        })();
-    </script>
     <script>
     (function () {
         var form = document.getElementById('membershipForm');

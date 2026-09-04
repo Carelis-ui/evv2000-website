@@ -512,7 +512,34 @@
         var playerList = document.getElementById('tdPlayerList');
         var playersWrap = document.getElementById('tdPlayers');
         var roster = document.getElementById('tdRoster');
-        var players = team.players || [];
+
+        // Feste Positions-Reihenfolge für alle Mannschaften:
+        // Zuspiel → Außen → Mitte → Diagonal → Libero → (Sonstige) → Trainer/Betreuer
+        var POS_ORDER = [
+            [/zuspiel|steller|setter/i, 1],
+            [/au(ß|ss)en|outside/i, 2],
+            [/mitte|mittelblock|middle/i, 3],
+            [/diagonal|\bdia\b|opposite/i, 4],
+            [/libero/i, 5]
+        ];
+        function posRank(role) {
+            var r = String(role || '');
+            for (var i = 0; i < POS_ORDER.length; i++) { if (POS_ORDER[i][0].test(r)) return POS_ORDER[i][1]; }
+            if (/trainer|coach|betreu|physio|manager|co-?trainer/i.test(r)) return 8;
+            return 6;
+        }
+        function sortPlayers(list) {
+            return list.slice().sort(function (a, b) {
+                var ra = posRank(a.role), rb = posRank(b.role);
+                if (ra !== rb) return ra - rb;
+                var na = a.number === null || a.number === undefined ? 999 : Number(a.number);
+                var nb = b.number === null || b.number === undefined ? 999 : Number(b.number);
+                if (na !== nb) return na - nb;
+                return String(a.name || '').localeCompare(String(b.name || ''), 'de');
+            });
+        }
+
+        var players = sortPlayers((team.players || []).filter(Boolean));
         var hasPhotos = players.some(function (p) { return p && p.image; });
         var escHtml = function (s) {
             if (s === null || s === undefined) return '';

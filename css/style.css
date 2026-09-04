@@ -594,6 +594,15 @@ img {
     transform: scale(1.05);
 }
 
+/* Breites Team-Lineup (2:1, schwarzer Studio-Hintergrund): komplett zeigen statt beschneiden,
+   Bildunterschrift sitzt auf dem schwarzen Bereich darunter */
+.showcase-card--lineup { background: #000; }
+.showcase-card--lineup img {
+    object-fit: contain;
+    object-position: center top;
+}
+.showcase-card--lineup:hover img { transform: scale(1.02); }
+
 .showcase-overlay {
     position: absolute;
     inset: 0;

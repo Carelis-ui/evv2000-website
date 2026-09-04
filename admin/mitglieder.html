@@ -69,6 +69,7 @@
             <div class="topbar-actions">
                 <button class="btn btn-ghost" id="csvBtn"><i class="fas fa-file-import"></i> CSV importieren</button>
                 <button class="btn btn-ghost" id="exportBtn"><i class="fas fa-file-export"></i> CSV exportieren</button>
+                <button class="btn btn-ghost" id="mvExportBtn" title="Export im Spaltenformat für den MeinVerein-Importassistenten"><i class="fas fa-file-export"></i> MeinVerein-CSV</button>
                 <button class="btn btn-primary" id="newBtn"><i class="fas fa-user-plus"></i> Neues Mitglied</button>
             </div>
         </div>
@@ -314,6 +315,7 @@
         document.getElementById('newBtn').addEventListener('click', function () { openEditor(null); });
         document.getElementById('csvBtn').addEventListener('click', function () { AdminCore.openModal('csvModal'); });
         document.getElementById('exportBtn').addEventListener('click', exportCsv);
+        document.getElementById('mvExportBtn').addEventListener('click', exportMeinVerein);
 
         // ── Filter ──
         ['searchInput', 'typeFilter', 'feeFilter', 'activeFilter'].forEach(function (id) {
@@ -528,6 +530,21 @@
             a.href = URL.createObjectURL(blob);
             a.download = 'evv2000-mitglieder-' + new Date().toISOString().slice(0, 10) + '.csv';
             a.click();
+        }
+
+        // ── Export für WISO MeinVerein (Stammdaten › Datenimport › Importassistent › Mitglieder) ──
+        function exportMeinVerein() {
+            if (!itemsCache.length) { AdminCore.toast('Keine Mitglieder zum Exportieren.', 'error'); return; }
+            function teamName(id) { var t = teamsCache.find(function (x) { return x.id === id; }); return t ? t.name : ''; }
+            var header = ['Mitgliedsnummer', 'Anrede', 'Vorname', 'Nachname', 'Geburtsdatum', 'Straße', 'PLZ', 'Ort', 'Land', 'E-Mail', 'Telefon', 'Eintrittsdatum', 'Austrittsdatum', 'Beitragsgruppe', 'Jahresbeitrag', 'Abteilung', 'IBAN', 'BIC', 'Mandatsreferenz', 'Mandatsdatum', 'Aktiv', 'Notizen'];
+            var rows = [header].concat(itemsCache.map(function (m) {
+                return [m.member_no, m.salutation, m.first_name, m.last_name, AdminCore.fmtDateDE(m.birthdate), m.street, m.postal_code, m.city, m.country || 'DE', m.email, m.phone,
+                    AdminCore.fmtDateDE(m.joined_on), AdminCore.fmtDateDE(m.left_on), TYPE_LABEL[m.membership_type] || m.membership_type,
+                    m.fee_year == null ? '' : String(m.fee_year).replace('.', ','), teamName(m.team_id), m.iban, m.bic, m.sepa_mandate_id,
+                    AdminCore.fmtDateDE(m.sepa_signed_at), m.is_active === false ? 'Nein' : 'Ja', m.notes];
+            }));
+            AdminCore.downloadCsv('meinverein-mitglieder-' + AdminCore.dateStr(new Date()) + '.csv', rows);
+            AdminCore.toast(itemsCache.length + ' Mitglieder für MeinVerein exportiert.', 'success');
         }
 
         // ── CSV Import ──

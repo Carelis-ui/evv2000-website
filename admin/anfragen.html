@@ -53,6 +53,13 @@
 
             <!-- ═══ Tab: Mitgliedsanträge ═══ -->
             <div id="antraegeTab" style="display:none">
+                <div class="mv-bar">
+                    <div class="mv-bar-text"><i class="fas fa-circle-info"></i> <strong>WISO MeinVerein:</strong> Anträge hier als CSV exportieren und in MeinVerein importieren (<em>Stammdaten › Datenimport › Importassistent › Mitglieder</em>). Eine direkte Schnittstelle bietet Buhl nicht an.</div>
+                    <div class="mv-bar-actions">
+                        <a class="btn btn-ghost btn-sm" href="https://web.meinverein.de/" target="_blank" rel="noopener"><i class="fas fa-arrow-up-right-from-square"></i> MeinVerein öffnen</a>
+                        <button class="btn btn-primary btn-sm" id="mvExportBtn" type="button"><i class="fas fa-file-export"></i> Für MeinVerein exportieren</button>
+                    </div>
+                </div>
                 <div class="table-wrap">
                     <table class="admin-table">
                         <thead>
@@ -320,6 +327,27 @@
         }
 
         await load();
+
+        /* ── Export für WISO MeinVerein (Importassistent: Spalten werden dort zugeordnet) ── */
+        document.getElementById('mvExportBtn').addEventListener('click', function () {
+            var open = applications.filter(function (a) { return a.status !== 'erledigt'; });
+            var list = open.length ? open : applications;
+            if (!list.length) { AdminCore.toast('Keine Anträge zum Exportieren.', 'error'); return; }
+            var header = ['Anrede', 'Vorname', 'Nachname', 'Geburtsdatum', 'Straße', 'PLZ', 'Ort', 'Land', 'E-Mail', 'Telefon', 'Eintrittsdatum', 'Beitragsgruppe', 'Abteilung', 'Kontoinhaber', 'IBAN', 'SEPA-Mandat erteilt', 'Erziehungsberechtigte(r)', 'Kontakt Erziehungsberechtigte(r)', 'Antrag vom', 'Status'];
+            var rows = [header].concat(list.map(function (a) {
+                return [a.anrede, a.vorname, a.nachname, AdminCore.fmtDateDE(a.geburtsdatum), a.strasse, a.plz, a.ort, 'Deutschland', a.email, a.telefon,
+                    AdminCore.fmtDateDE(a.created_at), a.mitgliedschaft, a.mannschaft, a.kontoinhaber, a.iban, a.consent_sepa ? 'Ja' : 'Nein',
+                    a.erziehungsberechtigter, a.kontakt_erziehungsberechtigter, AdminCore.fmtDateDE(a.created_at), a.status];
+            }));
+            AdminCore.downloadCsv('meinverein-mitgliedsantraege-' + AdminCore.dateStr(new Date()) + '.csv', rows);
+            AdminCore.toast(list.length + (open.length ? ' offene' : '') + ' Anträge exportiert – jetzt in MeinVerein importieren.', 'success');
+        });
+
+        // Direktsprung aus dem Dashboard: anfragen.html#antraege
+        if (location.hash === '#antraege') {
+            var tb = switchEl.querySelector('[data-tab="antraege"]');
+            if (tb) tb.click();
+        }
     })();
     </script>
 </body>

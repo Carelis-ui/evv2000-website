@@ -100,6 +100,19 @@
         var sections = document.getElementById('dashSections');
         var html = '';
 
+        if (AdminCore.can(['anfragen', 'members'])) {
+            html += '<div class="section-header"><h2 class="section-title">Vereinsverwaltung · WISO MeinVerein</h2></div>' +
+                '<div class="mv-card">' +
+                '<div class="mv-card-text"><p>Mitglieder, Beiträge und Anträge werden in <strong>WISO MeinVerein Web</strong> verwaltet. ' +
+                'Buhl bietet keine Schnittstelle – der Weg ist der CSV-Export hier und der Importassistent dort ' +
+                '(<em>Stammdaten › Datenimport › Importassistent › Mitglieder</em>). Tipp: den digitalen Mitgliedsantrag in MeinVerein aktivieren, dann landen neue Anträge direkt dort.</p></div>' +
+                '<div class="mv-card-actions">' +
+                '<a class="btn btn-primary" href="https://web.meinverein.de/" target="_blank" rel="noopener"><i class="fas fa-arrow-up-right-from-square"></i> MeinVerein Web öffnen</a>' +
+                (AdminCore.can('anfragen') ? '<a class="btn btn-ghost" href="anfragen.html#antraege"><i class="fas fa-user-plus"></i> Anträge exportieren</a>' : '') +
+                (AdminCore.can('members') ? '<a class="btn btn-ghost" href="mitglieder.html"><i class="fas fa-id-card"></i> Mitglieder exportieren</a>' : '') +
+                '</div></div>';
+        }
+
         if (AdminCore.can('kalender')) {
             html += '<div class="section-header"><h2 class="section-title">Nächste Termine</h2>' +
                 '<a href="kalender.html" class="section-link">Zum Kalender <i class="fas fa-arrow-right"></i></a></div>' +

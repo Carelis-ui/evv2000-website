@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Formulare &amp; Downloads verwalten</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Formulare &amp; Downloads</h1>
+            <div class="topbar-actions">
+                <button class="btn btn-primary" id="newBtn"><i class="fas fa-plus"></i> Neue Datei</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="width:44px"></th>
+                            <th>Titel</th>
+                            <th>Kategorie</th>
+                            <th>Größe</th>
+                            <th>Status</th>
+                            <th style="width:120px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Datei anlegen / bearbeiten -->
+    <div class="modal" id="editModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="modalTitle">Neue Datei</h3>
+                <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Titel *</label>
+                        <input type="text" class="form-input" id="fTitle" placeholder="z.B. Aufnahmeantrag (PDF)">
+                    </div>
+                    <div class="form-group full">
+                        <label>Beschreibung (optional)</label>
+                        <textarea class="form-textarea" id="fDesc" placeholder="Kurzer Hinweis, z.B. 'Bitte ausgefüllt an den Vorstand senden.'"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategorie</label>
+                        <input type="text" class="form-input" id="fCategory" list="catList" placeholder="z.B. Mitgliedschaft">
+                        <datalist id="catList">
+                            <option value="Mitgliedschaft"></option>
+                            <option value="Beachanlage"></option>
+                            <option value="Turniere & Events"></option>
+                            <option value="Satzung & Ordnungen"></option>
+                            <option value="Sonstiges"></option>
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label>Sortierung (klein = weiter oben)</label>
+                        <input type="number" class="form-input" id="fSort" value="0">
+                    </div>
+                    <div class="form-group full">
+                        <label>Datei (PDF / Word, max. 25 MB) *</label>
+                        <div class="doc-upload" id="docUpload" style="border:1.5px dashed var(--border,#2a3550);border-radius:12px;padding:18px;text-align:center;cursor:pointer">
+                            <i class="fas fa-cloud-upload-alt" style="font-size:1.6rem;opacity:.7"></i>
+                            <div id="docUploadText" style="margin-top:8px;font-size:.9rem">Klicken, um eine Datei zu wählen</div>
+                            <input type="file" id="docFileInput" accept=".pdf,.doc,.docx,application/pdf" style="display:none">
+                        </div>
+                        <div id="docFileInfo" style="margin-top:10px;font-size:.86rem;display:none"></div>
+                    </div>
+                    <div class="form-group full" style="display:flex;align-items:center;padding-top:4px">
+                        <label class="form-check"><input type="checkbox" id="fPublished" checked> Veröffentlicht (auf der Website sichtbar)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close>Abbrechen</button>
+                <button class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'dokumente.html', perm: 'dokumente' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var editingId = null;
+        var docFile = null;      // { url, name, size } — gesetzt nach Upload
+        var itemsCache = [];
+
+        function fmtSize(bytes) {
+            if (!bytes) return '—';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+        }
+
+        var upEl = document.getElementById('docUpload');
+        var upInput = document.getElementById('docFileInput');
+        var upText = document.getElementById('docUploadText');
+        var fileInfo = document.getElementById('docFileInfo');
+
+        function showFileInfo() {
+            if (docFile && docFile.url) {
+                fileInfo.style.display = 'block';
+                fileInfo.innerHTML = '<i class="fas fa-file-pdf" style="color:#e5484d"></i> ' +
+                    esc(docFile.name || 'Datei') + ' &middot; ' + fmtSize(docFile.size) +
+                    ' <a href="' + esc(docFile.url) + '" target="_blank" rel="noopener" style="margin-left:6px">öffnen</a>';
+                upText.textContent = 'Andere Datei wählen';
+            } else {
+                fileInfo.style.display = 'none';
+                fileInfo.innerHTML = '';
+                upText.textContent = 'Klicken, um eine Datei zu wählen';
+            }
+        }
+
+        async function handleFile(file) {
+            if (!file) return;
+            upText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Wird hochgeladen…';
+            try {
+                docFile = await AdminCore.uploadDocument(file, 'dokumente');
+                if (!document.getElementById('fTitle').value.trim()) {
+                    document.getElementById('fTitle').value = (docFile.name || '').replace(/\.[a-z0-9]+$/i, '');
+                }
+                showFileInfo();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast(e.message || 'Upload fehlgeschlagen', 'error');
+                showFileInfo();
+            }
+        }
+
+        upEl.addEventListener('click', function () { upInput.click(); });
+        upInput.addEventListener('change', function () { handleFile(upInput.files[0]); upInput.value = ''; });
+        ['dragover', 'dragenter'].forEach(function (ev) {
+            upEl.addEventListener(ev, function (e) { e.preventDefault(); upEl.style.opacity = '.7'; });
+        });
+        ['dragleave', 'drop'].forEach(function (ev) {
+            upEl.addEventListener(ev, function (e) { e.preventDefault(); upEl.style.opacity = '1'; });
+        });
+        upEl.addEventListener('drop', function (e) {
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+        });
+
+        document.querySelectorAll('[data-close]').forEach(function (b) {
+            b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });
+        });
+        document.getElementById('newBtn').addEventListener('click', function () { openEditor(null); });
+
+        function openEditor(item) {
+            editingId = item ? item.id : null;
+            document.getElementById('modalTitle').textContent = item ? 'Datei bearbeiten' : 'Neue Datei';
+            document.getElementById('fTitle').value = item ? item.title : '';
+            document.getElementById('fDesc').value = item ? (item.description || '') : '';
+            document.getElementById('fCategory').value = item ? (item.category || '') : '';
+            document.getElementById('fSort').value = item ? (item.sort_order || 0) : (itemsCache.length + 1) * 10;
+            document.getElementById('fPublished').checked = item ? item.is_published !== false : true;
+            docFile = item && item.file_url ? { url: item.file_url, name: item.file_name, size: item.file_size } : null;
+            showFileInfo();
+            AdminCore.openModal('editModal');
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', async function () {
+            var title = document.getElementById('fTitle').value.trim();
+            if (!title) { AdminCore.toast('Bitte einen Titel eingeben.', 'error'); return; }
+            if (!docFile || !docFile.url) { AdminCore.toast('Bitte eine Datei hochladen.', 'error'); return; }
+
+            var payload = {
+                title: title,
+                description: document.getElementById('fDesc').value.trim() || null,
+                category: document.getElementById('fCategory').value.trim() || null,
+                file_url: docFile.url,
+                file_name: docFile.name || null,
+                file_size: docFile.size || null,
+                sort_order: parseInt(document.getElementById('fSort').value, 10) || 0,
+                is_published: document.getElementById('fPublished').checked
+            };
+
+            var btn = this;
+            btn.disabled = true;
+            try {
+                if (editingId) {
+                    var up = await sb.from('documents').update(payload).eq('id', editingId);
+                    if (up.error) throw up.error;
+                    await AdminCore.audit('update', 'document', editingId, title, null);
+                    AdminCore.toast('Datei aktualisiert.', 'success');
+                } else {
+                    var ins = await sb.from('documents').insert(payload).select().single();
+                    if (ins.error) throw ins.error;
+                    await AdminCore.audit('create', 'document', ins.data.id, title, null);
+                    AdminCore.toast('Datei hinzugefügt.', 'success');
+                }
+                AdminCore.closeModal('editModal');
+                load();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler beim Speichern: ' + (e.message || e), 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        window.editItem = function (id) {
+            var item = itemsCache.find(function (n) { return n.id === id; });
+            if (item) openEditor(item);
+        };
+
+        window.deleteItem = async function (id) {
+            var item = itemsCache.find(function (n) { return n.id === id; });
+            if (!confirm('Datei "' + (item ? item.title : '') + '" wirklich löschen?')) return;
+            var del = await sb.from('documents').delete().eq('id', id);
+            if (del.error) {
+                AdminCore.toast('Fehler beim Löschen: ' + del.error.message, 'error');
+            } else {
+                await AdminCore.audit('delete', 'document', id, item ? item.title : null, null);
+                AdminCore.toast('Datei gelöscht.', 'success');
+                load();
+            }
+        };
+
+        async function load() {
+            var body = document.getElementById('listBody');
+            var res = await sb.from('documents').select('*').order('sort_order', { ascending: true }).order('title', { ascending: true });
+            if (res.error) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state">Fehler: ' + esc(res.error.message) + ' — Migration V5 ausgeführt?</td></tr>';
+                return;
+            }
+            itemsCache = res.data || [];
+            if (!itemsCache.length) {
+                body.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-file-arrow-down"></i>Noch keine Dateien. Lade das erste Formular hoch!</td></tr>';
+                return;
+            }
+            body.innerHTML = itemsCache.map(function (d) {
+                return '<tr>' +
+                    '<td><i class="fas fa-file-pdf" style="font-size:1.3rem;color:#e5484d"></i></td>' +
+                    '<td><strong style="color:#fff">' + esc(d.title) + '</strong>' +
+                        (d.file_name ? '<div style="font-size:.78rem;opacity:.6">' + esc(d.file_name) + '</div>' : '') + '</td>' +
+                    '<td>' + (d.category ? '<span class="tag tag-info">' + esc(d.category) + '</span>' : '—') + '</td>' +
+                    '<td>' + fmtSize(d.file_size) + '</td>' +
+                    '<td>' + (d.is_published !== false
+                        ? '<span class="tag tag-success">Öffentlich</span>'
+                        : '<span class="tag tag-muted">Entwurf</span>') + '</td>' +
+                    '<td>' +
+                        '<a class="action-btn" title="Öffnen" href="' + esc(d.file_url) + '" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i></a>' +
+                        '<button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + d.id + '\')"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + d.id + '\')"><i class="fas fa-trash"></i></button>' +
+                    '</td></tr>';
+            }).join('');
+        }
+
+        await load();
+    })();
+    </script>
+</body>
+</html>

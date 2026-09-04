@@ -98,6 +98,9 @@
                     <!-- Description -->
                     <div class="td-desc" id="tdDesc"></div>
 
+                    <!-- Ergebnisse / Tabelle (Link, optional) -->
+                    <div id="tdResults" style="margin-bottom:28px"></div>
+
                     <!-- Nächste Termine (aus dem Kalender) -->
                     <div id="tdUpcoming" style="display:none;margin-bottom:28px">
                         <h3 style="font-size:1.05rem;margin-bottom:14px"><i class="fas fa-calendar-alt" style="color:var(--primary)"></i> N&auml;chste Termine</h3>
@@ -167,6 +170,7 @@
                     <ul>
                         <li><a href="impressum.html">Impressum</a></li>
                         <li><a href="datenschutz.html">Datenschutz</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
                         <li><a href="#">Vereinssatzung</a></li>
                     </ul>
                 </div>
@@ -422,7 +426,8 @@
                 image: dbTeam.image_url,
                 description: dbTeam.description || '',
                 mv: dbTeam.mv_name ? { name: dbTeam.mv_name, phone: dbTeam.mv_phone || '', email: dbTeam.mv_email || '' } : null,
-                players: dbTeam.players || []
+                players: dbTeam.players || [],
+                results_url: dbTeam.results_url || null
             };
         } else {
             team = teams[teamSlug];
@@ -457,6 +462,20 @@
 
         // ======= DESCRIPTION =======
         document.getElementById('tdDesc').innerHTML = '<p>' + team.description + '</p>';
+
+        // ======= ERGEBNISSE / TABELLE (Link, optional) =======
+        var tdResults = document.getElementById('tdResults');
+        if (tdResults) {
+            if (team.results_url) {
+                var rurl = String(team.results_url);
+                if (!/^https?:\/\//i.test(rurl)) rurl = 'https://' + rurl;
+                tdResults.innerHTML = '<a href="' + rurl.replace(/"/g, '&quot;') +
+                    '" target="_blank" rel="noopener" class="btn btn-outline">' +
+                    '<i class="fas fa-table"></i> Ergebnisse &amp; Tabelle</a>';
+            } else {
+                tdResults.innerHTML = '';
+            }
+        }
 
         // ======= CONTACT / MV =======
         if (team.mv) {

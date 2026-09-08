@@ -167,16 +167,22 @@ p { margin: 0; }
 }
 .nav-links a:hover { color: var(--white); background: rgba(255, 255, 255, 0.06); }
 .nav-cta { flex: none; padding: 11px 18px; font-size: 14px; white-space: nowrap; }
-@media (max-width: 1360px) {
+@media (max-width: 1460px) {
     .brand small { display: none; }
     .brand img { width: 40px; }
     .nav-inner { gap: 16px; }
     .nav-links a { padding: 10px 9px; letter-spacing: 0.06em; }
 }
-@media (max-width: 1200px) {
+@media (max-width: 1280px) {
     .nav-inner { gap: 12px; }
-    .nav-links a { padding: 10px 7px; font-size: 14px; letter-spacing: 0.04em; }
-    .mode-btn { padding: 7px 11px 7px 9px; font-size: 13px; letter-spacing: 0.06em; }
+    .nav-links a { padding: 10px 6px; font-size: 14px; letter-spacing: 0.03em; }
+    .nav-cta { padding: 10px 13px; font-size: 13px; }
+    .mode-btn { padding: 7px 10px 7px 8px; font-size: 13px; letter-spacing: 0.05em; }
+}
+@media (max-width: 1140px) {
+    .nav-links a { padding: 10px 4px; font-size: 13px; letter-spacing: 0.02em; }
+    .mode-btn { padding: 7px 8px 7px 7px; }
+    .nav-inner { gap: 10px; }
 }
 .nav-burger { display: none; flex: none; margin-left: auto; width: 44px; height: 44px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: transparent; cursor: pointer; position: relative; }
 .nav-burger span { position: absolute; left: 12px; right: 12px; height: 2px; background: #fff; transition: transform 0.3s, opacity 0.3s; }
@@ -392,8 +398,9 @@ p { margin: 0; }
     .team-feature { grid-column: 1 / -1; grid-row: auto; }
     .team-card { min-height: 0; aspect-ratio: 16 / 10; }
     .nav-links { display: none; }
-    .nav-cta { display: none; }
-    .nav-burger { display: block; }
+    .nav-cta:not(.nav-cta--probe) { display: none; }
+    .nav-cta--probe { display: inline-flex; margin-left: auto; padding: 9px 12px; font-size: 13px; }
+    .nav-burger { display: block; margin-left: 0; }
     .nav-open .nav-links { display: flex; flex-direction: column; position: fixed; inset: 76px 0 auto 0; background: rgba(6, 9, 15, 0.98); padding: 16px var(--gutter) 24px; gap: 4px; border-bottom: 1px solid var(--line); }
     .nav-open .nav-links a { font-size: 22px; padding: 12px 8px; }
     .nav-open .site-nav { background: rgba(6, 9, 15, 0.98); }
@@ -874,3 +881,38 @@ a.up:hover .up-title { color: var(--blue); }
 .cal-item.is-h1 .tag:first-child { background: var(--blue); color: #fff; border-color: var(--blue); }
 .hc-item.is-h1 { border-left: 4px solid var(--blue); background: rgba(59, 130, 246, 0.14); }
 .cal-chip.is-h1 { background: var(--blue) !important; color: #fff !important; font-weight: 700; }
+
+/* Sehr kleine Handys: Schalter nur mit Icons, damit Probetraining-Button Platz hat */
+@media (max-width: 430px) {
+    .nav-inner { gap: 8px; }
+    .mode-btn { font-size: 0; padding: 8px 11px; gap: 0; }
+    .mode-btn svg { width: 16px; height: 16px; }
+    .nav-cta--probe { padding: 8px 10px; font-size: 12px; letter-spacing: 0.05em; }
+}
+
+/* 1. Herren: dezenter Hai + wandernder Rahmen */
+.cal-item.is-h1, .hc-item.is-h1 {
+    position: relative; overflow: hidden; isolation: isolate;
+    border: 1px solid transparent; border-left: 4px solid var(--blue);
+    background: linear-gradient(#14264a, #14264a) padding-box,
+                linear-gradient(90deg, rgba(59, 130, 246, 0.18) 0%, rgba(120, 170, 255, 0.85) 50%, rgba(59, 130, 246, 0.18) 100%) border-box;
+    background-size: 100% 100%, 260% 100%;
+    animation: h1-border 7s linear infinite;
+}
+.cal-item.is-h1::before, .hc-item.is-h1::before {
+    content: ''; position: absolute; top: 0; bottom: 0; left: -160px; width: 140px; z-index: -1; pointer-events: none;
+    opacity: 0.09;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 52'%3E%3Cpath fill='%23ffffff' d='M20 26C35 10 80 7 111 24l3 2-3 2C80 45 35 42 20 26z'/%3E%3Cpath fill='%23ffffff' d='M22 26L3 11l6 15-6 15z'/%3E%3Cpath fill='%23ffffff' d='M58 14L70 0l9 13z'/%3E%3Cpath fill='%23ffffff' d='M64 35l-6 13 18-9z'/%3E%3Ccircle cx='101' cy='23' r='2' fill='%2314264a'/%3E%3C/svg%3E") no-repeat center / 140px auto;
+    animation: h1-shark 26s linear infinite;
+}
+.hc-item.is-h1::before { animation-duration: 20s; }
+@keyframes h1-border { from { background-position: 0 0, 0% 0; } to { background-position: 0 0, 260% 0; } }
+@keyframes h1-shark {
+    0%   { transform: translateX(0) translateY(0); }
+    50%  { transform: translateX(calc(50vw)) translateY(6px); }
+    100% { transform: translateX(calc(100vw + 320px)) translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cal-item.is-h1, .hc-item.is-h1 { animation: none; }
+    .cal-item.is-h1::before, .hc-item.is-h1::before { display: none; }
+}

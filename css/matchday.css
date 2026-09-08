@@ -714,7 +714,7 @@ p { margin: 0; }
 .cal-day.has-events:hover { border-color: rgba(59, 130, 246, 0.6); }
 .cal-num { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--muted); }
 .cal-day.today .cal-num { color: var(--blue); }
-.cal-chip { font-size: 11px; line-height: 1.2; padding: 3px 6px; border-radius: 3px; color: #fff; background: var(--blue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-chip { font-size: 11px; line-height: 1.2; padding: 3px 6px; border-radius: 3px; color: var(--white); background: rgba(255, 255, 255, 0.12); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cal-chip.turnier { background: #0ea5e9; }
 .cal-chip.event { background: #10b981; }
 .cal-chip.training { background: #f59e0b; color: #1a1400; }
@@ -854,3 +854,23 @@ a.up:hover .up-title { color: var(--blue); }
 .person-contact { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; font-size: 14px; }
 .person-contact a { color: var(--white); border-bottom: 1px solid var(--line-strong); width: fit-content; }
 .person-contact a:hover { color: var(--blue); border-color: var(--blue); }
+
+/* Vorstand mobil */
+@media (max-width: 640px) {
+    .people-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .person-photo { aspect-ratio: 1 / 1.05; }
+    .person-body { padding: 12px 12px 14px; }
+    .person-role { font-size: 11px; letter-spacing: 0.08em; }
+    .person-body h3 { font-size: 19px; line-height: 1.1; }
+    .person-teams { font-size: 12px; }
+    .person-desc { display: none; }
+    .person-contact { font-size: 12px; margin-top: 8px; }
+    .person-contact a { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .person-initials { width: 64px; height: 64px; font-size: 24px; }
+}
+
+/* 1. Herren im Kalender deutlicher */
+.cal-item.is-h1 { border-left: 4px solid var(--blue); background: rgba(59, 130, 246, 0.14); }
+.cal-item.is-h1 .tag:first-child { background: var(--blue); color: #fff; border-color: var(--blue); }
+.hc-item.is-h1 { border-left: 4px solid var(--blue); background: rgba(59, 130, 246, 0.14); }
+.cal-chip.is-h1 { background: var(--blue) !important; color: #fff !important; font-weight: 700; }

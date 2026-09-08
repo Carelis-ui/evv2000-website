@@ -320,7 +320,7 @@
                         var meta = [TYPE[ev.event_type] || ev.event_type || ''];
                         if (ev.time_start) meta.push(String(ev.time_start).slice(0, 5) + ' Uhr');
                         if (ev.location) meta.push(ev.location);
-                        if (ev.opponent) meta.push((ev.is_home ? 'Heim vs. ' : 'Auswärts bei ') + ev.opponent);
+                        if (ev.opponent) meta.push((ev.is_home ? 'Heimspiel gegen ' : 'Auswärtsspiel bei ') + ev.opponent);
                         return '<a class="up" href="termin.html?id=' + esc(ev.id) + '"><div class="up-date"><b>' + d.getDate() + '</b><span>' + MONTHS[d.getMonth()] + '</span></div>' +
                             '<div><div class="up-title">' + esc(ev.title) + '</div><div class="up-meta">' + esc(meta.filter(Boolean).join(' · ')) + '</div></div></a>';
                     }).join('');

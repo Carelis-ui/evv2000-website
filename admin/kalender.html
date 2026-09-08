@@ -467,7 +467,7 @@
             return '<div class="ev-row' + (isH1(ev) ? ' is-h1' : '') + (pub ? '' : ' is-draft') + '">' +
                 '<div class="ev-time">' + (withDate ? '<b>' + fmtDE(ev.date) + '</b><span>' : '<b>') + esc(timeRange(ev)) + (withDate ? '</span>' : '</b>') + '</div>' +
                 '<div class="ev-main"><div class="ev-title">' + esc(evTitle(ev)) + '</div>' +
-                '<div class="ev-meta">' + [TYPE_LABEL[ev.event_type] || ev.event_type, ev.opponent ? (ev.is_home ? 'Heim gegen ' : 'Auswärts bei ') + ev.opponent : '', ev.location].filter(Boolean).map(esc).join(' · ') + '</div></div>' +
+                '<div class="ev-meta">' + [TYPE_LABEL[ev.event_type] || ev.event_type, ev.opponent ? (ev.is_home ? 'Heimspiel gegen ' : 'Auswärtsspiel bei ') + ev.opponent : '', ev.location].filter(Boolean).map(esc).join(' · ') + '</div></div>' +
                 '<div class="ev-actions">' + (pub ? '' : '<span class="tag tag-muted">Entwurf</span>') +
                 (canTermine ? '<button class="action-btn edit" title="Bearbeiten" data-edit="' + ev.id + '"><i class="fas fa-edit"></i></button>' +
                 '<button class="action-btn delete" title="Löschen" data-del="' + ev.id + '"><i class="fas fa-trash"></i></button>' : '') + '</div></div>';
@@ -515,7 +515,7 @@
                 return '<tr' + (isH1(ev) ? ' class="is-h1"' : '') + '>' +
                     '<td style="white-space:nowrap">' + fmtDE(ev.date) + (ev.date_end && ev.date_end !== ev.date ? ' – ' + fmtDE(ev.date_end) : '') + '</td>' +
                     '<td style="white-space:nowrap">' + esc(timeRange(ev)) + '</td>' +
-                    '<td><strong style="color:#fff">' + esc(evTitle(ev)) + '</strong>' + (ev.opponent ? '<br><small style="color:var(--text-muted)">' + (ev.is_home ? 'Heim gegen ' : 'Auswärts bei ') + esc(ev.opponent) + '</small>' : '') + '</td>' +
+                    '<td><strong style="color:#fff">' + esc(evTitle(ev)) + '</strong>' + (ev.opponent ? '<br><small style="color:var(--text-muted)">' + (ev.is_home ? 'Heimspiel gegen ' : 'Auswärtsspiel bei ') + esc(ev.opponent) + '</small>' : '') + '</td>' +
                     '<td><span class="tag tag-blue">' + esc(TYPE_LABEL[ev.event_type] || ev.event_type) + '</span></td>' +
                     '<td style="font-size:0.8rem">' + esc(ev.location || '—') + '</td>' +
                     '<td>' + (pub ? '<span class="tag tag-success">Öffentlich</span>' : '<span class="tag tag-muted">Entwurf</span>') + '</td>' +
@@ -568,6 +568,15 @@
             openEventEditor(null, AdminCore.dateStr(new Date()));
         });
 
+        /* Heim-Haken oder Gegner geändert → automatisch erzeugten Titel nachziehen */
+        function syncAutoTitle() {
+            var t = document.getElementById('eTitle'), opp = document.getElementById('eOpponent').value.trim();
+            if (!opp || !/^(Heimspiel gegen|Auswärtsspiel bei)s|^$/i.test(t.value.trim())) return;
+            t.value = (document.getElementById('eHome').checked ? 'Heimspiel gegen ' : 'Auswärtsspiel bei ') + opp;
+        }
+        document.getElementById('eHome').addEventListener('change', syncAutoTitle);
+        document.getElementById('eOpponent').addEventListener('input', syncAutoTitle);
+
         function openEventEditor(ev, presetDate) {
             editingEventId = ev ? ev.id : null;
             document.getElementById('eventModalTitle').textContent = ev ? 'Termin bearbeiten' : 'Neuer Termin';
@@ -593,6 +602,12 @@
             if (!title || !date) {
                 AdminCore.toast('Bitte Titel und Datum angeben.', 'error');
                 return;
+            }
+            var oppVal = document.getElementById('eOpponent').value.trim();
+            var homeVal = document.getElementById('eHome').checked;
+            if (oppVal && /^(Heimspiel gegen|Auswärtsspiel bei)s/i.test(title)) {
+                title = (homeVal ? 'Heimspiel gegen ' : 'Auswärtsspiel bei ') + oppVal;
+                document.getElementById('eTitle').value = title;
             }
             var payload = {
                 title: title,

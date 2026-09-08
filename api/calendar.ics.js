@@ -86,7 +86,7 @@ function buildEvent(ev, nowStamp) {
 
     var descParts = [];
     if (ev.event_type) descParts.push(TYPE_LABEL[ev.event_type] || ev.event_type);
-    if (ev.opponent) descParts.push((ev.is_home ? 'Heim gegen ' : 'Auswärts gegen ') + ev.opponent);
+    if (ev.opponent) descParts.push((ev.is_home ? 'Heimspiel gegen ' : 'Auswärtsspiel bei ') + ev.opponent);
     if (ev.description) descParts.push(ev.description);
     descParts.push('— EVV 2000 · https://evv2000-website.vercel.app/kalender');
     lines.push(fold('DESCRIPTION:' + esc(descParts.join('\n\n'))));

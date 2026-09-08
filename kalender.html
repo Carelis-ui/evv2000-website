@@ -256,7 +256,7 @@
                 if (ev.date_end && ev.date_end !== ev.date) { var e = new Date(ev.date_end + 'T00:00:00'); meta.push('bis ' + e.getDate() + '. ' + MS[e.getMonth()]); }
                 if (ev.time_start) meta.push(String(ev.time_start).slice(0, 5) + (ev.time_end ? '–' + String(ev.time_end).slice(0, 5) : '') + ' Uhr');
                 if (ev.location) meta.push(ev.location);
-                if (ev.opponent) meta.push((ev.is_home ? 'Heim gegen ' : 'Auswärts gegen ') + ev.opponent);
+                if (ev.opponent) meta.push((ev.is_home ? 'Heimspiel gegen ' : 'Auswärtsspiel bei ') + ev.opponent);
                 var title = '<a href="' + (ev.tournament_id ? 'turnier.html?id=' + esc(ev.tournament_id) : 'termin.html?id=' + esc(ev.id)) + '">' + esc(EVV.eventTitle(ev)) + '</a>';
                 var badges = '<span class="tag' + (ev.event_type === 'spiel' ? '' : ' tag--ghost') + '">' + esc(TYPE[ev.event_type] || ev.event_type) + '</span>';
                 if (ev.team_name) badges += '<span class="tag tag--ghost">' + esc(ev.team_name) + '</span>';

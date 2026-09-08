@@ -204,6 +204,12 @@
             nachrichtEl.required = !p;
         }
         betreffSel.addEventListener('change', toggleProbe);
+        var preset = new URLSearchParams(location.search).get('betreff');
+        if (preset && betreffSel.querySelector('option[value="' + preset + '"]')) {
+            betreffSel.value = preset;
+            betreffSel.dispatchEvent(new Event('change', { bubbles: true }));
+            setTimeout(function () { var f = document.getElementById('contactForm'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 400);
+        }
         toggleProbe();
         function pv(id) { return (document.getElementById(id).value || '').trim(); }
         function fmtDE(iso) { var p = (iso || '').split('-'); return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : iso; }

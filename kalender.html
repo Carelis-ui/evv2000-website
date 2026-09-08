@@ -188,6 +188,12 @@
         var TYPE = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
         var allEvents = [], teams = [];
         var cursor = new Date(); cursor.setDate(1);
+        /* Handy: Wochenansicht statt Monatsraster */
+        var mobileMq = window.matchMedia('(max-width: 640px)');
+        function isMobile() { return mobileMq.matches; }
+        function startOfWeek(d) { var x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; }
+        var weekCursor = startOfWeek(new Date());
+        var DOW = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
         var typeFilter = 'all', teamFilter = 'all', catFilter = 'all';
         var teamCat = {};   // team_id → 'erwachsene' | 'jugend'
         var grid = document.getElementById('kalGrid');
@@ -208,7 +214,40 @@
         }
         function onDay(ev, day) { var end = ev.date_end || ev.date; return ev.date <= day && day <= end; }
 
+        function chipHtml(ev) {
+            var href = ev.tournament_id ? 'turnier.html?id=' + esc(ev.tournament_id) : 'termin.html?id=' + esc(ev.id);
+            return '<a class="cal-chip ' + esc(ev.event_type || 'event') + (EVV.isFirstMen(ev.team_name) ? ' is-h1' : '') + '" href="' + href + '" title="' + esc(EVV.eventTitle(ev)) + '">' + esc(EVV.eventTitle(ev)) + '</a>';
+        }
+        function wireGrid() {
+            grid.querySelectorAll('.cal-chip').forEach(function (c) { c.addEventListener('click', function (e) { e.stopPropagation(); }); });
+            grid.querySelectorAll('.cal-day.has-events').forEach(function (day) {
+                day.addEventListener('click', function () {
+                    var target = document.getElementById('day-' + day.dataset.date);
+                    if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); target.classList.add('highlight'); setTimeout(function () { target.classList.remove('highlight'); }, 2000); }
+                });
+            });
+        }
+        function renderWeek() {
+            var events = filtered();
+            var today = ds(new Date());
+            var d1 = new Date(weekCursor), d7 = new Date(weekCursor); d7.setDate(d7.getDate() + 6);
+            var sameMonth = d1.getMonth() === d7.getMonth();
+            document.getElementById('kalTitle').textContent = d1.getDate() + '.' + (sameMonth ? '' : ' ' + MS[d1.getMonth()]) + ' – ' + d7.getDate() + '. ' + MS[d7.getMonth()] + ' ' + d7.getFullYear();
+            var html = '';
+            for (var i = 0; i < 7; i++) {
+                var d = new Date(weekCursor); d.setDate(weekCursor.getDate() + i);
+                var key = ds(d);
+                var dayEvents = events.filter(function (ev) { return onDay(ev, key); });
+                html += '<div class="cal-day' + (key === today ? ' today' : '') + (dayEvents.length ? ' has-events' : '') + '" data-date="' + key + '">' +
+                    '<div class="cal-num">' + d.getDate() + '<small>' + DOW[d.getDay()] + '</small></div>' + (dayEvents.length ? '<div class="cal-day-chips">' + dayEvents.map(chipHtml).join('') + '</div>' : '<div class="cal-day-empty">keine Termine</div>') + '</div>';
+            }
+            grid.classList.add('cal-grid--week');
+            grid.innerHTML = html;
+            wireGrid();
+        }
         function renderCalendar() {
+            if (isMobile()) { renderWeek(); return; }
+            grid.classList.remove('cal-grid--week');
             var y = cursor.getFullYear(), m = cursor.getMonth();
             document.getElementById('kalTitle').textContent = MONTHS[m] + ' ' + y;
             var events = filtered();
@@ -221,24 +260,13 @@
                 var d = new Date(start); d.setDate(start.getDate() + i);
                 var key = ds(d);
                 var dayEvents = events.filter(function (ev) { return onDay(ev, key); });
-                var chips = dayEvents.slice(0, 3).map(function (ev) {
-                    return '<div class="cal-chip ' + esc(ev.event_type || 'event') + (EVV.isFirstMen(ev.team_name) ? ' is-h1' : '') + '" title="' + esc(EVV.eventTitle(ev)) + '">' + esc(EVV.eventTitle(ev)) + '</div>';
-                }).join('');
+                var chips = dayEvents.slice(0, 3).map(chipHtml).join('');
                 if (dayEvents.length > 3) chips += '<div class="cal-more">+' + (dayEvents.length - 3) + ' weitere</div>';
                 html += '<div class="cal-day' + (d.getMonth() === m ? '' : ' other') + (key === today ? ' today' : '') + (dayEvents.length ? ' has-events' : '') + '" data-date="' + key + '">' +
                     '<div class="cal-num">' + d.getDate() + '</div>' + chips + '</div>';
             }
             grid.innerHTML = html;
-            grid.querySelectorAll('.cal-day.has-events').forEach(function (day) {
-                day.addEventListener('click', function () {
-                    var target = document.getElementById('day-' + day.dataset.date);
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        target.classList.add('highlight');
-                        setTimeout(function () { target.classList.remove('highlight'); }, 2000);
-                    }
-                });
-            });
+            wireGrid();
         }
 
         function renderList() {
@@ -272,9 +300,15 @@
 
         function render() { renderCalendar(); renderList(); }
 
-        document.getElementById('kalPrev').addEventListener('click', function () { cursor.setMonth(cursor.getMonth() - 1); render(); });
-        document.getElementById('kalNext').addEventListener('click', function () { cursor.setMonth(cursor.getMonth() + 1); render(); });
-        document.getElementById('kalToday').addEventListener('click', function () { cursor = new Date(); cursor.setDate(1); render(); });
+        function stepWeek(n) { weekCursor.setDate(weekCursor.getDate() + 7 * n); cursor = new Date(weekCursor.getFullYear(), weekCursor.getMonth(), 1); render(); }
+        function stepMonth(n) { cursor.setMonth(cursor.getMonth() + n); weekCursor = startOfWeek(cursor); render(); }
+        document.getElementById('kalPrev').addEventListener('click', function () { isMobile() ? stepWeek(-1) : stepMonth(-1); });
+        document.getElementById('kalNext').addEventListener('click', function () { isMobile() ? stepWeek(1) : stepMonth(1); });
+        document.getElementById('kalToday').addEventListener('click', function () { cursor = new Date(); cursor.setDate(1); weekCursor = startOfWeek(new Date()); render(); });
+        var lastMobile = isMobile();
+        function onModeChange() { if (isMobile() !== lastMobile) { lastMobile = isMobile(); render(); } }
+        if (mobileMq.addEventListener) mobileMq.addEventListener('change', onModeChange);
+        window.addEventListener('resize', onModeChange);
         document.querySelectorAll('#catPills .pill').forEach(function (p) {
             p.addEventListener('click', function () {
                 document.querySelectorAll('#catPills .pill').forEach(function (x) { x.classList.remove('is-active'); });

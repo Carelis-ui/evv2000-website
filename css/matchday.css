@@ -817,3 +817,39 @@ p { margin: 0; }
     .dd-menu { position: fixed; top: auto; left: 8px; right: 8px; bottom: 8px; max-height: 72vh; padding: 10px; border-radius: 18px; transform: translateY(16px); }
     .dd-opt { padding: 13px 14px; font-size: 16px; white-space: normal; }
 }
+
+/* ---------- Termine: 1. Herren hervorheben, klickbare Einträge ---------- */
+.cal-item.is-h1, .hc-item.is-h1 { border-color: rgba(59, 130, 246, 0.55); background: rgba(59, 130, 246, 0.10); }
+.cal-item.is-h1 .up-date b, .hc-item.is-h1 .hc-date b { color: var(--blue); }
+.cal-item-title a { color: var(--white); }
+.cal-item-title a:hover { color: var(--blue); }
+a.up { color: inherit; }
+a.up:hover .up-title { color: var(--blue); }
+.cal-chip.is-h1 { background: var(--blue); color: #fff; }
+
+/* Kontakt: Probetraining-Fragebogen */
+.probe-only { padding: 18px; border: 1px solid rgba(59, 130, 246, 0.45); border-radius: var(--radius); background: rgba(59, 130, 246, 0.06); }
+.probe-intro { color: var(--white); font-weight: 500; margin-bottom: 14px; }
+.field-hint { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); line-height: 1.45; }
+.field label small { font-family: var(--font-body); font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); margin-left: 6px; }
+.choice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 16px; margin-top: 6px; }
+
+/* Aktuelles: Bild komplett zeigen statt zuschneiden */
+.article-media.is-contain img, .news-media.is-contain img { object-fit: contain; background: #000; }
+.article--featured .article-media.is-contain { min-height: 0; aspect-ratio: 16 / 10; }
+
+/* Vorstand & Trainer */
+.people-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.person { background: var(--navy); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; transition: border-color 0.25s, transform 0.25s var(--ease); }
+.person:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.person-photo { aspect-ratio: 4 / 4.6; background: #0b1426; overflow: hidden; display: grid; place-items: center; }
+.person-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; display: block; }
+.person-initials { width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; background: rgba(59, 130, 246, 0.14); color: var(--blue); font-family: var(--font-display); font-weight: 800; font-size: 34px; }
+.person-body { padding: 18px 20px 20px; }
+.person-role { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); }
+.person-body h3 { font-size: 26px; margin-top: 6px; }
+.person-teams { color: var(--text); font-size: 14px; margin-top: 6px; }
+.person-desc { color: var(--muted); font-size: 14px; margin-top: 8px; line-height: 1.55; }
+.person-contact { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; font-size: 14px; }
+.person-contact a { color: var(--white); border-bottom: 1px solid var(--line-strong); width: fit-content; }
+.person-contact a:hover { color: var(--blue); border-color: var(--blue); }

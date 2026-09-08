@@ -115,6 +115,7 @@
                         <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
                         <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="vorstand.html">Vorstand &amp; Trainer</a></li>
                     </ul>
                 </div>
                 <div>
@@ -320,8 +321,8 @@
                         if (ev.time_start) meta.push(String(ev.time_start).slice(0, 5) + ' Uhr');
                         if (ev.location) meta.push(ev.location);
                         if (ev.opponent) meta.push((ev.is_home ? 'Heim vs. ' : 'Auswärts bei ') + ev.opponent);
-                        return '<div class="up"><div class="up-date"><b>' + d.getDate() + '</b><span>' + MONTHS[d.getMonth()] + '</span></div>' +
-                            '<div><div class="up-title">' + esc(ev.title) + '</div><div class="up-meta">' + esc(meta.filter(Boolean).join(' · ')) + '</div></div></div>';
+                        return '<a class="up" href="termin.html?id=' + esc(ev.id) + '"><div class="up-date"><b>' + d.getDate() + '</b><span>' + MONTHS[d.getMonth()] + '</span></div>' +
+                            '<div><div class="up-title">' + esc(ev.title) + '</div><div class="up-meta">' + esc(meta.filter(Boolean).join(' · ')) + '</div></div></a>';
                     }).join('');
                 }
             } catch (e) { /* Termine sind optional */ }

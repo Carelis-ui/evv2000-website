@@ -83,6 +83,7 @@
                         <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
                         <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="vorstand.html">Vorstand &amp; Trainer</a></li>
                     </ul>
                 </div>
                 <div>
@@ -143,13 +144,15 @@
         function label(n) { return n.tag_label || (n.tag === 'success' ? 'Neuigkeit' : 'Info'); }
 
         function article(n, big) {
-            var media = n.image_url ? '<div class="article-media"><img src="' + esc(n.image_url) + '" alt="" loading="lazy"></div>' : '';
+            var pos = n.image_position === 'top' ? '50% 0%' : n.image_position === 'bottom' ? '50% 100%' : '50% 50%';
+            var media = n.image_url ? '<div class="article-media' + (n.image_fit === 'contain' ? ' is-contain' : '') + '"><img src="' + esc(n.image_url) + '" alt="" loading="lazy" style="object-position:' + pos + '"></div>' : '';
+            var recap = n.tournament_id ? '<a class="link-arrow" href="turnier.html?id=' + esc(n.tournament_id) + '" style="margin-top:14px">Zum Turnier <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>' : '';
             return '<article class="article' + (big ? ' article--featured' : '') + '" id="' + esc(n.id) + '">' +
                 media +
                 '<div class="article-body">' +
                     '<div class="news-meta"><span class="tag">' + esc(label(n)) + '</span><span>' + esc(fmtDate(n.published_at)) + '</span></div>' +
                     '<h2>' + esc(n.title) + '</h2>' +
-                    '<div class="prose">' + paragraphs(n.content || n.excerpt) + '</div>' +
+                    '<div class="prose">' + paragraphs(n.content || n.excerpt) + '</div>' + recap +
                 '</div>' +
             '</article>';
         }

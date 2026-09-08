@@ -213,19 +213,20 @@
             document.getElementById('detailTitle').textContent = 'Mitgliedsantrag';
             document.getElementById('detailBody').innerHTML =
                 row('Eingang', AdminCore.fmtDateTime(a.created_at)) +
-                row('Name', esc((a.anrede ? a.anrede + ' ' : '') + a.vorname + ' ' + a.nachname)) +
-                row('Geburtsdatum', AdminCore.fmtDate(a.geburtsdatum)) +
+                row('Name', esc(a.vorname + ' ' + a.nachname) + (a.geschlecht ? ' <span class="tag tag-muted">' + esc(a.geschlecht) + '</span>' : (a.anrede ? ' <span class="tag tag-muted">' + esc(a.anrede) + '</span>' : ''))) +
+                row('Geburtsdatum', AdminCore.fmtDate(a.geburtsdatum) + (a.geburtsort || a.nationalitaet ? ' · ' + esc([a.geburtsort, a.nationalitaet].filter(Boolean).join(', ')) : '')) +
                 row('E-Mail', '<a href="mailto:' + esc(a.email) + '">' + esc(a.email) + '</a>') +
-                row('Telefon', esc(a.telefon)) +
+                row('Telefon', esc([a.telefon, a.mobil ? 'Mobil ' + a.mobil : ''].filter(Boolean).join(' · '))) +
                 row('Adresse', esc([a.strasse, (a.plz || '') + ' ' + (a.ort || '')].filter(Boolean).join(', '))) +
-                row('Mitgliedschaft', esc(a.mitgliedschaft)) +
+                row('Beitragsgruppe', esc(a.mitgliedschaft) + (a.beitragsart ? ' <span class="tag tag-muted">' + esc(a.beitragsart) + '</span>' : '')) +
+                (a.eintritt ? row('Gewünschter Eintritt', AdminCore.fmtDate(a.eintritt)) : '') +
                 row('Wunsch-Mannschaft', esc(a.mannschaft)) +
                 (a.erziehungsberechtigter ? row('Erziehungsberechtigt', esc(a.erziehungsberechtigter) +
                     (a.kontakt_erziehungsberechtigter ? ' (' + esc(a.kontakt_erziehungsberechtigter) + ')' : '')) : '') +
-                row('Kontoinhaber', esc(a.kontoinhaber)) +
+                row('Kontoinhaber', esc(a.kontoinhaber) + (a.kreditinstitut ? ' · ' + esc(a.kreditinstitut) : '') + (a.bic ? ' · BIC ' + esc(a.bic) : '')) +
                 row('IBAN', '<span id="ibanMasked">' + esc(maskIban(a.iban)) +
                     ' <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="revealIban(\'' + a.id + '\')"><i class="fas fa-eye"></i> anzeigen</button></span>') +
-                row('Zustimmungen', 'Satzung ✓ &nbsp; Datenschutz ✓ &nbsp; SEPA-Mandat ✓') +
+                row('Erklärungen', 'Satzung ✓ &nbsp; Datenschutz ✓ &nbsp; SEPA-Mandat ✓ &nbsp; Fotos/Videos ' + (a.consent_fotos ? '✓' : '✗')) +
                 row('Status', statusTag(a.status));
             document.getElementById('detailFoot').innerHTML =
                 '<a class="btn btn-ghost" href="mailto:' + esc(a.email) + '?subject=' + encodeURIComponent('Dein Mitgliedsantrag beim EVV 2000') + '"><i class="fas fa-reply"></i> Antworten</a>' +
@@ -333,10 +334,10 @@
             var open = applications.filter(function (a) { return a.status !== 'erledigt'; });
             var list = open.length ? open : applications;
             if (!list.length) { AdminCore.toast('Keine Anträge zum Exportieren.', 'error'); return; }
-            var header = ['Anrede', 'Vorname', 'Nachname', 'Geburtsdatum', 'Straße', 'PLZ', 'Ort', 'Land', 'E-Mail', 'Telefon', 'Eintrittsdatum', 'Beitragsgruppe', 'Abteilung', 'Kontoinhaber', 'IBAN', 'SEPA-Mandat erteilt', 'Erziehungsberechtigte(r)', 'Kontakt Erziehungsberechtigte(r)', 'Antrag vom', 'Status'];
+            var header = ['Anrede', 'Geschlecht', 'Vorname', 'Nachname', 'Geburtsdatum', 'Geburtsort', 'Nationalität', 'Straße', 'PLZ', 'Ort', 'Land', 'E-Mail', 'Telefon', 'Mobil', 'Eintrittsdatum', 'Beitragsgruppe', 'Beitragsart', 'Abteilung', 'Kontoinhaber', 'Kreditinstitut', 'IBAN', 'BIC', 'SEPA-Mandat erteilt', 'Foto-Einwilligung', 'Erziehungsberechtigte(r)', 'Kontakt Erziehungsberechtigte(r)', 'Antrag vom', 'Status'];
             var rows = [header].concat(list.map(function (a) {
-                return [a.anrede, a.vorname, a.nachname, AdminCore.fmtDateDE(a.geburtsdatum), a.strasse, a.plz, a.ort, 'Deutschland', a.email, a.telefon,
-                    AdminCore.fmtDateDE(a.created_at), a.mitgliedschaft, a.mannschaft, a.kontoinhaber, a.iban, a.consent_sepa ? 'Ja' : 'Nein',
+                return [a.anrede, a.geschlecht, a.vorname, a.nachname, AdminCore.fmtDateDE(a.geburtsdatum), a.geburtsort, a.nationalitaet, a.strasse, a.plz, a.ort, 'Deutschland', a.email, a.telefon, a.mobil,
+                    AdminCore.fmtDateDE(a.eintritt || a.created_at), a.mitgliedschaft, a.beitragsart, a.mannschaft, a.kontoinhaber, a.kreditinstitut, a.iban, a.bic, a.consent_sepa ? 'Ja' : 'Nein', a.consent_fotos ? 'Ja' : 'Nein',
                     a.erziehungsberechtigter, a.kontakt_erziehungsberechtigter, AdminCore.fmtDateDE(a.created_at), a.status];
             }));
             AdminCore.downloadCsv('meinverein-mitgliedsantraege-' + AdminCore.dateStr(new Date()) + '.csv', rows);

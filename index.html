@@ -207,6 +207,7 @@
                         <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
                         <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="vorstand.html">Vorstand &amp; Trainer</a></li>
                     </ul>
                 </div>
                 <div>
@@ -240,6 +241,7 @@
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/evv-common.js"></script>
     <script src="js/matchday.js"></script>
     <script>
     (function () {
@@ -279,7 +281,7 @@
 
                 var res = await Promise.all([
                     sb.from('public_calendar').select('*').gte('date', calFrom).lte('date', calTo).order('date', { ascending: true }).order('time_start', { ascending: true }).limit(500),
-                    sb.from('news').select('id,title,content,tag,tag_label,published_at,image_url').eq('is_published', true).order('published_at', { ascending: false }).limit(4),
+                    sb.from('news').select('*').eq('is_published', true).order('published_at', { ascending: false }).limit(4),
                     sb.from('sponsors').select('name,logo_url,website_url').eq('is_visible', true).order('sort_order', { ascending: true }).order('name', { ascending: true })
                 ]);
 
@@ -306,10 +308,10 @@
             listEl.innerHTML = upcoming.map(function (e) {
                 var dt = d(e.date);
                 var time = e.time_start ? e.time_start.slice(0, 5) + (e.time_end ? '–' + e.time_end.slice(0, 5) : '') + ' Uhr' : 'ganztägig';
-                var meta = [TYPE[e.event_type] || e.event_type, fmtRange(e), time, e.team_name, e.location].filter(Boolean);
-                return '<a class="hc-item" href="kalender.html">' +
+                var meta = [TYPE[e.event_type] || e.event_type, fmtRange(e), time, e.location].filter(Boolean);
+                return '<a class="hc-item' + (EVV.isFirstMen(e.team_name) ? ' is-h1' : '') + '" href="termin.html?id=' + esc(e.id) + '">' +
                     '<span class="hc-date"><b>' + dt.getDate() + '</b><span>' + MONTHS[dt.getMonth()] + '</span></span>' +
-                    '<span><span class="hc-name">' + esc(e.title) + '</span><span class="hc-meta">' + esc(meta.join(' · ')) + '</span></span>' +
+                    '<span><span class="hc-name">' + esc(EVV.eventTitle(e)) + '</span><span class="hc-meta">' + esc(meta.join(' · ')) + '</span></span>' +
                     '</a>';
             }).join('');
         }
@@ -325,7 +327,7 @@
             var excerpt = (feat.content || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
             if (excerpt.length > 180) excerpt = excerpt.slice(0, 177).replace(/\s+\S*$/, '') + '…';
             var media = feat.image_url
-                ? '<div class="news-media"><img src="' + esc(feat.image_url) + '" alt="" loading="lazy"></div>'
+                ? '<div class="news-media' + (feat.image_fit === 'contain' ? ' is-contain' : '') + '"><img src="' + esc(feat.image_url) + '" alt="" loading="lazy" style="object-position:50% ' + (feat.image_position === 'top' ? '0%' : feat.image_position === 'bottom' ? '100%' : '50%') + '"></div>'
                 : '<div class="news-media" style="display:flex;align-items:end;padding:28px"><img src="img/logo-evv.png" alt="" style="width:90px;opacity:.5"></div>';
             var featHtml =
                 '<a class="news-feature" href="aktuelles.html#' + esc(feat.id) + '">' + media +

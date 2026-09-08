@@ -230,6 +230,12 @@
             }
         });
 
+        window.writeRecap = function (id) {
+            var t = itemsCache.find(function (x) { return x.id === id; });
+            if (!t) return;
+            window.location.href = 'news.html?new=1&tournament=' + encodeURIComponent(id) + '&title=' + encodeURIComponent('Rückblick: ' + t.name);
+        };
+
         window.editItem = function (id) {
             var item = itemsCache.find(function (t) { return t.id === id; });
             if (item) openEditor(item);
@@ -280,6 +286,7 @@
                         : '<span class="tag tag-muted">Entwurf</span>') + '</td>' +
                     '<td>' +
                         '<button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + t.id + '\')"><i class="fas fa-edit"></i></button>' +
+                        '<button class="action-btn" title="Rückblick schreiben (Beitrag bei Aktuelles)" onclick="writeRecap(\'' + t.id + '\')"><i class="fas fa-pen-nib"></i></button>' +
                         '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + t.id + '\')"><i class="fas fa-trash"></i></button>' +
                     '</td></tr>';
             }).join('');

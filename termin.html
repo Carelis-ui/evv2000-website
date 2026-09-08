@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Termin-Details des EVV 2000: Spiel, Turnier oder Event mit Uhrzeit, Ort und Anfahrt.">
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <title>Termin | EVV 2000</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
+</head>
+<body data-page="kalender" data-mode="halle">
+
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer - Volleyball - Verein</small></span>
+            </a>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
+            </div>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Kalender</a>
+                <a href="events.html" data-nav="events">Events</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+<!-- @chrome:/header -->
+
+    <section class="page-hero">
+        <div class="wrap">
+            <p class="kicker" id="tKicker" data-reveal>Termin</p>
+            <h1 id="tTitle" data-reveal="2">Termin wird geladen…</h1>
+            <p class="lead" id="tLead" data-reveal="3"></p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="wrap">
+            <div id="tNotFound" class="empty-note" style="display:none">
+                Dieser Termin wurde nicht gefunden oder ist nicht mehr öffentlich. <a href="kalender.html" style="color:var(--blue)">Zum Kalender</a>
+            </div>
+            <div class="td-grid" id="tContent" style="display:none">
+                <div class="stack">
+                    <div class="facts" data-reveal>
+                        <div class="fact"><div class="fact-label">Datum</div><div class="fact-value" id="fDate">–</div></div>
+                        <div class="fact"><div class="fact-label">Uhrzeit</div><div class="fact-value" id="fTime">–</div></div>
+                        <div class="fact"><div class="fact-label">Mannschaft</div><div class="fact-value" id="fTeam">–</div></div>
+                        <div class="fact" id="fOppWrap"><div class="fact-label">Gegner</div><div class="fact-value" id="fOpp">–</div></div>
+                    </div>
+                    <div class="panel" id="tLocationBlock" data-reveal="2" style="display:none">
+                        <p class="kicker">Spielort &amp; Anfahrt</p>
+                        <h3 id="fLocation" style="font-size:clamp(24px,2.6vw,32px);margin-top:10px">–</h3>
+                        <p id="fAddress" style="color:var(--muted);margin-top:6px"></p>
+                        <div class="form-actions" style="margin-top:18px;gap:10px;flex-wrap:wrap">
+                            <a class="btn btn-solid" id="mapsGoogle" href="#" target="_blank" rel="noopener">Google Maps</a>
+                            <a class="btn btn-ghost" id="mapsApple" href="#" target="_blank" rel="noopener">Apple Karten</a>
+                        </div>
+                    </div>
+                    <div class="prose" id="tDesc" style="display:none" data-reveal="2"></div>
+                </div>
+                <div class="stack" data-reveal="3">
+                    <div class="panel">
+                        <p class="kicker">Mitnehmen</p>
+                        <h3 style="font-size:clamp(22px,2.4vw,28px);margin-top:10px">Termin speichern</h3>
+                        <p style="color:var(--muted);margin-top:8px;font-size:15px">Als Kalendereintrag für Handy oder PC herunterladen. Den kompletten Vereinskalender gibt es als Abo auf der Kalenderseite.</p>
+                        <div class="form-actions" style="margin-top:16px;gap:10px;flex-wrap:wrap">
+                            <a class="btn btn-solid" id="icsBtn" href="#" download="termin.ics">In Kalender speichern</a>
+                            <a class="btn btn-ghost" href="kalender.html#abo">Kalender abonnieren</a>
+                        </div>
+                    </div>
+                    <div class="panel" id="teamPanel" style="display:none">
+                        <p class="kicker">Mannschaft</p>
+                        <h3 id="teamName" style="font-size:clamp(22px,2.4vw,28px);margin-top:10px">–</h3>
+                        <a class="link-arrow" id="teamLink" href="mannschaften.html" style="margin-top:14px">Zur Mannschaft <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+                    </div>
+                    <a class="link-arrow" href="kalender.html">Alle Termine <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- @chrome:footer -->
+    <footer class="footer">
+        <div class="wrap">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
+                </div>
+                <div>
+                    <h4>Verein</h4>
+                    <ul>
+                        <li><a href="mannschaften.html">Mannschaften</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
+                        <li><a href="kalender.html">Kalender</a></li>
+                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="vorstand.html">Vorstand &amp; Trainer</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Mitmachen</h4>
+                    <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
+                        <li><a href="impressum.html">Impressum</a></li>
+                        <li><a href="datenschutz.html">Datenschutz</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
+            </div>
+        </div>
+    </footer>
+<!-- @chrome:/footer -->
+
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/evv-common.js"></script>
+    <script src="js/matchday.js"></script>
+    <script>
+    (async function () {
+        var MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+        var DAYS = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+        var TYPE = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
+        function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+        function d(iso) { return new Date(iso + 'T00:00:00'); }
+        function fmtDate(iso) { var x = d(iso); return DAYS[x.getDay()] + ', ' + x.getDate() + '. ' + MONTHS[x.getMonth()] + ' ' + x.getFullYear(); }
+        function fmtShort(iso) { var x = d(iso); return x.getDate() + '. ' + MONTHS[x.getMonth()] + ' ' + x.getFullYear(); }
+        function hm(t) { return t ? String(t).slice(0, 5) : ''; }
+
+        var id = new URLSearchParams(location.search).get('id');
+        function notFound() {
+            document.getElementById('tTitle').textContent = 'Termin nicht gefunden';
+            document.getElementById('tNotFound').style.display = '';
+        }
+        if (!id) { notFound(); return; }
+
+        try {
+            await ErkaSupabase.init();
+            var sb = ErkaSupabase.client;
+            if (!sb) throw new Error('offline');
+            var res = await sb.from('public_calendar').select('*').eq('id', id).maybeSingle();
+            if (res.error || !res.data) { notFound(); return; }
+            var ev = res.data;
+
+            var typeLabel = TYPE[ev.event_type] || ev.event_type || 'Termin';
+            var teamShort = EVV.teamLabel(ev.team_name);
+            document.title = EVV.eventTitle(ev) + ' | EVV 2000';
+            document.getElementById('tKicker').textContent = typeLabel + (teamShort ? ' · ' + teamShort : '');
+            document.getElementById('tTitle').textContent = ev.title;
+
+            var multi = ev.date_end && ev.date_end !== ev.date;
+            var dateText = multi ? fmtShort(ev.date) + ' – ' + fmtShort(ev.date_end) : fmtDate(ev.date);
+            var timeText = ev.time_start ? hm(ev.time_start) + (ev.time_end ? ' – ' + hm(ev.time_end) : '') + ' Uhr' : 'ganztägig';
+            document.getElementById('tLead').textContent = [dateText, timeText, ev.location].filter(Boolean).join(' · ');
+            document.getElementById('fDate').textContent = dateText;
+            document.getElementById('fTime').textContent = timeText;
+            document.getElementById('fTeam').textContent = ev.team_name || '–';
+
+            if (ev.opponent) {
+                document.getElementById('fOpp').textContent = ev.opponent + (ev.is_home === true ? ' (Heimspiel)' : ev.is_home === false ? ' (Auswärts)' : '');
+            } else {
+                document.getElementById('fOppWrap').style.display = 'none';
+            }
+
+            if (ev.location) {
+                var links = EVV.mapsLinks(ev.location);
+                document.getElementById('tLocationBlock').style.display = '';
+                document.getElementById('fLocation').textContent = ev.location;
+                if (links) {
+                    document.getElementById('fAddress').textContent = links.address !== ev.location ? links.address : '';
+                    document.getElementById('mapsGoogle').href = links.google;
+                    document.getElementById('mapsApple').href = links.apple;
+                }
+            }
+
+            if (ev.description) {
+                var descEl = document.getElementById('tDesc');
+                descEl.style.display = '';
+                descEl.innerHTML = String(ev.description).split(/\n{2,}/).map(function (p) { return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>'; }).join('');
+            }
+
+            if (ev.team_id) {
+                var teamRes = await sb.from('public_teams').select('slug,name').eq('id', ev.team_id).maybeSingle();
+                if (teamRes.data) {
+                    document.getElementById('teamPanel').style.display = '';
+                    document.getElementById('teamName').textContent = teamRes.data.name;
+                    document.getElementById('teamLink').href = 'mannschaft.html?team=' + encodeURIComponent(teamRes.data.slug);
+                }
+            }
+
+            /* ICS für diesen Termin */
+            function icsDate(iso) { return iso.replace(/-/g, ''); }
+            function icsDateTime(iso, t) { return icsDate(iso) + 'T' + hm(t).replace(':', '') + '00'; }
+            function icsEsc(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;'); }
+            var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//EVV 2000//Termin//DE', 'BEGIN:VEVENT', 'UID:' + ev.id + '@evv2000.de',
+                'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z')];
+            if (ev.time_start) {
+                lines.push('DTSTART;TZID=Europe/Berlin:' + icsDateTime(ev.date, ev.time_start));
+                lines.push('DTEND;TZID=Europe/Berlin:' + icsDateTime(ev.date_end || ev.date, ev.time_end || (String(hm(ev.time_start)) < '22:00' ? String(parseInt(hm(ev.time_start), 10) + 2).padStart(2, '0') + hm(ev.time_start).slice(2) : '23:59')));
+            } else {
+                var endD = d(ev.date_end || ev.date); endD.setDate(endD.getDate() + 1);
+                lines.push('DTSTART;VALUE=DATE:' + icsDate(ev.date));
+                lines.push('DTEND;VALUE=DATE:' + endD.getFullYear() + String(endD.getMonth() + 1).padStart(2, '0') + String(endD.getDate()).padStart(2, '0'));
+            }
+            lines.push('SUMMARY:' + icsEsc(EVV.eventTitle(ev)));
+            if (ev.location) lines.push('LOCATION:' + icsEsc(EVV.resolveAddress(ev.location)));
+            if (ev.description) lines.push('DESCRIPTION:' + icsEsc(ev.description));
+            lines.push('URL:' + location.href, 'END:VEVENT', 'END:VCALENDAR');
+            var icsBtn = document.getElementById('icsBtn');
+            icsBtn.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(lines.join('\r\n'));
+            icsBtn.download = (EVV.eventTitle(ev) || 'termin').replace(/[^\wäöüÄÖÜß-]+/g, '-').toLowerCase() + '.ics';
+
+            document.getElementById('tContent').style.display = '';
+        } catch (e) {
+            console.warn(e);
+            notFound();
+        }
+    })();
+    </script>
+</body>
+</html>

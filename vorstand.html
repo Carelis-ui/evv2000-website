@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex">
+    <meta name="description" content="Vorstand und Trainer des EVV 2000 – Ansprechpartner für Verein, Mannschaften und Jugend.">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <title>Impressum | EVV 2000</title>
+    <title>Vorstand &amp; Trainer | EVV 2000</title>
+    <meta property="og:title" content="Vorstand & Trainer | EVV 2000">
+    <meta property="og:description" content="Die Menschen hinter dem Erkelenzer Volleyball-Verein 2000 e.V.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evv2000-website.vercel.app/vorstand">
+    <meta property="og:image" content="https://evv2000-website.vercel.app/img/team-herren-1.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body data-page="impressum" data-mode="halle">
+<body data-page="vorstand" data-mode="halle">
 
 <!-- @chrome:header -->
     <header class="site-nav" id="siteNav">
@@ -40,42 +45,37 @@
 
     <section class="page-hero">
         <div class="wrap">
-            <p class="kicker" data-reveal>Rechtliches</p>
-            <h1 data-reveal="2">Impressum.</h1>
+            <p class="kicker" data-reveal>Verein</p>
+            <h1 data-reveal="2">Vorstand &amp;<br>Trainer.</h1>
+            <p class="lead" data-reveal="3">Die Menschen, die den EVV 2000 tragen: Ansprechpartner für Verein, Mitgliedschaft, Mannschaften und Jugend.</p>
         </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="vorstand">
         <div class="wrap">
-            <div class="legal prose" data-reveal>
-                <h2>Angaben gemäß § 5 TMG</h2>
-                <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>c/o Martin König, 1. Vorsitzender<br>In Granterath 76<br>41812 Erkelenz</p>
-
-                <h2>Vertreten durch den Vorstand</h2>
-                <p>1. Vorsitzender: Martin König<br>2. Vorsitzender: [wird ergänzt]</p>
-
-                <h2>Kontakt</h2>
-                <p>Telefon: <a href="tel:+491719940856">0171 9940856</a><br>E-Mail: <a href="mailto:jaymanns@evv2000.de">jaymanns@evv2000.de</a></p>
-
-                <h2>Registereintrag</h2>
-                <p>Eingetragen im Vereinsregister<br>Registergericht: Amtsgericht Erkelenz<br>Registernummer: [wird ergänzt]</p>
-
-                <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
-                <p>Martin König<br>In Granterath 76<br>41812 Erkelenz</p>
-
-                <h2>Streitschlichtung</h2>
-                <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr/</a></p>
-                <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
-
-                <h2>Haftung für Inhalte</h2>
-                <p>Als gemeinnütziger Verein sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen.</p>
-
-                <h2>Haftung für Links</h2>
-                <p>Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter verantwortlich.</p>
-
-                <h2>Urheberrecht</h2>
-                <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des Vereins.</p>
+            <div class="section-head" data-reveal>
+                <div><p class="kicker">Vorstand</p><h2>Die Vereinsführung.</h2></div>
             </div>
+            <div class="people-grid" id="gridVorstand" data-reveal><div class="empty-note">Wird geladen…</div></div>
+        </div>
+    </section>
+
+    <section class="section" id="trainer" style="padding-top:0">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div><p class="kicker">Trainer</p><h2>An der Linie.</h2></div>
+                <a class="link-arrow" href="mannschaften.html">Zu den Mannschaften <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+            </div>
+            <div class="people-grid" id="gridTrainer" data-reveal><div class="empty-note">Wird geladen…</div></div>
+        </div>
+    </section>
+
+    <section class="section" id="weitere" style="padding-top:0;display:none">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div><p class="kicker">Weitere</p><h2>Gute Geister.</h2></div>
+            </div>
+            <div class="people-grid" id="gridSonstige" data-reveal></div>
         </div>
     </section>
 
@@ -129,6 +129,51 @@
     </footer>
 <!-- @chrome:/footer -->
 
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
     <script src="js/matchday.js"></script>
+    <script>
+    (async function () {
+        function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+        function initials(name) { return String(name || '').split(/\s+/).map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase(); }
+        function card(p) {
+            var photo = p.image_url ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.name) + '" loading="lazy">' : '<div class="person-initials">' + esc(initials(p.name)) + '</div>';
+            var contact = [
+                p.email ? '<a href="mailto:' + esc(p.email) + '">' + esc(p.email) + '</a>' : '',
+                p.phone ? '<a href="tel:' + esc(String(p.phone).replace(/[^\d+]/g, '')) + '">' + esc(p.phone) + '</a>' : ''
+            ].filter(Boolean).join('');
+            return '<article class="person">' +
+                '<div class="person-photo">' + photo + '</div>' +
+                '<div class="person-body">' +
+                    '<p class="person-role">' + esc(p.role) + '</p>' +
+                    '<h3>' + esc(p.name) + '</h3>' +
+                    (p.teams ? '<p class="person-teams">' + esc(p.teams) + '</p>' : '') +
+                    (p.description ? '<p class="person-desc">' + esc(p.description) + '</p>' : '') +
+                    (contact ? '<div class="person-contact">' + contact + '</div>' : '') +
+                '</div></article>';
+        }
+        function fill(id, list, emptyText) {
+            var el = document.getElementById(id);
+            el.innerHTML = list.length ? list.map(card).join('') : '<div class="empty-note">' + emptyText + '</div>';
+        }
+        try {
+            await ErkaSupabase.init();
+            var sb = ErkaSupabase.client;
+            if (!sb) throw new Error('offline');
+            var res = await sb.from('public_staff').select('*');
+            if (res.error) throw res.error;
+            var all = res.data || [];
+            fill('gridVorstand', all.filter(function (p) { return p.group === 'vorstand'; }), 'Der Vorstand wird gerade eingetragen.');
+            fill('gridTrainer', all.filter(function (p) { return p.group === 'trainer'; }), 'Die Trainer werden gerade eingetragen – bis dahin stehen sie auf den Mannschaftsseiten.');
+            var rest = all.filter(function (p) { return p.group !== 'vorstand' && p.group !== 'trainer'; });
+            if (rest.length) { document.getElementById('weitere').style.display = ''; fill('gridSonstige', rest, ''); }
+        } catch (e) {
+            console.warn(e);
+            fill('gridVorstand', [], 'Der Vorstand wird gerade eingetragen.');
+            fill('gridTrainer', [], 'Die Trainer stehen auf den Mannschaftsseiten.');
+        }
+    })();
+    </script>
 </body>
 </html>

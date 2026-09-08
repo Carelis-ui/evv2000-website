@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>EVV 2000 | Vorstand &amp; Trainer verwalten</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .drag-handle { transition: color 0.15s; }
+        .drag-handle:hover { color: var(--accent) !important; }
+        .sort-ghost { opacity: 0.35; background: rgba(59,130,246,0.15) !important; }
+        .publish-toggle:disabled { opacity: 0.5; cursor: wait; }
+        .person-thumb { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: 50% 20%; display: block; background: var(--navy); }
+        .person-initials { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--navy); color: var(--primary-light); font-family: var(--font-heading); font-weight: 700; }
+        .setup-note { padding: 14px 16px; margin-bottom: 18px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; font-size: 0.88rem; }
+        .setup-note code { background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 4px; }
+        #imgPicker .img-picker-preview img { height: 220px; object-fit: cover; object-position: 50% 15%; }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+        <div class="topbar">
+            <h1 class="topbar-title">Vorstand &amp; Trainer</h1>
+            <div class="topbar-actions">
+                <a href="../vorstand.html" target="_blank" rel="noopener" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-up-right-from-square"></i> Seite ansehen</a>
+                <button class="btn btn-primary" id="newBtn"><i class="fas fa-user-plus"></i> Neue Person</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="setupNote" class="setup-note" style="display:none">
+                <i class="fas fa-triangle-exclamation"></i> Die Tabelle <code>staff</code> fehlt noch. Bitte einmal <code>supabase-migration-v8-verein.sql</code> im Supabase SQL-Editor ausführen.
+            </div>
+
+            <div class="filter-pills" id="groupFilter" style="margin-bottom:20px">
+                <button class="filter-pill active" data-group="all">Alle</button>
+                <button class="filter-pill" data-group="vorstand">Vorstand</button>
+                <button class="filter-pill" data-group="trainer">Trainer</button>
+                <button class="filter-pill" data-group="sonstige">Weitere</button>
+            </div>
+
+            <div id="sortHint" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.35);color:#93c5fd;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:0.85rem">
+                <i class="fas fa-info-circle"></i> Reihenfolge per <i class="fas fa-grip-vertical"></i>-Griff ziehen (nur in „Alle“). So erscheinen die Personen auch auf der Website.
+            </div>
+
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="width:32px"></th>
+                            <th>Foto</th>
+                            <th>Name</th>
+                            <th>Funktion</th>
+                            <th>Bereich</th>
+                            <th>Mannschaften</th>
+                            <th>Kontakt</th>
+                            <th>Status</th>
+                            <th style="width:110px">Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                        <tr><td colspan="9" class="empty-state"><i class="fas fa-spinner fa-spin"></i>Laden...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Person anlegen / bearbeiten -->
+    <div class="modal" id="editModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="modalTitle">Neue Person</h3>
+                <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" class="form-input" id="fName" placeholder="Vor- und Nachname">
+                    </div>
+                    <div class="form-group">
+                        <label>Funktion *</label>
+                        <input type="text" class="form-input" id="fRole" placeholder="z.B. 1. Vorsitzender, Trainer Herren 1">
+                    </div>
+                    <div class="form-group">
+                        <label>Bereich</label>
+                        <select class="form-select" id="fGroup">
+                            <option value="vorstand">Vorstand</option>
+                            <option value="trainer">Trainer</option>
+                            <option value="sonstige">Weitere (z.B. Beachwart, Jugendleitung)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mannschaften (bei Trainern)</label>
+                        <input type="text" class="form-input" id="fTeams" placeholder="z.B. Herren 1, mU18">
+                    </div>
+                    <div class="form-group">
+                        <label>E-Mail (öffentlich)</label>
+                        <input type="email" class="form-input" id="fEmail" placeholder="name@evv2000.de">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon (öffentlich)</label>
+                        <input type="text" class="form-input" id="fPhone" placeholder="0171 …">
+                    </div>
+                    <div class="form-group full">
+                        <label>Kurztext (optional)</label>
+                        <textarea class="form-textarea" id="fDesc" style="min-height:70px" placeholder="z.B. seit 2015 im Verein, Ansprechpartner für Sponsoring"></textarea>
+                    </div>
+                    <div class="form-group full">
+                        <label>Foto</label>
+                        <div id="imgPicker"></div>
+                        <div class="form-hint">Hochformat oder quadratisch, Gesicht mittig. Wird automatisch verkleinert.</div>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-check"><input type="checkbox" id="fPublished" checked> Auf der Website anzeigen</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close>Abbrechen</button>
+                <button class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/admin-core.js"></script>
+    <script>
+    (async function () {
+        var me = await AdminCore.init({ page: 'personen.html', perm: 'teams' });
+        if (!me) return;
+
+        var sb = ErkaSupabase.client;
+        var esc = AdminCore.esc;
+        var editingId = null;
+        var itemsCache = [];
+        var activeGroup = 'all';
+        var sortable = null;
+        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'personen');
+        var GROUP_LABEL = { vorstand: 'Vorstand', trainer: 'Trainer', sonstige: 'Weitere' };
+        var GROUP_TAG = { vorstand: 'tag-blue', trainer: 'tag-success', sonstige: 'tag-muted' };
+
+        document.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', function () { AdminCore.closeModal('editModal'); }); });
+        document.getElementById('newBtn').addEventListener('click', function () { openEditor(null); });
+        document.querySelectorAll('#groupFilter .filter-pill').forEach(function (p) {
+            p.addEventListener('click', function () {
+                document.querySelectorAll('#groupFilter .filter-pill').forEach(function (x) { x.classList.remove('active'); });
+                p.classList.add('active');
+                activeGroup = p.dataset.group;
+                render();
+            });
+        });
+
+        function val(id) { return document.getElementById(id).value; }
+        function setVal(id, v) { document.getElementById(id).value = v == null ? '' : v; }
+        function initials(name) { return String(name || '').split(/\s+/).map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase(); }
+        function thumb(p) {
+            var src = p.image_url ? (p.image_url.indexOf('http') === 0 ? p.image_url : '../' + p.image_url) : '';
+            return src ? '<img class="person-thumb" src="' + esc(src) + '" alt="">' : '<div class="person-initials">' + esc(initials(p.name)) + '</div>';
+        }
+
+        function openEditor(item) {
+            editingId = item ? item.id : null;
+            document.getElementById('modalTitle').textContent = item ? 'Person bearbeiten' : 'Neue Person';
+            setVal('fName', item && item.name);
+            setVal('fRole', item && item.role);
+            setVal('fGroup', item ? (item.group || 'vorstand') : 'vorstand');
+            setVal('fTeams', item && item.teams);
+            setVal('fEmail', item && item.email);
+            setVal('fPhone', item && item.phone);
+            setVal('fDesc', item && item.description);
+            document.getElementById('fPublished').checked = item ? item.is_published !== false : true;
+            picker.setUrl(item ? item.image_url : '');
+            AdminCore.openModal('editModal');
+        }
+
+        document.getElementById('saveBtn').addEventListener('click', async function () {
+            var name = val('fName').trim(), role = val('fRole').trim();
+            if (!name || !role) { AdminCore.toast('Bitte Name und Funktion ausfüllen.', 'error'); return; }
+            var payload = {
+                name: name, role: role, group: val('fGroup'),
+                teams: val('fTeams').trim() || null, email: val('fEmail').trim() || null, phone: val('fPhone').trim() || null,
+                description: val('fDesc').trim() || null, image_url: picker.getUrl() || null,
+                is_published: document.getElementById('fPublished').checked
+            };
+            var btn = this; btn.disabled = true;
+            try {
+                if (editingId) {
+                    var up = await sb.from('staff').update(payload).eq('id', editingId);
+                    if (up.error) throw up.error;
+                    await AdminCore.audit('update', 'person', editingId, name, null);
+                    AdminCore.toast('Gespeichert.', 'success');
+                } else {
+                    payload.sort_order = (itemsCache.length + 1) * 10;
+                    var ins = await sb.from('staff').insert(payload).select().single();
+                    if (ins.error) throw ins.error;
+                    await AdminCore.audit('create', 'person', ins.data.id, name, null);
+                    AdminCore.toast('Person angelegt.', 'success');
+                }
+                AdminCore.closeModal('editModal');
+                load();
+            } catch (e) {
+                console.error(e);
+                AdminCore.toast('Fehler beim Speichern: ' + (e.message || e), 'error');
+            } finally { btn.disabled = false; }
+        });
+
+        window.editItem = function (id) { var it = itemsCache.find(function (x) { return x.id === id; }); if (it) openEditor(it); };
+        window.deleteItem = async function (id) {
+            var it = itemsCache.find(function (x) { return x.id === id; });
+            if (!confirm('„' + (it ? it.name : '') + '“ wirklich löschen?')) return;
+            var del = await sb.from('staff').delete().eq('id', id);
+            if (del.error) { AdminCore.toast('Fehler: ' + del.error.message, 'error'); return; }
+            await AdminCore.audit('delete', 'person', id, it ? it.name : null, null);
+            AdminCore.toast('Gelöscht.', 'success');
+            load();
+        };
+
+        function render() {
+            var body = document.getElementById('listBody');
+            var sortEnabled = activeGroup === 'all';
+            document.getElementById('sortHint').style.display = sortEnabled ? '' : 'none';
+            var items = sortEnabled ? itemsCache : itemsCache.filter(function (p) { return (p.group || 'vorstand') === activeGroup; });
+            if (sortable) { sortable.destroy(); sortable = null; }
+            if (!items.length) {
+                body.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-users"></i>Noch niemand eingetragen. Lege über „Neue Person“ Vorstand und Trainer an.</td></tr>';
+                return;
+            }
+            body.innerHTML = items.map(function (p) {
+                var pub = p.is_published !== false;
+                var contact = [p.email ? '<a href="mailto:' + esc(p.email) + '">' + esc(p.email) + '</a>' : '', p.phone ? esc(p.phone) : ''].filter(Boolean).join('<br>') || '—';
+                return '<tr data-id="' + esc(p.id) + '">' +
+                    (sortEnabled ? '<td class="drag-handle" style="cursor:grab;color:var(--text-muted);text-align:center"><i class="fas fa-grip-vertical"></i></td>' : '<td style="opacity:0.3;text-align:center"><i class="fas fa-grip-vertical"></i></td>') +
+                    '<td>' + thumb(p) + '</td>' +
+                    '<td><strong style="color:#fff">' + esc(p.name) + '</strong></td>' +
+                    '<td>' + esc(p.role) + '</td>' +
+                    '<td><span class="tag ' + (GROUP_TAG[p.group] || 'tag-muted') + '">' + esc(GROUP_LABEL[p.group] || p.group) + '</span></td>' +
+                    '<td style="font-size:0.85rem">' + esc(p.teams || '—') + '</td>' +
+                    '<td style="font-size:0.8rem">' + contact + '</td>' +
+                    '<td><button class="publish-toggle tag ' + (pub ? 'tag-success' : 'tag-muted') + '" data-id="' + esc(p.id) + '" data-state="' + (pub ? '1' : '0') + '" style="border:none;cursor:pointer;font-family:inherit"><i class="fas fa-' + (pub ? 'eye' : 'eye-slash') + '"></i> ' + (pub ? 'Öffentlich' : 'Versteckt') + '</button></td>' +
+                    '<td><button class="action-btn edit" title="Bearbeiten" onclick="editItem(\'' + p.id + '\')"><i class="fas fa-edit"></i></button>' +
+                    '<button class="action-btn delete" title="Löschen" onclick="deleteItem(\'' + p.id + '\')"><i class="fas fa-trash"></i></button></td></tr>';
+            }).join('');
+            body.querySelectorAll('.publish-toggle').forEach(function (btn) {
+                btn.addEventListener('click', async function () {
+                    var id = btn.dataset.id, newState = btn.dataset.state !== '1';
+                    btn.disabled = true;
+                    var up = await sb.from('staff').update({ is_published: newState }).eq('id', id);
+                    if (up.error) { AdminCore.toast('Fehler: ' + up.error.message, 'error'); btn.disabled = false; return; }
+                    var it = itemsCache.find(function (x) { return x.id === id; }); if (it) it.is_published = newState;
+                    render();
+                });
+            });
+            if (sortEnabled && window.Sortable) {
+                sortable = window.Sortable.create(body, { handle: '.drag-handle', animation: 160, ghostClass: 'sort-ghost', onEnd: onSortEnd });
+            }
+        }
+
+        async function onSortEnd() {
+            var updates = [];
+            document.querySelectorAll('#listBody tr[data-id]').forEach(function (row, idx) {
+                var it = itemsCache.find(function (x) { return x.id === row.dataset.id; });
+                var order = (idx + 1) * 10;
+                if (it && it.sort_order !== order) { it.sort_order = order; updates.push({ id: it.id, sort_order: order }); }
+            });
+            itemsCache.sort(function (a, b) { return (a.sort_order || 0) - (b.sort_order || 0); });
+            if (!updates.length) return;
+            var results = await Promise.all(updates.map(function (u) { return sb.from('staff').update({ sort_order: u.sort_order }).eq('id', u.id); }));
+            var err = results.find(function (r) { return r.error; });
+            if (err) { AdminCore.toast('Fehler beim Sortieren: ' + err.error.message, 'error'); load(); }
+            else AdminCore.toast('Reihenfolge gespeichert.', 'success');
+        }
+
+        async function load() {
+            var res = await sb.from('staff').select('*').order('sort_order', { ascending: true }).order('name', { ascending: true });
+            if (res.error) {
+                document.getElementById('setupNote').style.display = '';
+                document.getElementById('listBody').innerHTML = '<tr><td colspan="9" class="empty-state">Tabelle noch nicht vorhanden – bitte Migration V8 ausführen.</td></tr>';
+                return;
+            }
+            itemsCache = res.data || [];
+            render();
+        }
+        await load();
+    })();
+    </script>
+</body>
+</html>

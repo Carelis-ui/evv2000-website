@@ -42,6 +42,7 @@
         { href: 'events.html',        icon: 'fa-trophy',         label: 'Turniere & Events', perm: 'events' },
         { href: 'teams.html',         icon: 'fa-users',          label: 'Mannschaften',      perm: 'teams' },
         { href: 'startseite.html',    icon: 'fa-house',          label: 'Startseite',        perm: 'teams' },
+        { href: 'personen.html',      icon: 'fa-user-tie',       label: 'Vorstand & Trainer', perm: 'teams' },
         { href: 'sponsoren.html',     icon: 'fa-handshake',      label: 'Sponsoren',         perm: 'sponsors' },
         { href: 'kalender.html',      icon: 'fa-calendar-alt',   label: 'Kalender',          perm: ['kalender', 'beach'] },
         { href: 'beach.html',         icon: 'fa-umbrella-beach', label: 'Beach-Buchungen',   perm: 'beach' },

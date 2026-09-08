@@ -87,6 +87,19 @@
                         <label>Bild (optional)</label>
                         <div id="imgPicker"></div>
                     </div>
+                    <div class="form-group">
+                        <label>Bilddarstellung</label>
+                        <select class="form-select" id="fImageFit"><option value="cover">Füllend zuschneiden (Standard)</option><option value="contain">Komplett zeigen, nichts abschneiden</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Bildausschnitt (beim Zuschneiden)</label>
+                        <select class="form-select" id="fImagePos"><option value="top">Oben behalten</option><option value="center" selected>Mitte</option><option value="bottom">Unten behalten</option></select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Rückblick zu einem Turnier / Event (optional)</label>
+                        <select class="form-select" id="fTournament"><option value="">— kein Bezug —</option></select>
+                        <div class="form-hint">Der Beitrag wird dann auf der Turnierseite als „Rückblick“ verlinkt.</div>
+                    </div>
                 </div>
             </div>
             <div class="modal-foot">
@@ -126,8 +139,21 @@
             document.getElementById('fDate').value = item ? (item.published_at || '') : AdminCore.dateStr(new Date());
             document.getElementById('fPublished').checked = item ? item.is_published !== false : true;
             picker.setUrl(item ? item.image_url : '');
+            document.getElementById('fImageFit').value = (item && item.image_fit) || 'cover';
+            document.getElementById('fImagePos').value = (item && item.image_position) || 'center';
+            document.getElementById('fTournament').value = (item && item.tournament_id) || '';
             AdminCore.openModal('editModal');
         }
+
+        /* Turniere für die Rückblick-Zuordnung */
+        async function loadTournaments() {
+            var r = await sb.from('tournaments').select('id,name,date_start').order('date_start', { ascending: false }).limit(60);
+            var sel = document.getElementById('fTournament');
+            sel.innerHTML = '<option value="">— kein Bezug —</option>' + (r.data || []).map(function (t) {
+                return '<option value="' + t.id + '">' + esc(t.name) + ' (' + AdminCore.fmtDate(t.date_start) + ')</option>';
+            }).join('');
+        }
+        await loadTournaments();
 
         document.getElementById('saveBtn').addEventListener('click', async function () {
             var title = document.getElementById('fTitle').value.trim();
@@ -144,20 +170,27 @@
                 tag_label: document.getElementById('fTagLabel').value.trim() || null,
                 published_at: document.getElementById('fDate').value || AdminCore.dateStr(new Date()),
                 is_published: document.getElementById('fPublished').checked,
-                image_url: picker.getUrl() || null
+                image_url: picker.getUrl() || null,
+                image_fit: document.getElementById('fImageFit').value,
+                image_position: document.getElementById('fImagePos').value,
+                tournament_id: document.getElementById('fTournament').value || null
             };
 
             var btn = this;
             btn.disabled = true;
 
             try {
+                var stripV8 = function (p) { var c = Object.assign({}, p); delete c.image_fit; delete c.image_position; delete c.tournament_id; return c; };
+                var v8missing = function (err) { return err && /column|schema cache/i.test(err.message || ''); };
                 if (editingId) {
                     var up = await sb.from('news').update(payload).eq('id', editingId);
+                    if (up.error && v8missing(up.error)) { up = await sb.from('news').update(stripV8(payload)).eq('id', editingId); AdminCore.toast('Hinweis: Bilddarstellung/Rückblick brauchen Migration V8.', 'error'); }
                     if (up.error) throw up.error;
                     await AdminCore.audit('update', 'news', editingId, title, null);
                     AdminCore.toast('Beitrag aktualisiert.', 'success');
                 } else {
                     var ins = await sb.from('news').insert(payload).select().single();
+                    if (ins.error && v8missing(ins.error)) { ins = await sb.from('news').insert(stripV8(payload)).select().single(); AdminCore.toast('Hinweis: Bilddarstellung/Rückblick brauchen Migration V8.', 'error'); }
                     if (ins.error) throw ins.error;
                     await AdminCore.audit('create', 'news', ins.data.id, title, null);
                     AdminCore.toast('Beitrag erstellt.', 'success');
@@ -227,6 +260,15 @@
         await load();
 
         // Deep-Link: news.html?edit=<id>
+        /* Direktsprung „Rückblick schreiben“ aus Turniere & Events: news.html?new=1&tournament=<id>&title=… */
+        var qp = new URLSearchParams(location.search);
+        if (qp.get('new') === '1') {
+            openEditor(null);
+            if (qp.get('title')) document.getElementById('fTitle').value = qp.get('title');
+            document.getElementById('fTagLabel').value = 'Rückblick';
+            document.getElementById('fTag').value = 'success';
+            if (qp.get('tournament')) document.getElementById('fTournament').value = qp.get('tournament');
+        }
         var editParam = new URLSearchParams(location.search).get('edit');
         if (editParam) {
             var target = itemsCache.find(function (n) { return n.id === editParam; });

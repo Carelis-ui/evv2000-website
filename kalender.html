@@ -54,6 +54,11 @@
     <section class="section">
         <div class="wrap">
             <div class="toolbar" data-reveal>
+                <div class="pills" id="catPills" role="group" aria-label="Bereich">
+                    <button class="pill is-active" data-cat="all" type="button">Alle</button>
+                    <button class="pill" data-cat="erwachsene" type="button">Erwachsene</button>
+                    <button class="pill" data-cat="jugend" type="button">Jugend</button>
+                </div>
                 <div class="pills" id="typePills" role="group" aria-label="Terminart">
                     <button class="pill is-active" data-type="all" type="button">Alle</button>
                     <button class="pill" data-type="spiel" type="button">Spiele</button>
@@ -132,6 +137,7 @@
                         <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
                         <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="vorstand.html">Vorstand &amp; Trainer</a></li>
                     </ul>
                 </div>
                 <div>
@@ -165,6 +171,7 @@
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/evv-common.js"></script>
     <script src="js/matchday.js"></script>
     <script>
     (function () {
@@ -180,7 +187,8 @@
         var TYPE = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
         var allEvents = [], teams = [];
         var cursor = new Date(); cursor.setDate(1);
-        var typeFilter = 'all', teamFilter = 'all';
+        var typeFilter = 'all', teamFilter = 'all', catFilter = 'all';
+        var teamCat = {};   // team_id → 'erwachsene' | 'jugend'
         var grid = document.getElementById('kalGrid');
         var list = document.getElementById('kalList');
 
@@ -193,6 +201,7 @@
             return allEvents.filter(function (ev) {
                 if (typeFilter !== 'all' && ev.event_type !== typeFilter) return false;
                 if (teamFilter !== 'all' && ev.team_id !== teamFilter) return false;
+                if (catFilter !== 'all' && ev.team_id && teamCat[ev.team_id] && teamCat[ev.team_id] !== catFilter) return false;
                 return true;
             });
         }
@@ -212,7 +221,7 @@
                 var key = ds(d);
                 var dayEvents = events.filter(function (ev) { return onDay(ev, key); });
                 var chips = dayEvents.slice(0, 3).map(function (ev) {
-                    return '<div class="cal-chip ' + esc(ev.event_type || 'event') + '" title="' + esc(ev.title) + '">' + esc(ev.title) + '</div>';
+                    return '<div class="cal-chip ' + esc(ev.event_type || 'event') + (EVV.isFirstMen(ev.team_name) ? ' is-h1' : '') + '" title="' + esc(EVV.eventTitle(ev)) + '">' + esc(EVV.eventTitle(ev)) + '</div>';
                 }).join('');
                 if (dayEvents.length > 3) chips += '<div class="cal-more">+' + (dayEvents.length - 3) + ' weitere</div>';
                 html += '<div class="cal-day' + (d.getMonth() === m ? '' : ' other') + (key === today ? ' today' : '') + (dayEvents.length ? ' has-events' : '') + '" data-date="' + key + '">' +
@@ -248,10 +257,10 @@
                 if (ev.time_start) meta.push(String(ev.time_start).slice(0, 5) + (ev.time_end ? '–' + String(ev.time_end).slice(0, 5) : '') + ' Uhr');
                 if (ev.location) meta.push(ev.location);
                 if (ev.opponent) meta.push((ev.is_home ? 'Heim gegen ' : 'Auswärts gegen ') + ev.opponent);
-                var title = ev.tournament_id ? '<a href="turnier.html?id=' + esc(ev.tournament_id) + '">' + esc(ev.title) + ' ↗</a>' : esc(ev.title);
+                var title = '<a href="' + (ev.tournament_id ? 'turnier.html?id=' + esc(ev.tournament_id) : 'termin.html?id=' + esc(ev.id)) + '">' + esc(EVV.eventTitle(ev)) + '</a>';
                 var badges = '<span class="tag' + (ev.event_type === 'spiel' ? '' : ' tag--ghost') + '">' + esc(TYPE[ev.event_type] || ev.event_type) + '</span>';
                 if (ev.team_name) badges += '<span class="tag tag--ghost">' + esc(ev.team_name) + '</span>';
-                return '<div class="cal-item" id="day-' + esc(ev.date) + '">' +
+                return '<div class="cal-item' + (EVV.isFirstMen(ev.team_name) ? ' is-h1' : '') + '" id="day-' + esc(ev.date) + '">' +
                     '<div class="up-date"><b>' + d.getDate() + '</b><span>' + MS[d.getMonth()] + '</span></div>' +
                     '<div><div class="cal-item-title">' + title + '</div><div class="cal-item-meta">' + meta.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + '</div>' +
                     (ev.description ? '<p style="font-size:14px;color:var(--muted);margin-top:6px">' + esc(String(ev.description).slice(0, 200)) + '</p>' : '') + '</div>' +
@@ -265,6 +274,14 @@
         document.getElementById('kalPrev').addEventListener('click', function () { cursor.setMonth(cursor.getMonth() - 1); render(); });
         document.getElementById('kalNext').addEventListener('click', function () { cursor.setMonth(cursor.getMonth() + 1); render(); });
         document.getElementById('kalToday').addEventListener('click', function () { cursor = new Date(); cursor.setDate(1); render(); });
+        document.querySelectorAll('#catPills .pill').forEach(function (p) {
+            p.addEventListener('click', function () {
+                document.querySelectorAll('#catPills .pill').forEach(function (x) { x.classList.remove('is-active'); });
+                p.classList.add('is-active');
+                catFilter = p.dataset.cat;
+                render();
+            });
+        });
         document.querySelectorAll('#typePills .pill').forEach(function (p) {
             p.addEventListener('click', function () {
                 document.querySelectorAll('#typePills .pill').forEach(function (x) { x.classList.remove('is-active'); });
@@ -285,6 +302,7 @@
             ]);
             allEvents = results[0].data || [];
             teams = results[1].data || [];
+            teams.forEach(function (t) { teamCat[t.id] = (t.category || '').toLowerCase() === 'jugend' ? 'jugend' : 'erwachsene'; });
             var sel = document.getElementById('teamSelect');
             var groups = { herren: [], damen: [], jugend: [], hobby: [] };
             var labels = { herren: 'Herren', damen: 'Damen', jugend: 'Jugend', hobby: 'Hobby' };

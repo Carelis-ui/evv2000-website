@@ -56,7 +56,7 @@
             <div class="td-grid">
                 <div class="form-card" data-reveal>
                     <h2>Nachricht senden</h2>
-                    <p class="form-intro">Die Ansprechpartner der einzelnen Mannschaften findest du direkt auf den <a href="mannschaften.html" style="color:var(--blue)">Team-Seiten</a>.</p>
+                    <p class="form-intro">Die Ansprechpartner der einzelnen Mannschaften findest du direkt auf den <a href="mannschaften.html" style="color:var(--blue)">Team-Seiten</a>, Vorstand und Trainer unter <a href="vorstand.html" style="color:var(--blue)">Vorstand &amp; Trainer</a>.</p>
                     <form id="contactForm" novalidate>
                         <div class="form-grid">
                             <div class="field"><label for="name">Name <em>*</em></label><input type="text" id="name" name="name" placeholder="Dein Name" required autocomplete="name"></div>
@@ -73,7 +73,31 @@
                                     <option value="sonstiges">Sonstiges</option>
                                 </select>
                             </div>
-                            <div class="field full"><label for="nachricht">Nachricht <em>*</em></label><textarea id="nachricht" name="nachricht" rows="6" placeholder="Worum geht es?" required></textarea></div>
+                            <div class="field full probe-only" id="probeFields" hidden>
+                                <div class="probe-intro">Schön, dass du Volleyball ausprobieren willst. Mit ein paar Angaben finden wir die passende Mannschaft für dich.</div>
+                                <div class="form-grid">
+                                    <div class="field"><label for="pVorname">Vorname <em>*</em></label><input type="text" id="pVorname" placeholder="Dein Vorname" autocomplete="given-name"></div>
+                                    <div class="field"><label for="pName">Name <em>*</em></label><input type="text" id="pName" placeholder="Dein Nachname" autocomplete="family-name"></div>
+                                    <div class="field"><label for="pGeburt">Geburtsdatum <em>*</em></label><input type="date" id="pGeburt"><small class="field-hint">Wir brauchen dein Geburtsdatum, um dich einer passenden Mannschaft für deinen Jahrgang zuteilen zu können.</small></div>
+                                    <div class="field"><label for="pGeschlecht">Welchem Geschlecht ordnest du dich zu? <em>*</em></label>
+                                        <select id="pGeschlecht"><option value="" disabled selected>Bitte wählen…</option><option value="Männlich">Männlich</option><option value="Weiblich">Weiblich</option><option value="Sonstiges">Sonstiges</option></select>
+                                    </div>
+                                    <div class="field"><label for="pHandy">Handynummer <em>*</em></label><input type="tel" id="pHandy" placeholder="0171 1234567" autocomplete="tel"></div>
+                                    <div class="field"><label for="pErfahrung">Wie schätzt du deine Spielerfahrung ein? <em>*</em></label>
+                                        <select id="pErfahrung"><option value="" disabled selected>Bitte wählen…</option><option>Anfänger</option><option>Volleyball in der Schule</option><option>Ich spiele regelmäßig mit Freunden</option><option>Ich spiele im Verein</option><option>Punktspieler (min. Oberliga / Landesliga)</option><option>Sonstiges</option></select>
+                                    </div>
+                                    <div class="field full"><label>Wie hast du von unserem Verein erfahren? <small>Mehrfachauswahl möglich</small></label>
+                                        <div class="choice-grid" id="pQuelle">
+                                            <label class="check"><input type="checkbox" value="Freunde oder Kollegen"><span>Freunde oder Kollegen</span></label>
+                                            <label class="check"><input type="checkbox" value="Schulposter"><span>Schulposter</span></label>
+                                            <label class="check"><input type="checkbox" value="Soziale Medien"><span>Soziale Medien</span></label>
+                                            <label class="check"><input type="checkbox" value="Andere Offline-Werbeaktivitäten"><span>Andere Offline-Werbeaktivitäten</span></label>
+                                            <label class="check"><input type="checkbox" value="Sonstiges"><span>Sonstiges</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field full"><label for="nachricht" id="nachrichtLabel">Nachricht <em>*</em></label><textarea id="nachricht" name="nachricht" rows="6" placeholder="Worum geht es?" required></textarea></div>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn btn-solid btn-lg">Nachricht senden</button>
@@ -120,6 +144,7 @@
                         <li><a href="aktuelles.html">Aktuelles</a></li>
                         <li><a href="kalender.html">Kalender</a></li>
                         <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="vorstand.html">Vorstand &amp; Trainer</a></li>
                     </ul>
                 </div>
                 <div>
@@ -162,6 +187,46 @@
         var msg = document.getElementById('formMessage');
         var LABELS = { probetraining: 'Probetraining', mitgliedschaft: 'Mitgliedschaft', mannschaften: 'Mannschaften', beachanlage: 'Beachanlage / Buchung', sponsoring: 'Sponsoring', turniere: 'Turniere / Events', sonstiges: 'Sonstiges' };
 
+        /* Probetraining: eigener Fragebogen statt Name + freier Nachricht */
+        var betreffSel = document.getElementById('betreff');
+        var probeBox = document.getElementById('probeFields');
+        var nameField = document.getElementById('name').closest('.field');
+        var nachrichtLabel = document.getElementById('nachrichtLabel');
+        var nachrichtEl = document.getElementById('nachricht');
+        function isProbe() { return betreffSel.value === 'probetraining'; }
+        function toggleProbe() {
+            var p = isProbe();
+            probeBox.hidden = !p;
+            nameField.style.display = p ? 'none' : '';
+            nachrichtLabel.innerHTML = p ? 'Hast du noch weitere Fragen? <small>optional</small>' : 'Nachricht <em>*</em>';
+            nachrichtEl.placeholder = p ? 'Zum Beispiel: Wann und wo ist das nächste Training?' : 'Worum geht es?';
+            nachrichtEl.required = !p;
+        }
+        betreffSel.addEventListener('change', toggleProbe);
+        toggleProbe();
+        function pv(id) { return (document.getElementById(id).value || '').trim(); }
+        function fmtDE(iso) { var p = (iso || '').split('-'); return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : iso; }
+        function probeData() {
+            var quellen = Array.prototype.map.call(document.querySelectorAll('#pQuelle input:checked'), function (c) { return c.value; });
+            return { vorname: pv('pVorname'), name: pv('pName'), geburt: pv('pGeburt'), geschlecht: pv('pGeschlecht'), handy: pv('pHandy'), erfahrung: pv('pErfahrung'), quellen: quellen };
+        }
+        function probeErrors(d, email) {
+            var e = [];
+            if (!d.vorname) e.push('Vorname');
+            if (!d.name) e.push('Name');
+            if (!d.geburt) e.push('Geburtsdatum');
+            if (!d.geschlecht) e.push('Geschlecht');
+            if (!d.handy) e.push('Handynummer');
+            if (!email) e.push('E-Mail');
+            if (!d.erfahrung) e.push('Spielerfahrung');
+            return e;
+        }
+        function probeMessage(d, extra) {
+            return ['Anfrage Probetraining', '', 'Name: ' + d.vorname + ' ' + d.name, 'Geburtsdatum: ' + fmtDE(d.geburt), 'Geschlecht: ' + d.geschlecht,
+                'Handynummer: ' + d.handy, 'Spielerfahrung: ' + d.erfahrung, 'Aufmerksam geworden durch: ' + (d.quellen.length ? d.quellen.join(', ') : '–'),
+                '', 'Weitere Fragen: ' + (extra || '–')].join('\n');
+        }
+
         function mailtoFallback(name, email, betreff, nachricht) {
             var subject = 'Kontaktanfrage: ' + (LABELS[betreff] || betreff || 'Allgemein');
             var body = 'Name: ' + name + '\nE-Mail: ' + email + '\n\n' + nachricht;
@@ -174,7 +239,17 @@
             var email = document.getElementById('email').value.trim();
             var betreff = document.getElementById('betreff').value;
             var nachricht = document.getElementById('nachricht').value.trim();
-            if (!name || !email || !betreff || !nachricht) {
+            if (isProbe()) {
+                var pd = probeData();
+                var pe = probeErrors(pd, email);
+                if (pe.length) {
+                    msg.className = 'form-msg error show';
+                    msg.innerHTML = 'Bitte prüfe folgende Angaben: <b>' + pe.join(', ') + '</b>';
+                    return;
+                }
+                name = pd.vorname + ' ' + pd.name;
+                nachricht = probeMessage(pd, nachricht);
+            } else if (!name || !email || !betreff || !nachricht) {
                 msg.className = 'form-msg error show';
                 msg.textContent = 'Bitte alle Felder ausfüllen.';
                 return;

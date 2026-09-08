@@ -44,12 +44,49 @@
                         <button class="btn btn-primary" id="newEventBtn"><i class="fas fa-plus"></i> Neuer Termin</button>
                     </div>
                 </div>
-                <div class="cal-grid" id="calGrid"></div>
-                <p class="form-hint" style="margin-top:12px">
-                    <i class="fas fa-info-circle"></i>
-                    Klicke auf einen Tag, um einen Termin anzulegen — oder auf einen Termin, um ihn zu bearbeiten.
-                    Turniere (<span style="color:var(--accent)">cyan</span>) werden unter „Turniere &amp; Events" gepflegt.
-                </p>
+                <div class="cal-filters">
+                    <div class="segment" id="catSeg">
+                        <button data-cat="" class="active" type="button">Alle</button>
+                        <button data-cat="erwachsene" type="button">Erwachsene</button>
+                        <button data-cat="jugend" type="button">Jugend</button>
+                        <button data-cat="hobby" type="button">Hobby</button>
+                    </div>
+                    <select class="form-select" id="fltTeam"><option value="">Alle Mannschaften</option></select>
+                    <select class="form-select" id="fltType"><option value="">Alle Typen</option><option value="spiel">Spiele</option><option value="turnier">Turniere</option><option value="event">Events</option><option value="training">Training</option></select>
+                    <input type="search" class="form-input" id="fltSearch" placeholder="Suche: Titel, Gegner, Ort…">
+                    <div class="segment" id="viewSeg">
+                        <button data-mode="month" class="active" type="button"><i class="fas fa-calendar"></i> Monat</button>
+                        <button data-mode="list" type="button"><i class="fas fa-list"></i> Liste</button>
+                    </div>
+                </div>
+                <div id="monthView">
+                    <div class="cal-grid" id="calGrid"></div>
+                    <div class="day-panel" id="dayPanel" style="display:none">
+                        <div class="day-panel-head">
+                            <h3 id="dayPanelTitle">Termine</h3>
+                            <button class="btn btn-primary btn-sm" id="dayNewBtn" type="button"><i class="fas fa-plus"></i> Termin an diesem Tag</button>
+                        </div>
+                        <div id="dayPanelList"></div>
+                    </div>
+                    <p class="form-hint" style="margin-top:12px">
+                        <i class="fas fa-info-circle"></i>
+                        Tag anklicken → Termine des Tages erscheinen unter dem Kalender und lassen sich dort bearbeiten. Termin anklicken → direkt bearbeiten.
+                        Turniere (<span style="color:var(--accent)">cyan</span>) werden unter „Turniere &amp; Events" gepflegt. <span style="color:var(--primary-light)">Blau</span> = 1. Herren.
+                    </p>
+                </div>
+                <div id="listView" style="display:none">
+                    <div class="list-period">
+                        <label>Von <input type="date" class="form-input" id="lstFrom"></label>
+                        <label>Bis <input type="date" class="form-input" id="lstTo"></label>
+                        <span class="list-count" id="lstCount"></span>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th>Datum</th><th>Zeit</th><th>Termin</th><th>Typ</th><th>Ort</th><th>Status</th><th style="width:110px">Aktionen</th></tr></thead>
+                            <tbody id="lstBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- ═══ Ansicht: BEACHPLÄTZE ═══ -->
@@ -249,6 +286,7 @@
     <script>window.ERKA_API_BASE = 'https://erka-beach.vercel.app';</script>
     <script src="../js/supabase-client.js"></script>
     <script src="../js/admin-core.js"></script>
+    <script src="../js/evv-common.js"></script>
     <script src="../js/ics-parse.js"></script>
     <script>
     (async function () {
@@ -295,10 +333,38 @@
         var editingEventId = null;
         var MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
         var TYPE_LABEL = { spiel: 'Spiel', turnier: 'Turnier', event: 'Event', training: 'Training' };
+        var flt = { cat: '', team: '', type: '', q: '' };
+        var viewMode = 'month';
+        var selectedDay = null;
+        var teamById = {};
+        function teamName(ev) { return (ev.teams && ev.teams.name) || (teamById[ev.team_id] && teamById[ev.team_id].name) || ''; }
+        function teamCat(ev) { var t = teamById[ev.team_id]; return t ? (t.category || '').toLowerCase() : ''; }
+        function evTitle(ev) { return EVV.eventTitle({ title: ev.title, team_name: teamName(ev) }); }
+        function isH1(ev) { return EVV.isFirstMen(teamName(ev)); }
+        function filterEv(ev) {
+            if (flt.type && ev.event_type !== flt.type) return false;
+            if (flt.team && ev.team_id !== flt.team) return false;
+            if (flt.cat) {
+                var c = teamCat(ev);
+                if (!ev.team_id) return false;
+                if (flt.cat === 'erwachsene' ? (c !== 'herren' && c !== 'damen') : c !== flt.cat) return false;
+            }
+            if (flt.q) {
+                var hay = [ev.title, ev.opponent, ev.location, teamName(ev), ev.description].join(' ').toLowerCase();
+                if (hay.indexOf(flt.q.toLowerCase()) === -1) return false;
+            }
+            return true;
+        }
+        function fmtDE(iso) { return AdminCore.fmtDate(iso); }
+        function timeRange(ev) { return ev.time_start ? String(ev.time_start).slice(0, 5) + (ev.time_end ? '–' + String(ev.time_end).slice(0, 5) : '') : 'ganztägig'; }
 
         async function loadTeams() {
-            var res = await sb.from('teams').select('id, name').order('sort_order');
+            var res = await sb.from('teams').select('id, name, category').order('sort_order');
             teamsCache = res.data || [];
+            teamById = {};
+            teamsCache.forEach(function (t) { teamById[t.id] = t; });
+            var fsel = document.getElementById('fltTeam');
+            fsel.innerHTML = '<option value="">Alle Mannschaften</option>' + teamsCache.map(function (t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('');
             var sel = document.getElementById('eTeam');
             sel.innerHTML = '<option value="">— Keine —</option>' + teamsCache.map(function (t) {
                 return '<option value="' + t.id + '">' + esc(t.name) + '</option>';
@@ -309,6 +375,10 @@
             var y = calCursor.getFullYear(), m = calCursor.getMonth();
             var from = AdminCore.dateStr(new Date(y, m, -7));
             var to = AdminCore.dateStr(new Date(y, m + 1, 14));
+            if (viewMode === 'list') {
+                from = document.getElementById('lstFrom').value || AdminCore.dateStr(new Date());
+                to = document.getElementById('lstTo').value || AdminCore.dateStr(new Date(new Date().getFullYear() + 1, new Date().getMonth(), 0));
+            }
             var evRes = await sb.from('calendar_events').select('*, teams(name)')
                 .gte('date', from).lte('date', to).order('date');
             eventsCache = evRes.data || [];
@@ -339,7 +409,7 @@
                 var inMonth = d.getMonth() === m;
                 var isToday = ds === todayStr;
 
-                var dayEvents = eventsCache.filter(function (ev) { return ev.date === ds; });
+                var dayEvents = eventsCache.filter(function (ev) { return ev.date === ds && filterEv(ev); });
                 var dayTournaments = tournamentsCache.filter(function (t) { return t.date_start === ds; });
 
                 var chips = '';
@@ -352,16 +422,16 @@
                 });
                 dayEvents.forEach(function (ev) {
                     if (shown < 3) {
-                        var label = (ev.time_start ? ev.time_start + ' ' : '') + ev.title;
+                        var label = (ev.time_start ? String(ev.time_start).slice(0, 5) + ' ' : '') + evTitle(ev);
                         var draft = ev.is_published === false ? ' style="opacity:0.55"' : '';
-                        chips += '<div class="cal-chip ' + esc(ev.event_type || 'event') + '" data-event="' + ev.id + '" title="' + esc(ev.title) + (ev.is_published === false ? ' (Entwurf)' : '') + '"' + draft + '>' + esc(label) + '</div>';
+                        chips += '<div class="cal-chip ' + esc(ev.event_type || 'event') + (isH1(ev) ? ' is-h1' : '') + '" data-event="' + ev.id + '" title="' + esc(evTitle(ev)) + (ev.is_published === false ? ' (Entwurf)' : '') + '"' + draft + '>' + esc(label) + '</div>';
                         shown++;
                     }
                 });
                 var rest = dayEvents.length + dayTournaments.length - shown;
                 if (rest > 0) chips += '<div class="cal-more">+' + rest + ' weitere</div>';
 
-                html += '<div class="cal-day' + (inMonth ? '' : ' other') + (isToday ? ' today' : '') + (canTermine ? ' clickable' : '') + '" data-date="' + ds + '">' +
+                html += '<div class="cal-day' + (inMonth ? '' : ' other') + (isToday ? ' today' : '') + (canTermine ? ' clickable' : '') + (ds === selectedDay ? ' selected' : '') + '" data-date="' + ds + '">' +
                     '<div class="cal-day-num">' + d.getDate() + '</div>' + chips + '</div>';
             }
             grid.innerHTML = html;
@@ -380,18 +450,108 @@
                     if (AdminCore.can('events')) window.location.href = 'events.html';
                 });
             });
-            if (canTermine) {
-                grid.querySelectorAll('.cal-day').forEach(function (day) {
-                    day.addEventListener('click', function () {
-                        openEventEditor(null, day.dataset.date);
-                    });
-                });
-            }
+            grid.querySelectorAll('.cal-day').forEach(function (day) {
+                day.addEventListener('click', function () { selectDay(day.dataset.date); });
+            });
+            renderDayPanel();
         }
+
+        /* ── Tagesliste unter dem Kalender ── */
+        function selectDay(ds) {
+            selectedDay = selectedDay === ds ? null : ds;
+            document.querySelectorAll('#calGrid .cal-day').forEach(function (d) { d.classList.toggle('selected', d.dataset.date === selectedDay); });
+            renderDayPanel();
+        }
+        function eventRow(ev, withDate) {
+            var pub = ev.is_published !== false;
+            return '<div class="ev-row' + (isH1(ev) ? ' is-h1' : '') + (pub ? '' : ' is-draft') + '">' +
+                '<div class="ev-time">' + (withDate ? '<b>' + fmtDE(ev.date) + '</b><span>' : '<b>') + esc(timeRange(ev)) + (withDate ? '</span>' : '</b>') + '</div>' +
+                '<div class="ev-main"><div class="ev-title">' + esc(evTitle(ev)) + '</div>' +
+                '<div class="ev-meta">' + [TYPE_LABEL[ev.event_type] || ev.event_type, ev.opponent ? (ev.is_home ? 'Heim gegen ' : 'Auswärts bei ') + ev.opponent : '', ev.location].filter(Boolean).map(esc).join(' · ') + '</div></div>' +
+                '<div class="ev-actions">' + (pub ? '' : '<span class="tag tag-muted">Entwurf</span>') +
+                (canTermine ? '<button class="action-btn edit" title="Bearbeiten" data-edit="' + ev.id + '"><i class="fas fa-edit"></i></button>' +
+                '<button class="action-btn delete" title="Löschen" data-del="' + ev.id + '"><i class="fas fa-trash"></i></button>' : '') + '</div></div>';
+        }
+        function wireRows(container) {
+            container.querySelectorAll('[data-edit]').forEach(function (b) { b.addEventListener('click', function () { var ev = eventsCache.find(function (x) { return x.id === b.dataset.edit; }); if (ev) openEventEditor(ev, null); }); });
+            container.querySelectorAll('[data-del]').forEach(function (b) { b.addEventListener('click', function () { deleteEventById(b.dataset.del); }); });
+        }
+        async function deleteEventById(id) {
+            var ev = eventsCache.find(function (x) { return x.id === id; });
+            if (!ev || !confirm('Termin „' + evTitle(ev) + '“ wirklich löschen?')) return;
+            var del = await sb.from('calendar_events').delete().eq('id', id);
+            if (del.error) { AdminCore.toast('Fehler: ' + del.error.message, 'error'); return; }
+            await AdminCore.audit('delete', 'termin', id, ev.title, null);
+            AdminCore.toast('Termin gelöscht.', 'success');
+            refreshCalendar();
+        }
+        function renderDayPanel() {
+            var panel = document.getElementById('dayPanel');
+            if (!selectedDay) { panel.style.display = 'none'; return; }
+            var d = new Date(selectedDay + 'T00:00:00');
+            var DAYS = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+            document.getElementById('dayPanelTitle').textContent = DAYS[d.getDay()] + ', ' + d.getDate() + '. ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+            var list = eventsCache.filter(function (ev) { return ev.date === selectedDay && filterEv(ev); })
+                .sort(function (a, b) { return (a.time_start || '99') < (b.time_start || '99') ? -1 : 1; });
+            var tours = tournamentsCache.filter(function (t) { return t.date_start === selectedDay; });
+            var host = document.getElementById('dayPanelList');
+            host.innerHTML = tours.map(function (t) {
+                return '<div class="ev-row is-tournament"><div class="ev-time"><b><i class="fas fa-trophy"></i></b></div><div class="ev-main"><div class="ev-title">' + esc(t.name) + '</div><div class="ev-meta">Turnier · wird unter „Turniere &amp; Events“ gepflegt</div></div><div class="ev-actions"><a class="btn btn-ghost btn-sm" href="events.html">Öffnen</a></div></div>';
+            }).join('') + (list.length ? list.map(function (ev) { return eventRow(ev, false); }).join('') : (tours.length ? '' : '<div class="empty-state" style="padding:18px">Keine Termine an diesem Tag' + (flt.cat || flt.team || flt.type || flt.q ? ' (mit den gewählten Filtern)' : '') + '.</div>'));
+            wireRows(host);
+            document.getElementById('dayNewBtn').style.display = canTermine ? '' : 'none';
+            panel.style.display = '';
+        }
+        document.getElementById('dayNewBtn').addEventListener('click', function () { if (selectedDay) openEventEditor(null, selectedDay); });
+
+        /* ── Listenansicht ── */
+        function renderListView() {
+            var body = document.getElementById('lstBody');
+            var list = eventsCache.filter(filterEv).sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : (a.time_start || '99') < (b.time_start || '99') ? -1 : 1; });
+            document.getElementById('lstCount').textContent = list.length + ' Termin' + (list.length === 1 ? '' : 'e');
+            if (!list.length) { body.innerHTML = '<tr><td colspan="7" class="empty-state">Keine Termine im Zeitraum' + (flt.cat || flt.team || flt.type || flt.q ? ' (mit den gewählten Filtern)' : '') + '.</td></tr>'; return; }
+            body.innerHTML = list.map(function (ev) {
+                var pub = ev.is_published !== false;
+                return '<tr' + (isH1(ev) ? ' class="is-h1"' : '') + '>' +
+                    '<td style="white-space:nowrap">' + fmtDE(ev.date) + (ev.date_end && ev.date_end !== ev.date ? ' – ' + fmtDE(ev.date_end) : '') + '</td>' +
+                    '<td style="white-space:nowrap">' + esc(timeRange(ev)) + '</td>' +
+                    '<td><strong style="color:#fff">' + esc(evTitle(ev)) + '</strong>' + (ev.opponent ? '<br><small style="color:var(--text-muted)">' + (ev.is_home ? 'Heim gegen ' : 'Auswärts bei ') + esc(ev.opponent) + '</small>' : '') + '</td>' +
+                    '<td><span class="tag tag-blue">' + esc(TYPE_LABEL[ev.event_type] || ev.event_type) + '</span></td>' +
+                    '<td style="font-size:0.8rem">' + esc(ev.location || '—') + '</td>' +
+                    '<td>' + (pub ? '<span class="tag tag-success">Öffentlich</span>' : '<span class="tag tag-muted">Entwurf</span>') + '</td>' +
+                    '<td>' + (canTermine ? '<button class="action-btn edit" title="Bearbeiten" data-edit="' + ev.id + '"><i class="fas fa-edit"></i></button><button class="action-btn delete" title="Löschen" data-del="' + ev.id + '"><i class="fas fa-trash"></i></button>' : '') + '</td></tr>';
+            }).join('');
+            wireRows(body);
+        }
+        function setViewMode(mode) {
+            viewMode = mode;
+            document.querySelectorAll('#viewSeg button').forEach(function (b) { b.classList.toggle('active', b.dataset.mode === mode); });
+            document.getElementById('monthView').style.display = mode === 'month' ? '' : 'none';
+            document.getElementById('listView').style.display = mode === 'list' ? '' : 'none';
+            document.querySelector('#termineView .cal-nav').style.visibility = mode === 'month' ? '' : 'hidden';
+            if (mode === 'list' && !document.getElementById('lstFrom').value) {
+                document.getElementById('lstFrom').value = AdminCore.dateStr(new Date());
+                var t = new Date(); t.setMonth(t.getMonth() + 6);
+                document.getElementById('lstTo').value = AdminCore.dateStr(t);
+            }
+            refreshCalendar();
+        }
+        document.querySelectorAll('#viewSeg button').forEach(function (b) { b.addEventListener('click', function () { setViewMode(b.dataset.mode); }); });
+        document.querySelectorAll('#catSeg button').forEach(function (b) {
+            b.addEventListener('click', function () {
+                document.querySelectorAll('#catSeg button').forEach(function (x) { x.classList.remove('active'); });
+                b.classList.add('active'); flt.cat = b.dataset.cat; renderAll();
+            });
+        });
+        document.getElementById('fltTeam').addEventListener('change', function () { flt.team = this.value; renderAll(); });
+        document.getElementById('fltType').addEventListener('change', function () { flt.type = this.value; renderAll(); });
+        document.getElementById('fltSearch').addEventListener('input', function () { flt.q = this.value.trim(); renderAll(); });
+        ['lstFrom', 'lstTo'].forEach(function (id) { document.getElementById(id).addEventListener('change', function () { refreshCalendar(); }); });
+        function renderAll() { if (viewMode === 'month') renderCalendar(); else renderListView(); }
 
         async function refreshCalendar() {
             await loadEvents();
-            renderCalendar();
+            renderAll();
         }
 
         document.getElementById('calPrev').addEventListener('click', function () {

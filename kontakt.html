@@ -197,6 +197,7 @@
         function toggleProbe() {
             var p = isProbe();
             probeBox.hidden = !p;
+            probeBox.style.display = p ? '' : 'none';
             nameField.style.display = p ? 'none' : '';
             nachrichtLabel.innerHTML = p ? 'Hast du noch weitere Fragen? <small>optional</small>' : 'Nachricht <em>*</em>';
             nachrichtEl.placeholder = p ? 'Zum Beispiel: Wann und wo ist das nächste Training?' : 'Worum geht es?';

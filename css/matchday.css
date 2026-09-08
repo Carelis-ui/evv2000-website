@@ -828,6 +828,7 @@ a.up:hover .up-title { color: var(--blue); }
 .cal-chip.is-h1 { background: var(--blue); color: #fff; }
 
 /* Kontakt: Probetraining-Fragebogen */
+.probe-only[hidden] { display: none !important; }
 .probe-only { padding: 18px; border: 1px solid rgba(59, 130, 246, 0.45); border-radius: var(--radius); background: rgba(59, 130, 246, 0.06); }
 .probe-intro { color: var(--white); font-weight: 500; margin-bottom: 14px; }
 .field-hint { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); line-height: 1.45; }

@@ -339,8 +339,143 @@
 
         /* Bild-Picker-UI in ein Element mounten.
            Rückgabe: { getUrl(), setUrl(url) } */
-        imagePicker: function (mountEl, folder, initialUrl) {
+        /* ── Zuschneide-Fenster: Bild verschieben + zoomen, festes Seitenverhältnis ──
+           cropImage(file, { aspect, presets: [{label, value}], title })
+           → Promise<File|null>: zugeschnittenes JPEG, Original bei „Original verwenden", null bei Abbruch */
+        cropImage: function (file, opts) {
+            opts = opts || {};
             var self = this;
+            if (!file || !/^image\//i.test(file.type) || /svg|gif/i.test(file.type)) return Promise.resolve(file);
+            return new Promise(function (resolve) {
+                var modal = document.getElementById('cropModal');
+                if (!modal) {
+                    modal = document.createElement('div');
+                    modal.className = 'modal';
+                    modal.id = 'cropModal';
+                    modal.innerHTML =
+                        '<div class="modal-box crop-box">' +
+                            '<div class="modal-head"><h3 id="cropTitle">Bild zuschneiden</h3><button class="modal-close" type="button" data-crop-cancel><i class="fas fa-times"></i></button></div>' +
+                            '<div class="modal-body">' +
+                                '<div class="crop-presets" id="cropPresets"></div>' +
+                                '<div class="crop-stage-wrap"><div class="crop-stage" id="cropStage"><img id="cropImg" alt="" draggable="false"></div></div>' +
+                                '<div class="crop-tools"><i class="fas fa-magnifying-glass-minus"></i><input type="range" id="cropZoom" min="1" max="4" step="0.01" value="1"><i class="fas fa-magnifying-glass-plus"></i>' +
+                                '<span class="crop-hint">Bild ziehen zum Verschieben · Mausrad oder Regler zum Zoomen</span></div>' +
+                            '</div>' +
+                            '<div class="modal-foot">' +
+                                '<button class="btn btn-ghost" type="button" data-crop-cancel>Abbrechen</button>' +
+                                '<button class="btn btn-ghost" type="button" data-crop-original title="Bild ohne Zuschnitt verwenden">Original verwenden</button>' +
+                                '<button class="btn btn-primary" type="button" data-crop-ok><i class="fas fa-crop-simple"></i> Zuschneiden &amp; übernehmen</button>' +
+                            '</div>' +
+                        '</div>';
+                    document.body.appendChild(modal);
+                }
+                var stage = modal.querySelector('#cropStage'), img = modal.querySelector('#cropImg'),
+                    zoomEl = modal.querySelector('#cropZoom'), presetsEl = modal.querySelector('#cropPresets');
+                modal.querySelector('#cropTitle').textContent = opts.title || 'Bild zuschneiden';
+                var presets = opts.presets || [{ label: '16:9', value: 16 / 9 }, { label: '4:3', value: 4 / 3 }, { label: '1:1', value: 1 }];
+                var aspect = opts.aspect || presets[0].value;
+                var st = { zoom: 1, x: 0, y: 0, base: 1, nw: 0, nh: 0, vw: 0, vh: 0 };
+                var objUrl = URL.createObjectURL(file);
+
+                function scale() { return st.base * st.zoom; }
+                function clamp() {
+                    var w = st.nw * scale(), h = st.nh * scale();
+                    st.x = Math.min(0, Math.max(st.vw - w, st.x));
+                    st.y = Math.min(0, Math.max(st.vh - h, st.y));
+                }
+                function apply() { clamp(); img.style.transform = 'translate(' + st.x + 'px,' + st.y + 'px) scale(' + scale() + ')'; }
+                function layout() {
+                    var wrap = stage.parentNode;
+                    var maxW = Math.min((wrap.clientWidth || 640) - 24, 720), maxH = Math.min(window.innerHeight * 0.5, 460);
+                    var vw = maxW, vh = vw / aspect;
+                    if (vh > maxH) { vh = maxH; vw = vh * aspect; }
+                    st.vw = vw; st.vh = vh;
+                    stage.style.width = vw + 'px'; stage.style.height = vh + 'px';
+                    st.base = Math.max(vw / st.nw, vh / st.nh);
+                    st.zoom = 1; zoomEl.value = '1';
+                    st.x = (vw - st.nw * st.base) / 2; st.y = (vh - st.nh * st.base) / 2;
+                    apply();
+                }
+                function setZoom(z, cx, cy) {
+                    z = Math.max(1, Math.min(4, z));
+                    var before = scale();
+                    var px = (cx - st.x) / before, py = (cy - st.y) / before;
+                    st.zoom = z;
+                    var after = scale();
+                    st.x = cx - px * after; st.y = cy - py * after;
+                    zoomEl.value = String(z);
+                    apply();
+                }
+                function renderPresets() {
+                    presetsEl.innerHTML = presets.map(function (p) {
+                        return '<button type="button" class="crop-preset' + (Math.abs(p.value - aspect) < 0.001 ? ' active' : '') + '" data-aspect="' + p.value + '">' + self.esc(p.label) + '</button>';
+                    }).join('');
+                    presetsEl.querySelectorAll('.crop-preset').forEach(function (b) {
+                        b.addEventListener('click', function () { aspect = parseFloat(b.dataset.aspect); renderPresets(); layout(); });
+                    });
+                }
+
+                var drag = null;
+                function onDown(e) { drag = { x: e.clientX, y: e.clientY, sx: st.x, sy: st.y }; if (stage.setPointerCapture) stage.setPointerCapture(e.pointerId); e.preventDefault(); }
+                function onMove(e) { if (!drag) return; st.x = drag.sx + (e.clientX - drag.x); st.y = drag.sy + (e.clientY - drag.y); apply(); }
+                function onUp() { drag = null; }
+                function onWheel(e) { e.preventDefault(); var r = stage.getBoundingClientRect(); setZoom(st.zoom * (e.deltaY < 0 ? 1.1 : 0.9), e.clientX - r.left, e.clientY - r.top); }
+                function onZoomInput() { setZoom(parseFloat(zoomEl.value), st.vw / 2, st.vh / 2); }
+                function onResize() { if (st.nw) layout(); }
+
+                function cleanup() {
+                    stage.removeEventListener('pointerdown', onDown); stage.removeEventListener('pointermove', onMove);
+                    stage.removeEventListener('pointerup', onUp); stage.removeEventListener('pointercancel', onUp);
+                    stage.removeEventListener('wheel', onWheel); zoomEl.removeEventListener('input', onZoomInput);
+                    window.removeEventListener('resize', onResize);
+                    modal.querySelectorAll('[data-crop-cancel],[data-crop-original],[data-crop-ok]').forEach(function (b) { b.onclick = null; });
+                    modal.classList.remove('open');
+                    if (!document.querySelector('.modal.open')) document.body.style.overflow = '';
+                    URL.revokeObjectURL(objUrl);
+                    img.removeAttribute('src');
+                }
+                function finish(result) { cleanup(); resolve(result); }
+                function exportCrop() {
+                    var s = scale();
+                    var sx = -st.x / s, sy = -st.y / s, sw = st.vw / s, sh = st.vh / s;
+                    var outW = Math.min(1600, Math.round(sw)), outH = Math.round(outW * (st.vh / st.vw));
+                    var canvas = document.createElement('canvas');
+                    canvas.width = outW; canvas.height = outH;
+                    var ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, outW, outH);
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
+                    canvas.toBlob(function (blob) {
+                        if (!blob) { finish(file); return; }
+                        var name = (file.name || 'bild').replace(/\.[^.]+$/, '') + '-zuschnitt.jpg';
+                        finish(new File([blob], name, { type: 'image/jpeg' }));
+                    }, 'image/jpeg', 0.88);
+                }
+
+                img.onload = function () {
+                    st.nw = img.naturalWidth; st.nh = img.naturalHeight;
+                    renderPresets();
+                    modal.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                    setTimeout(layout, 30);
+                    stage.addEventListener('pointerdown', onDown); stage.addEventListener('pointermove', onMove);
+                    stage.addEventListener('pointerup', onUp); stage.addEventListener('pointercancel', onUp);
+                    stage.addEventListener('wheel', onWheel, { passive: false }); zoomEl.addEventListener('input', onZoomInput);
+                    window.addEventListener('resize', onResize);
+                    modal.querySelectorAll('[data-crop-cancel]').forEach(function (b) { b.onclick = function () { finish(null); }; });
+                    modal.querySelector('[data-crop-original]').onclick = function () { finish(file); };
+                    modal.querySelector('[data-crop-ok]').onclick = exportCrop;
+                };
+                img.onerror = function () { URL.revokeObjectURL(objUrl); resolve(file); };
+                img.src = objUrl;
+            });
+        },
+
+        /* Bild-Picker-UI in ein Element mounten.
+           opts.crop: false = kein Zuschneide-Fenster, sonst { aspect, presets, title }
+           Rückgabe: { getUrl(), setUrl(url) } */
+        imagePicker: function (mountEl, folder, initialUrl, opts) {
+            var self = this;
+            opts = opts || {};
             var url = initialUrl || '';
 
             mountEl.classList.add('img-picker');
@@ -368,9 +503,14 @@
 
             async function handleFile(file) {
                 if (!file) return;
+                var toUpload = file;
+                if (opts.crop !== false) {
+                    toUpload = await self.cropImage(file, opts.crop || {});
+                    if (!toUpload) return;   // abgebrochen
+                }
                 progress.style.display = 'flex';
                 try {
-                    url = await self.uploadImage(file, folder);
+                    url = await self.uploadImage(toUpload, folder, opts.upload);
                     render();
                 } catch (e) {
                     console.error(e);

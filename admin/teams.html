@@ -183,7 +183,7 @@
         var editingId = null;
         var itemsCache = [];
         var activeCat = 'all';
-        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'teams');
+        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'teams', '', { crop: { aspect: 16 / 10, title: 'Teambild zuschneiden', presets: [{ label: '16:10 (Karte)', value: 1.6 }, { label: '4:3', value: 4 / 3 }, { label: '3:2', value: 1.5 }] } });
         // Kader-Editor: Fotos landen im Storage unter spieler/<team-slug>/
         var roster = AdminCore.rosterEditor(document.getElementById('rosterEditor'), {
             folder: function () {

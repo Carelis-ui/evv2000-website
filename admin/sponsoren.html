@@ -130,7 +130,7 @@
         var editingId = null;
         var itemsCache = [];
         var sortable = null;
-        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'sponsors');
+        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'sponsors', '', { crop: false });
 
         document.querySelectorAll('[data-close]').forEach(function (b) {
             b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });

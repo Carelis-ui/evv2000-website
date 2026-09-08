@@ -151,7 +151,9 @@
 
             grid.querySelectorAll('.slot').forEach(function (el) {
                 var i = parseInt(el.dataset.i, 10);
-                var picker = AdminCore.imagePicker(el.querySelector('.slot-picker'), 'startseite', previewUrl(cfg.slots[i].image));
+                var picker = AdminCore.imagePicker(el.querySelector('.slot-picker'), 'startseite', previewUrl(cfg.slots[i].image), { crop: i === 0
+                    ? { aspect: 4 / 3, title: 'Großes Bild zuschneiden', presets: [{ label: '4:3', value: 4 / 3 }, { label: '3:2', value: 1.5 }, { label: '16:10', value: 1.6 }] }
+                    : { aspect: 16 / 10, title: 'Kachelbild zuschneiden', presets: [{ label: '16:10 (Karte)', value: 1.6 }, { label: '4:3', value: 4 / 3 }, { label: '1:1', value: 1 }] } });
                 pickers[i] = picker;
 
                 el.querySelectorAll('[data-f]').forEach(function (inp) {

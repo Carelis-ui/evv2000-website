@@ -1106,3 +1106,17 @@ button { font-family: var(--font-body); }
 .list-count { margin-left: auto; }
 .admin-table tr.is-h1 td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
 @media (max-width: 640px) { .ev-row { grid-template-columns: 1fr; gap: 6px; } .cal-filters #viewSeg { margin-left: 0; } }
+
+/* ── Zuschneide-Fenster ──────────────────────────────────────────────────── */
+.modal-box.crop-box { max-width: 860px; }
+.crop-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.crop-preset { padding: 6px 13px; border-radius: 999px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-family: var(--font-heading); font-weight: 600; font-size: 0.82rem; letter-spacing: 0.04em; }
+.crop-preset:hover { color: #fff; border-color: var(--primary); }
+.crop-preset.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.crop-stage-wrap { display: flex; justify-content: center; background: #05080f; border-radius: var(--radius-sm); padding: 12px; }
+.crop-stage { position: relative; overflow: hidden; background: #000; cursor: grab; touch-action: none; user-select: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
+.crop-stage:active { cursor: grabbing; }
+.crop-stage img { position: absolute; left: 0; top: 0; transform-origin: 0 0; max-width: none; pointer-events: none; }
+.crop-tools { display: flex; align-items: center; gap: 10px; margin-top: 12px; color: var(--text-muted); flex-wrap: wrap; }
+.crop-tools input[type=range] { flex: 1; min-width: 140px; max-width: 280px; accent-color: var(--primary); }
+.crop-hint { font-size: 0.78rem; margin-left: auto; }

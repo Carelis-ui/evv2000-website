@@ -232,10 +232,16 @@
         });
 
         async function upload(idx, field, file) {
+            // Zuschneide-Fenster (Hochformat 4:5), dann Upload
+            var cropped = await core.cropImage(file, {
+                aspect: 4 / 5, title: field === 'image2' ? 'Hover-Foto zuschneiden' : 'Spielerfoto zuschneiden',
+                presets: [{ label: '4:5 Hochformat', value: 4 / 5 }, { label: '1:1', value: 1 }, { label: '3:4', value: 3 / 4 }]
+            });
+            if (!cropped) return;
             var tileEl = list.querySelector('.rp-tile[data-idx="' + idx + '"][data-field="' + field + '"]');
             if (tileEl) tileEl.classList.add('is-uploading');
             try {
-                var url = await core.uploadImage(file, folder(), { maxW: 1000, maxH: 1250, quality: 0.85 });
+                var url = await core.uploadImage(cropped, folder(), { maxW: 1000, maxH: 1250, quality: 0.85 });
                 state[idx][field] = url;
                 render();
                 core.toast('Foto hochgeladen.', 'success');

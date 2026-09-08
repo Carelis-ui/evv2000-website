@@ -151,7 +151,7 @@
         var itemsCache = [];
         var activeGroup = 'all';
         var sortable = null;
-        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'personen');
+        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'personen', '', { crop: { aspect: 4 / 5, title: 'Foto zuschneiden', presets: [{ label: '4:5 Hochformat', value: 4 / 5 }, { label: '1:1', value: 1 }] } });
         var GROUP_LABEL = { vorstand: 'Vorstand', trainer: 'Trainer', sonstige: 'Weitere' };
         var GROUP_TAG = { vorstand: 'tag-blue', trainer: 'tag-success', sonstige: 'tag-muted' };
 

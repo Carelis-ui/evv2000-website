@@ -91,10 +91,6 @@
                         <label>Bilddarstellung</label>
                         <select class="form-select" id="fImageFit"><option value="cover">Füllend zuschneiden (Standard)</option><option value="contain">Komplett zeigen, nichts abschneiden</option></select>
                     </div>
-                    <div class="form-group">
-                        <label>Bildausschnitt (beim Zuschneiden)</label>
-                        <select class="form-select" id="fImagePos"><option value="top">Oben behalten</option><option value="center" selected>Mitte</option><option value="bottom">Unten behalten</option></select>
-                    </div>
                     <div class="form-group full">
                         <label>Rückblick zu einem Turnier / Event (optional)</label>
                         <select class="form-select" id="fTournament"><option value="">— kein Bezug —</option></select>
@@ -121,7 +117,7 @@
         var sb = ErkaSupabase.client;
         var esc = AdminCore.esc;
         var editingId = null;
-        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'news');
+        var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'news', '', { crop: { aspect: 16 / 9, title: 'Beitragsbild zuschneiden', presets: [{ label: '16:9 (Beitrag)', value: 16 / 9 }, { label: '4:3', value: 4 / 3 }, { label: '1:1', value: 1 }] } });
 
         document.querySelectorAll('[data-close]').forEach(function (b) {
             b.addEventListener('click', function () { AdminCore.closeModal('editModal'); });
@@ -140,7 +136,6 @@
             document.getElementById('fPublished').checked = item ? item.is_published !== false : true;
             picker.setUrl(item ? item.image_url : '');
             document.getElementById('fImageFit').value = (item && item.image_fit) || 'cover';
-            document.getElementById('fImagePos').value = (item && item.image_position) || 'center';
             document.getElementById('fTournament').value = (item && item.tournament_id) || '';
             AdminCore.openModal('editModal');
         }
@@ -172,7 +167,7 @@
                 is_published: document.getElementById('fPublished').checked,
                 image_url: picker.getUrl() || null,
                 image_fit: document.getElementById('fImageFit').value,
-                image_position: document.getElementById('fImagePos').value,
+                image_position: 'center',
                 tournament_id: document.getElementById('fTournament').value || null
             };
 

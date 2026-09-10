@@ -10,7 +10,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://evv2000-website.vercel.app/kalender">
     <meta property="og:image" content="https://evv2000-website.vercel.app/img/team-herren-1.jpg">
-    <title>Kalender | EVV 2000</title>
+    <title>Termine, Turniere &amp; Events | EVV 2000</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -31,9 +31,9 @@
             </div>
             <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
                 <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
-                <a href="kalender.html" data-nav="kalender">Kalender</a>
-                <a href="events.html" data-nav="events">Events</a>
+                <a href="kalender.html" data-nav="kalender">Termine</a>
                 <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="benefits.html" data-nav="benefits">Benefits</a>
                 <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
                 <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
             </nav>
@@ -46,9 +46,9 @@
 
     <section class="page-hero">
         <div class="wrap">
-            <p class="kicker" data-reveal>Kalender</p>
+            <p class="kicker" data-reveal>Termine</p>
             <h1 data-reveal="2">Spiele, Turniere<br>&amp; Events.</h1>
-            <p class="lead" data-reveal="3">Alle Termine des EVV 2000 auf einen Blick – filtere nach Terminart oder Mannschaft, oder abonniere den Kalender direkt in deiner App.</p>
+            <p class="lead" data-reveal="3">Alle Termine des EVV 2000 auf einen Blick – Spielplan und Kalender-Abo oben, <a href="#events" style="color:var(--blue)">Turniere &amp; Events mit Anmeldung</a> weiter unten.</p>
         </div>
     </section>
 
@@ -119,6 +119,43 @@
         </div>
     </section>
 
+    <section class="section" id="events">
+        <div class="wrap">
+            <div class="section-head" data-reveal>
+                <div>
+                    <p class="kicker">Events &amp; Turniere</p>
+                    <h2>Unsere Highlights.</h2>
+                </div>
+                <p style="color:var(--muted);max-width:520px">ERKA-Turnier, Beachturniere, Camps – die Termine, bei denen der ganze Verein zusammenkommt. Anmeldung direkt online.</p>
+            </div>
+            <div class="toolbar" data-reveal>
+                <div class="pills" id="typeFilter" role="group" aria-label="Art">
+                    <button class="pill is-active" data-filter="all" type="button">Alle</button>
+                    <button class="pill" data-filter="upcoming" type="button">Anstehend</button>
+                    <button class="pill" data-filter="beach" type="button">Beach</button>
+                    <button class="pill" data-filter="halle" type="button">Halle</button>
+                </div>
+                <span class="count" id="eventCount"></span>
+            </div>
+            <div class="event-grid" id="eventsGrid" data-reveal>
+                <div class="empty-note">Turniere werden geladen…</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="join">
+        <div class="wrap join-inner">
+            <div data-reveal>
+                <h2>Turnier bei uns<br>ausrichten?</h2>
+                <p>Halle oder Beachanlage – wir haben Platz für Firmen-Cups, Schulturniere und Freundschaftsspiele. Schreib uns einfach.</p>
+            </div>
+            <div class="join-actions" data-reveal="2">
+                <a class="btn btn-white btn-lg" href="kontakt.html">Anfrage senden</a>
+                <a class="btn btn-ghost btn-lg" href="beachanlage.html">ERKA Beach</a>
+            </div>
+        </div>
+    </section>
+
 <!-- @chrome:footer -->
     <footer class="footer">
         <div class="wrap">
@@ -136,8 +173,8 @@
                     <ul>
                         <li><a href="mannschaften.html">Mannschaften</a></li>
                         <li><a href="aktuelles.html">Aktuelles</a></li>
-                        <li><a href="kalender.html">Kalender</a></li>
-                        <li><a href="events.html">Events &amp; Turniere</a></li>
+                        <li><a href="kalender.html">Termine &amp; Kalender</a></li>
+                        <li><a href="kalender.html#events">Events &amp; Turniere</a></li>
                         <li><a href="vorstand.html">Vorstand &amp; Trainer</a></li>
                     </ul>
                 </div>
@@ -145,6 +182,7 @@
                     <h4>Mitmachen</h4>
                     <ul>
                         <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="benefits.html">Mitglieder-Benefits</a></li>
                         <li><a href="beachanlage.html">ERKA Beach</a></li>
                         <li><a href="sponsoren.html">Sponsoring</a></li>
                         <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
@@ -353,6 +391,86 @@
             console.error('Kalender load error:', e);
             list.innerHTML = '<div class="empty-note">Der Kalender konnte nicht geladen werden. Bitte versuche es später erneut.</div>';
             grid.innerHTML = '';
+        }
+    })();
+    </script>
+    <script>
+    (async function () {
+        var MONTHS = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+        var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>';
+        var grid = document.getElementById('eventsGrid');
+        var items = [];
+        var filter = 'all';
+
+        function esc(s) {
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        function dOf(v) { return v ? new Date(String(v).length <= 10 ? v + 'T00:00:00' : v) : null; }
+        function range(t) {
+            var a = dOf(t.date_start), b = dOf(t.date_end);
+            if (!a) return '';
+            var s = a.getDate() + '. ' + MONTHS[a.getMonth()] + ' ' + a.getFullYear();
+            if (b && b.toDateString() !== a.toDateString()) s = a.getDate() + '.–' + b.getDate() + '. ' + MONTHS[b.getMonth()] + ' ' + b.getFullYear();
+            return s;
+        }
+
+        function render() {
+            var today = new Date(); today.setHours(0, 0, 0, 0);
+            var shown = items.filter(function (t) {
+                var type = (t.type || '').toLowerCase();
+                if (filter === 'beach') return type === 'beach';
+                if (filter === 'halle') return type !== 'beach';
+                if (filter === 'upcoming') { var end = dOf(t.date_end) || dOf(t.date_start); return end && end >= today; }
+                return true;
+            });
+            document.getElementById('eventCount').textContent = shown.length + (shown.length === 1 ? ' Turnier' : ' Turniere');
+            if (!shown.length) { grid.innerHTML = '<div class="empty-note">Aktuell sind keine Turniere in dieser Auswahl geplant.</div>'; return; }
+            grid.innerHTML = shown.map(function (t) {
+                var a = dOf(t.date_start);
+                var isBeach = (t.type || '').toLowerCase() === 'beach';
+                var end = dOf(t.date_end) || a;
+                var past = end && end < today;
+                var features = [isBeach ? 'Beach · Outdoor' : 'Halle'];
+                if (t.max_teams) features.push(t.max_teams + ' Teams');
+                if (t.has_trophy) features.push('Wanderpokal');
+                if (t.is_wvv) features.push('WVV');
+                var desc = String(t.description || '').replace(/<[^>]+>/g, '');
+                if (desc.length > 170) desc = desc.slice(0, 167).replace(/\s+\S*$/, '') + '…';
+                var media = t.image_url ? '<div class="event-media"><img src="' + esc(t.image_url) + '" alt="" loading="lazy"></div>' : '';
+                return '<a class="event-card' + (t.featured ? ' featured' : '') + (past ? ' past' : '') + '" href="turnier.html?id=' + esc(t.id) + '">' +
+                    '<div class="event-date"><b>' + (a ? a.getDate() : '–') + '</b><span>' + (a ? MONTHS[a.getMonth()] + ' ' + String(a.getFullYear()).slice(2) : '') + '</span></div>' +
+                    '<div class="event-body">' + media +
+                        '<div class="news-meta"><span class="tag' + (isBeach ? '' : ' tag--ghost') + '">' + (isBeach ? 'Beachturnier' : 'Hallenturnier') + '</span><span>' + esc(range(t)) + (past ? ' · vorbei' : '') + '</span></div>' +
+                        '<h3>' + esc(t.name) + '</h3>' +
+                        (desc ? '<p>' + esc(desc) + '</p>' : '') +
+                        '<div class="event-features">' + features.map(function (f) { return '<span>' + esc(f) + '</span>'; }).join('') + '</div>' +
+                        '<span class="link-arrow">' + (past ? 'Rückblick' : 'Details & Anmeldung') + ' ' + ARROW + '</span>' +
+                    '</div>' +
+                '</a>';
+            }).join('');
+        }
+
+        document.querySelectorAll('#typeFilter .pill').forEach(function (b) {
+            b.addEventListener('click', function () {
+                document.querySelectorAll('#typeFilter .pill').forEach(function (x) { x.classList.remove('is-active'); });
+                b.classList.add('is-active');
+                filter = b.getAttribute('data-filter');
+                render();
+            });
+        });
+
+        try {
+            await ErkaSupabase.init();
+            var sb = ErkaSupabase.client;
+            if (!sb) throw new Error('offline');
+            var res = await sb.from('public_tournaments').select('*').order('date_start', { ascending: true });
+            if (res.error) throw res.error;
+            items = res.data || [];
+            render();
+        } catch (e) {
+            console.warn('Turniere konnten nicht geladen werden', e);
+            grid.innerHTML = '<div class="empty-note">Die Turniere konnten gerade nicht geladen werden. Bitte später erneut versuchen.</div>';
         }
     })();
     </script>

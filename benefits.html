@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Partner und Sponsoren des EVV 2000 – gemeinsam den Volleyballsport in Erkelenz fördern. Sponsor werden.">
+    <meta name="description" content="Mitglieder-Benefits beim EVV 2000: Vergünstigungen bei Sport Heister, Vereinsshop, I2-Anmeldung und mehr.">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <meta property="og:title" content="Partner &amp; Sponsoren | EVV 2000">
-    <meta property="og:description" content="Unsere Partner und Sponsoren machen den Volleyballsport in Erkelenz möglich.">
+    <title>Mitglieder-Benefits | EVV 2000</title>
+    <meta property="og:title" content="Mitglieder-Benefits | EVV 2000">
+    <meta property="og:description" content="Was du als Mitglied des Erkelenzer Volleyball-Vereins 2000 e.V. alles bekommst.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://evv2000-website.vercel.app/sponsoren">
+    <meta property="og:url" content="https://evv2000-website.vercel.app/benefits">
     <meta property="og:image" content="https://evv2000-website.vercel.app/img/team-herren-1.jpg">
-    <title>Partner &amp; Sponsoren | EVV 2000</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/matchday.css">
 </head>
-<body data-page="sponsoren" data-mode="halle">
+<body data-page="benefits" data-mode="halle">
 
 <!-- @chrome:header -->
     <header class="site-nav" id="siteNav">
@@ -46,54 +46,73 @@
 
     <section class="page-hero">
         <div class="wrap">
-            <p class="kicker" data-reveal>Partner &amp; Sponsoren</p>
-            <h1 data-reveal="2">Gemeinsam<br>stärker.</h1>
-            <p class="lead" data-reveal="3">Unsere Partner und Sponsoren machen unsere Vereinsarbeit möglich – von der Jugend bis zur Verbandsliga, von der Halle bis zur Beachanlage.</p>
-        </div>
-    </section>
-
-    <section class="section sponsors">
-        <div class="wrap">
-            <div class="section-head" data-reveal>
-                <div>
-                    <p class="kicker">Unsere Partner</p>
-                    <h2>Sie machen es möglich.</h2>
-                </div>
-                <span class="count" id="sponsorCount" style="color:var(--muted)"></span>
-            </div>
-            <div class="sponsor-band" id="sponsorBand" data-reveal>
-                <div class="sponsor-tile"><span style="color:var(--paper-muted)">Partner werden geladen…</span></div>
-            </div>
+            <p class="kicker" data-reveal>Mitglieder-Benefits</p>
+            <h1 data-reveal="2">Mehr drin<br>als Volleyball.</h1>
+            <p class="lead" data-reveal="3">Als Mitglied des EVV 2000 bekommst du mehr als Training und Spielbetrieb: Vergünstigungen bei unseren Partnern, den Vereinsshop und Zugang zu Angeboten rund um den Verein.</p>
         </div>
     </section>
 
     <section class="section">
         <div class="wrap">
+            <div class="benefit-grid" data-reveal>
+
+                <article class="benefit-card benefit-card--partner" id="heister">
+                    <div class="benefit-logo"><img id="heisterLogo" src="" alt="Sport Heister" hidden><span id="heisterFallback">SPORT HEISTER</span></div>
+                    <p class="kicker">Partner-Vorteil</p>
+                    <h2>Vergünstigungen bei Sport Heister</h2>
+                    <p>Unser Ausrüster-Partner Sport Heister gewährt EVV-Mitgliedern Vergünstigungen auf das gesamte Sortiment – von Volleyballschuhen über Knieschoner bis zur Teamkleidung.</p>
+                    <p class="benefit-note">Einfach im Laden als Mitglied des EVV 2000 zu erkennen geben. Fragen zu Konditionen beantwortet Sport Heister vor Ort oder der Vorstand.</p>
+                    <div class="form-actions">
+                        <a class="btn btn-solid" href="https://www.sport-heister.de/" target="_blank" rel="noopener sponsored">Zu Sport Heister</a>
+                    </div>
+                </article>
+
+                <article class="benefit-card" id="shop">
+                    <p class="kicker">Vereinsshop</p>
+                    <h2>Trikots, Training &amp; Fanartikel</h2>
+                    <p>Im Vereinsshop gibt es die offizielle Teamkleidung des EVV 2000: Trikots, Trainingsshirts, Hoodies und Fanartikel im Vereinsdesign – für Spieler, Eltern und Fans.</p>
+                    <div class="form-actions">
+                        <a class="btn btn-solid" id="shopLink" href="#" data-url="">Zum Vereinsshop</a>
+                    </div>
+                    <p class="benefit-note" id="shopNote">Der Shop-Link wird in Kürze freigeschaltet.</p>
+                </article>
+
+                <article class="benefit-card" id="i2">
+                    <p class="kicker">Anmeldung</p>
+                    <h2>I2-Anmeldung</h2>
+                    <p>Als Mitglied kannst du dich über den Verein für I2 anmelden. Alle Details und der Weg zur Anmeldung stehen hier, sobald sie freigegeben sind.</p>
+                    <div class="form-actions">
+                        <a class="btn btn-solid" id="i2Link" href="#" data-url="">Zur I2-Anmeldung</a>
+                    </div>
+                    <p class="benefit-note" id="i2Note">Infos folgen in Kürze.</p>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+        <div class="wrap">
             <div class="td-grid">
                 <div data-reveal>
-                    <p class="kicker">Sponsor werden</p>
-                    <h2 style="font-size:clamp(36px,4.5vw,60px);margin:14px 0 18px">Ihre Marke.<br>Unser Spielfeld.</h2>
-                    <p class="lead">Unterstützen Sie den Volleyballsport in Erkelenz und profitieren Sie von einer starken, regionalen Partnerschaft mit über 300 Mitgliedern, 14 Mannschaften und Turnieren mit hunderten Gästen.</p>
-                    <ul class="benefits" style="margin-top:24px">
-                        <li>Logo auf Website &amp; Trikots</li>
-                        <li>Präsenz bei Turnieren &amp; Events</li>
-                        <li>Sichtbarkeit an der Beachanlage</li>
-                        <li>Reichweite in Social Media</li>
-                        <li>Regionale Verbundenheit</li>
-                        <li>Individuelle Pakete nach Wunsch</li>
+                    <p class="kicker">Inklusive</p>
+                    <h2 style="font-size:clamp(30px,3.4vw,44px);margin:12px 0 18px">Was jedes Mitglied bekommt.</h2>
+                    <ul class="benefits">
+                        <li>Training in einer passenden Mannschaft – von der U12 bis zur Verbandsliga</li>
+                        <li>Spielbetrieb im Volleyballverband NRW inklusive Versicherung über den Verein</li>
+                        <li>Beachanlage ERKA Beach für Mitglieder kostenlos</li>
+                        <li>Qualifizierte Trainer und Trainerinnen</li>
+                        <li>Turniere, Camps und Vereinsfeste das ganze Jahr</li>
+                        <li>Eine Vereinsgemeinschaft, die zusammenhält</li>
                     </ul>
                 </div>
-                <div class="form-card" data-reveal="2">
-                    <h2>Kontakt aufnehmen</h2>
-                    <p class="form-intro">Wir stellen Ihnen gerne unsere Sponsoring-Pakete vor – unverbindlich und persönlich.</p>
-                    <div class="contact-lines" style="margin-bottom:22px">
-                        <span><b>Erkelenzer Volleyball-Verein 2000 e.V.</b></span>
-                        <span><a href="mailto:jaymanns@evv2000.de?subject=Sponsoring-Anfrage">jaymanns@evv2000.de</a></span>
-                        <span><a href="tel:+491719940856">0171 9940856</a></span>
-                    </div>
-                    <div class="form-actions" style="margin-top:0">
-                        <a class="btn btn-solid btn-lg" href="mailto:jaymanns@evv2000.de?subject=Sponsoring-Anfrage">Sponsoring anfragen</a>
-                        <a class="btn btn-ghost" href="kontakt.html">Kontaktformular</a>
+                <div class="panel" data-reveal="2">
+                    <p class="kicker">Noch kein Mitglied?</p>
+                    <h3 style="font-size:clamp(26px,2.8vw,36px);margin-top:10px">Probetraining ist kostenlos.</h3>
+                    <p style="color:var(--muted);margin-top:10px">Komm vorbei, spiel mit und entscheide danach. Beiträge und Antrag findest du auf der Mitgliedschaftsseite.</p>
+                    <div class="form-actions" style="margin-top:18px;gap:10px;flex-wrap:wrap">
+                        <a class="btn btn-solid" href="kontakt.html?betreff=probetraining">Probetraining anfragen</a>
+                        <a class="btn btn-ghost" href="mitgliedschaft.html">Mitglied werden</a>
                     </div>
                 </div>
             </div>
@@ -157,30 +176,26 @@
     <script src="js/matchday.js"></script>
     <script>
     (async function () {
-        var host = document.getElementById('sponsorBand');
-        function esc(s) {
-            if (s === null || s === undefined) return '';
-            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        }
+        /* Buttons ohne hinterlegte URL bleiben inaktiv, bis der Link eingetragen ist */
+        ['shopLink', 'i2Link'].forEach(function (id) {
+            var a = document.getElementById(id);
+            if (!a.dataset.url) { a.classList.add('is-disabled'); a.setAttribute('aria-disabled', 'true'); a.addEventListener('click', function (e) { e.preventDefault(); }); }
+            else { a.href = a.dataset.url; a.target = '_blank'; a.rel = 'noopener'; var n = document.getElementById(id.replace('Link', 'Note')); if (n) n.hidden = true; }
+        });
+        /* Logo von Sport Heister aus der Sponsorenliste */
         try {
             await ErkaSupabase.init();
             var sb = ErkaSupabase.client;
-            if (!sb) throw new Error('offline');
-            var res = await sb.from('sponsors').select('name,logo_url,website_url').eq('is_visible', true).order('sort_order', { ascending: true }).order('name', { ascending: true });
-            if (res.error) throw res.error;
-            var list = res.data || [];
-            document.getElementById('sponsorCount').textContent = list.length ? list.length + ' Partner' : '';
-            if (!list.length) { host.innerHTML = '<div class="sponsor-tile"><span style="color:var(--paper-muted)">Ihr Logo hier</span></div>'; return; }
-            host.innerHTML = list.map(function (s) {
-                var inner = s.logo_url ? '<img src="' + esc(s.logo_url) + '" alt="' + esc(s.name) + '" loading="lazy">' : '<span>' + esc(s.name) + '</span>';
-                return s.website_url
-                    ? '<a class="sponsor-tile" href="' + esc(s.website_url) + '" target="_blank" rel="noopener sponsored" title="' + esc(s.name) + '">' + inner + '</a>'
-                    : '<div class="sponsor-tile" title="' + esc(s.name) + '">' + inner + '</div>';
-            }).join('');
-        } catch (e) {
-            console.warn('Sponsoren konnten nicht geladen werden', e);
-            host.innerHTML = '<div class="sponsor-tile"><span style="color:var(--paper-muted)">Partner konnten nicht geladen werden</span></div>';
-        }
+            if (!sb) return;
+            var r = await sb.from('sponsors').select('name,logo_url,website_url').ilike('name', '%heister%').limit(1);
+            var s = r.data && r.data[0];
+            if (s && s.logo_url) {
+                var img = document.getElementById('heisterLogo');
+                img.src = s.logo_url; img.hidden = false;
+                document.getElementById('heisterFallback').hidden = true;
+                if (s.website_url) document.querySelector('#heister .btn').href = s.website_url;
+            }
+        } catch (e) { /* Fallback-Text bleibt */ }
     })();
     </script>
 </body>

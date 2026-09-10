@@ -949,3 +949,19 @@ a.up:hover .up-title { color: var(--blue); }
     .cal-chip.is-h1 { animation: none; }
     .cal-chip.is-h1::before { display: none; }
 }
+
+/* ---------- Benefits ---------- */
+.benefit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.benefit-card { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 28px 26px 26px; background: var(--navy); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color 0.25s, transform 0.25s var(--ease); }
+.benefit-card:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.benefit-card--partner { border-color: rgba(59, 130, 246, 0.45); background: linear-gradient(180deg, rgba(59, 130, 246, 0.10), rgba(59, 130, 246, 0.02)), var(--navy); }
+.benefit-card h2 { font-size: clamp(26px, 2.4vw, 34px); line-height: 1.05; }
+.benefit-card p { color: var(--muted); font-size: 15px; line-height: 1.6; }
+.benefit-card .form-actions { margin-top: auto; padding-top: 6px; }
+.benefit-note { font-size: 13px !important; color: var(--muted-2, var(--muted)) !important; }
+.benefit-logo { height: 64px; display: flex; align-items: center; margin-bottom: 4px; }
+.benefit-logo img { max-height: 56px; max-width: 200px; background: #fff; padding: 8px 12px; border-radius: 10px; }
+.benefit-logo span { font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: 0.06em; color: var(--white); }
+.btn.is-disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+@media (max-width: 1080px) { .benefit-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .benefit-grid { grid-template-columns: 1fr; } .benefit-card { padding: 22px 20px; } }

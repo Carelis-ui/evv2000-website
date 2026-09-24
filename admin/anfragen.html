@@ -223,10 +223,15 @@
                 row('Wunsch-Mannschaft', esc(a.mannschaft)) +
                 (a.erziehungsberechtigter ? row('Erziehungsberechtigt', esc(a.erziehungsberechtigter) +
                     (a.kontakt_erziehungsberechtigter ? ' (' + esc(a.kontakt_erziehungsberechtigter) + ')' : '')) : '') +
-                row('Kontoinhaber', esc(a.kontoinhaber) + (a.kreditinstitut ? ' · ' + esc(a.kreditinstitut) : '') + (a.bic ? ' · BIC ' + esc(a.bic) : '')) +
-                row('IBAN', '<span id="ibanMasked">' + esc(maskIban(a.iban)) +
-                    ' <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="revealIban(\'' + a.id + '\')"><i class="fas fa-eye"></i> anzeigen</button></span>') +
-                row('Erklärungen', 'Satzung ✓ &nbsp; Datenschutz ✓ &nbsp; SEPA-Mandat ✓ &nbsp; Fotos/Videos ' + (a.consent_fotos ? '✓' : '✗')) +
+                row('Zahlungsart', a.consent_sepa
+                    ? '<span class="tag tag-blue">SEPA-Lastschrift</span>'
+                    : '<span class="tag tag-warning">Rechnung</span> <span style="color:var(--text-muted)">– Beitrag muss in Rechnung gestellt werden</span>') +
+                (a.consent_sepa ? (
+                    row('Kontoinhaber', esc(a.kontoinhaber) + (a.kreditinstitut ? ' · ' + esc(a.kreditinstitut) : '') + (a.bic ? ' · BIC ' + esc(a.bic) : '')) +
+                    row('IBAN', '<span id="ibanMasked">' + esc(maskIban(a.iban)) +
+                        ' <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="revealIban(\'' + a.id + '\')"><i class="fas fa-eye"></i> anzeigen</button></span>')
+                ) : '') +
+                row('Erklärungen', 'Satzung ✓ &nbsp; Datenschutz ✓ &nbsp; SEPA-Mandat ' + (a.consent_sepa ? '✓' : '✗') + ' &nbsp; Fotos/Videos ' + (a.consent_fotos ? '✓' : '✗')) +
                 row('Status', statusTag(a.status));
             document.getElementById('detailFoot').innerHTML =
                 '<a class="btn btn-ghost" href="mailto:' + esc(a.email) + '?subject=' + encodeURIComponent('Dein Mitgliedsantrag beim EVV 2000') + '"><i class="fas fa-reply"></i> Antworten</a>' +

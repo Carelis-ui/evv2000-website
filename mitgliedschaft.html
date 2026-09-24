@@ -164,14 +164,21 @@
                         </div>
 
                         <div class="form-section">
-                            <div class="form-section-title"><span>05</span> SEPA-Lastschriftmandat</div>
-                            <div class="form-grid">
-                                <div class="field"><label for="kontoinhaber">Kontoinhaber <em>*</em></label><input type="text" id="kontoinhaber" name="kontoinhaber" required placeholder="Max Mustermann"></div>
-                                <div class="field"><label for="kreditinstitut">Kreditinstitut</label><input type="text" id="kreditinstitut" name="kreditinstitut" placeholder="Kreissparkasse Heinsberg"></div>
-                                <div class="field"><label for="iban">IBAN <em>*</em></label><input type="text" id="iban" name="iban" required placeholder="DE89 3704 0044 0532 0130 00" autocomplete="off"></div>
-                                <div class="field"><label for="bic">BIC</label><input type="text" id="bic" name="bic" placeholder="WELADED1ERK" autocomplete="off"></div>
+                            <div class="form-section-title"><span>05</span> Beitragszahlung</div>
+                            <div class="consents" style="margin-bottom:6px">
+                                <label class="check"><input type="radio" name="zahlungsart" id="zahlSepa" value="sepa" checked><span><b style="color:var(--white);font-weight:600">SEPA-Lastschrift</b> – der Beitrag wird jährlich automatisch eingezogen.</span></label>
+                                <label class="check"><input type="radio" name="zahlungsart" id="zahlRechnung" value="rechnung"><span><b style="color:var(--white);font-weight:600">Rechnung</b> – ihr bekommt eine Rechnung und überweist den Beitrag selbst.</span></label>
                             </div>
-                            <p class="form-intro" style="margin:14px 0 0;font-size:13px;line-height:1.5">Ich bin damit einverstanden, dass der Mitgliedsbeitrag jährlich per SEPA-Lastschrift von meinem Konto abgebucht wird. Gläubiger-Identifikationsnummer: DE52ZZZ00000387421. Die Mandatsreferenz entnehme ich der Jahresrechnung. Die Widerrufsfrist beträgt 8 Wochen nach Kontobelastung. Diese Ermächtigung erlischt mit Kündigung der Mitgliedschaft oder jederzeit durch Widerruf.</p>
+                            <div id="sepaFields">
+                                <div class="form-grid">
+                                    <div class="field"><label for="kontoinhaber">Kontoinhaber <em>*</em></label><input type="text" id="kontoinhaber" name="kontoinhaber" required placeholder="Max Mustermann"></div>
+                                    <div class="field"><label for="kreditinstitut">Kreditinstitut</label><input type="text" id="kreditinstitut" name="kreditinstitut" placeholder="Kreissparkasse Heinsberg"></div>
+                                    <div class="field"><label for="iban">IBAN <em>*</em></label><input type="text" id="iban" name="iban" required placeholder="DE89 3704 0044 0532 0130 00" autocomplete="off"></div>
+                                    <div class="field"><label for="bic">BIC</label><input type="text" id="bic" name="bic" placeholder="WELADED1ERK" autocomplete="off"></div>
+                                </div>
+                                <p class="form-intro" style="margin:14px 0 0;font-size:13px;line-height:1.5">Ich bin damit einverstanden, dass der Mitgliedsbeitrag jährlich per SEPA-Lastschrift von meinem Konto abgebucht wird. Gläubiger-Identifikationsnummer: DE52ZZZ00000387421. Die Mandatsreferenz entnehme ich der Jahresrechnung. Die Widerrufsfrist beträgt 8 Wochen nach Kontobelastung. Diese Ermächtigung erlischt mit Kündigung der Mitgliedschaft oder jederzeit durch Widerruf.</p>
+                            </div>
+                            <p class="form-intro" id="rechnungHint" hidden style="margin:14px 0 0;font-size:13px;line-height:1.5">Der Verein schickt dir die Jahresrechnung per E-Mail an die oben angegebene Adresse. Der Beitrag ist dann innerhalb der auf der Rechnung genannten Frist zu überweisen.</p>
                         </div>
 
                         <div class="form-section">
@@ -179,7 +186,7 @@
                             <div class="consents">
                                 <label class="check"><input type="checkbox" id="consentSatzung" name="consentSatzung" required><span>Hiermit beantrage ich die Mitgliedschaft und erkläre, die jeweils gültige <a href="formulare.html" target="_blank">Satzung</a>, Ordnungen und Vereinsbeschlüsse anzuerkennen. Abmeldungen sind nur schriftlich zum 31.12. möglich und müssen bis zum 15.11. dem Vorstand vorliegen. <em style="color:var(--blue);font-style:normal">*</em></span></label>
                                 <label class="check"><input type="checkbox" id="consentDatenschutz" name="consentDatenschutz" required><span>Mir ist bekannt und ich bin damit einverstanden, dass die erhobenen Daten gespeichert und verarbeitet werden. Sie sind für das Mitgliedschaftsverhältnis und die Verfolgung der Vereinsziele erforderlich und werden nicht weitergegeben (<a href="datenschutz.html" target="_blank">Datenschutzerklärung</a>). <em style="color:var(--blue);font-style:normal">*</em></span></label>
-                                <label class="check"><input type="checkbox" id="consentSepa" name="consentSepa" required><span>Ich erteile das SEPA-Lastschriftmandat für den jährlichen Mitgliedsbeitrag. <em style="color:var(--blue);font-style:normal">*</em></span></label>
+                                <label class="check" id="consentSepaWrap"><input type="checkbox" id="consentSepa" name="consentSepa" required><span>Ich erteile das SEPA-Lastschriftmandat für den jährlichen Mitgliedsbeitrag. <em style="color:var(--blue);font-style:normal">*</em></span></label>
                                 <label class="check"><input type="checkbox" id="consentFotos" name="consentFotos"><span><b style="color:var(--white);font-weight:600">Einverständniserklärung Fotos &amp; Videos:</b> Ich willige ein, dass im Rahmen der Berichterstattung über die Aktivitäten des Vereins Bilder von mir mit Nennung des Namens auf der Vereinshomepage, auf Seiten des Volleyballverbandes (z.&nbsp;B. volleyball.nrw) oder in der Presse veröffentlicht werden dürfen. Die Einwilligung gilt bis auf schriftlichen Widerruf gegenüber dem Vorstand. Bei Minderjährigen ab 14 Jahren ist auch die Einwilligung des Mitglieds erforderlich.</span></label>
                             </div>
                         </div>
@@ -299,6 +306,7 @@
                 strasse: v('strasse'), plz: v('plz'), ort: v('ort'),
                 mitgliedschaft: v('mitgliedschaft'), eintritt: v('eintritt'), mannschaft: v('mannschaft'),
                 erziehungsberechtigter: v('erziehungsberechtigter'), kontaktErziehungsberechtigter: v('kontaktErziehungsberechtigter'),
+                zahlungsart: zahlungsart(),
                 kontoinhaber: v('kontoinhaber'), kreditinstitut: v('kreditinstitut'), iban: v('iban'), bic: v('bic'),
                 consentFotos: checked('consentFotos')
             };
@@ -324,11 +332,13 @@
                 if (!d.erziehungsberechtigter) e.push('Name der/des Erziehungsberechtigten');
                 if (!checked('consentGuardian')) e.push('Einverständnis der gesetzlichen Vertretung');
             }
-            if (!d.kontoinhaber) e.push('Kontoinhaber');
-            if (!d.iban || d.iban.replace(/\s/g, '').length < 15) e.push('IBAN');
+            if (d.zahlungsart === 'sepa') {
+                if (!d.kontoinhaber) e.push('Kontoinhaber');
+                if (!d.iban || d.iban.replace(/\s/g, '').length < 15) e.push('IBAN');
+                if (!checked('consentSepa')) e.push('SEPA-Lastschriftmandat');
+            }
             if (!checked('consentSatzung')) e.push('Anerkennung von Satzung und Ordnungen');
             if (!checked('consentDatenschutz')) e.push('Datenschutzerklärung');
-            if (!checked('consentSepa')) e.push('SEPA-Lastschriftmandat');
             return e;
         }
         function buildEmailBody(d) {
@@ -340,11 +350,38 @@
                 '--- Mitgliedschaft ---', 'Beitragsgruppe: ' + (GROUPS[d.mitgliedschaft] || d.mitgliedschaft), 'Beitragsart: ' + beitragsart(d.mitgliedschaft),
                 'Eintritt: ' + fmtDE(d.eintritt), 'Mannschaft: ' + selectedTeamLabel(), ''];
             if (d.erziehungsberechtigter) l.push('--- Gesetzliche Vertretung ---', 'Name: ' + d.erziehungsberechtigter, 'Kontakt: ' + (d.kontaktErziehungsberechtigter || '–'), '');
-            l.push('--- SEPA-Lastschriftmandat ---', 'Kontoinhaber: ' + d.kontoinhaber, 'Kreditinstitut: ' + (d.kreditinstitut || '–'), 'IBAN: ' + maskIban(d.iban), 'BIC: ' + (d.bic || '–'), '',
-                '--- Erklärungen ---', 'Satzung & Ordnungen: anerkannt', 'Datenschutz: zugestimmt', 'SEPA-Mandat: erteilt', 'Fotos & Videos: ' + (d.consentFotos ? 'eingewilligt' : 'nicht eingewilligt'), '',
+            if (d.zahlungsart === 'sepa') {
+                l.push('--- SEPA-Lastschriftmandat ---', 'Kontoinhaber: ' + d.kontoinhaber, 'Kreditinstitut: ' + (d.kreditinstitut || '–'), 'IBAN: ' + maskIban(d.iban), 'BIC: ' + (d.bic || '–'), '');
+            } else {
+                l.push('--- Beitragszahlung ---', 'Zahlungsart: Rechnung (kein SEPA-Mandat)', '');
+            }
+            l.push('--- Erklärungen ---', 'Satzung & Ordnungen: anerkannt', 'Datenschutz: zugestimmt',
+                'SEPA-Mandat: ' + (d.zahlungsart === 'sepa' ? 'erteilt' : 'nicht erteilt (Zahlung per Rechnung)'),
+                'Fotos & Videos: ' + (d.consentFotos ? 'eingewilligt' : 'nicht eingewilligt'), '',
                 'Gesendet am: ' + new Date().toLocaleString('de-DE'));
             return l.join('\n');
         }
+
+        /* Beitragszahlung: Bankdaten und SEPA-Haken nur bei Lastschrift */
+        var sepaFields = document.getElementById('sepaFields');
+        var rechnungHint = document.getElementById('rechnungHint');
+        var consentSepaWrap = document.getElementById('consentSepaWrap');
+        var consentSepaBox = document.getElementById('consentSepa');
+        function zahlungsart() { return document.querySelector('input[name="zahlungsart"]:checked').value; }
+        function toggleZahlungsart() {
+            var sepa = zahlungsart() === 'sepa';
+            sepaFields.style.display = sepa ? '' : 'none';
+            rechnungHint.hidden = sepa;
+            rechnungHint.style.display = sepa ? 'none' : 'block';
+            consentSepaWrap.style.display = sepa ? 'flex' : 'none';
+            consentSepaBox.required = sepa;
+            if (!sepa) consentSepaBox.checked = false;
+            ['kontoinhaber', 'iban'].forEach(function (id) { document.getElementById(id).required = sepa; });
+        }
+        document.querySelectorAll('input[name="zahlungsart"]').forEach(function (r) {
+            r.addEventListener('change', toggleZahlungsart);
+        });
+        toggleZahlungsart();
 
         /* Gesetzliche Vertretung nur bei Minderjährigen */
         var guardian = document.getElementById('guardianSection');
@@ -391,6 +428,7 @@
             try {
                 await ErkaSupabase.init();
                 if (!ErkaSupabase.client) throw new Error('offline');
+                var sepa = data.zahlungsart === 'sepa';
                 var base = {
                     anrede: data.geschlecht === 'weiblich' ? 'Frau' : data.geschlecht === 'männlich' ? 'Herr' : (data.geschlecht ? 'Divers' : null),
                     vorname: data.vorname, nachname: data.nachname, geburtsdatum: data.geburtsdatum || null,
@@ -400,13 +438,13 @@
                     mannschaft: selectedTeamLabel(),
                     erziehungsberechtigter: data.erziehungsberechtigter || null,
                     kontakt_erziehungsberechtigter: data.kontaktErziehungsberechtigter || null,
-                    kontoinhaber: data.kontoinhaber, iban: data.iban.replace(/\s/g, ''),
-                    consent_satzung: true, consent_datenschutz: true, consent_sepa: true
+                    kontoinhaber: sepa ? data.kontoinhaber : null, iban: sepa ? data.iban.replace(/\s/g, '') : null,
+                    consent_satzung: true, consent_datenschutz: true, consent_sepa: sepa
                 };
                 var extra = {
                     geschlecht: data.geschlecht || null, geburtsort: data.geburtsort || null, nationalitaet: data.nationalitaet || null,
                     mobil: data.mobil || null, eintritt: data.eintritt || null, beitragsart: beitragsart(data.mitgliedschaft),
-                    kreditinstitut: data.kreditinstitut || null, bic: data.bic || null, consent_fotos: !!data.consentFotos
+                    kreditinstitut: sepa ? (data.kreditinstitut || null) : null, bic: sepa ? (data.bic || null) : null, consent_fotos: !!data.consentFotos
                 };
                 var res = await ErkaSupabase.client.from('membership_applications').insert(Object.assign({}, base, extra));
                 if (res.error && /column|schema cache/i.test(res.error.message || '')) {

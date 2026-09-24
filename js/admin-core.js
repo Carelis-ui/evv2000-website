@@ -62,7 +62,7 @@
         { href: 'kalender.html',      icon: 'fa-calendar-alt',   label: 'Kalender',          perm: ['kalender', 'beach'] },
         { href: 'beach.html',         icon: 'fa-umbrella-beach', label: 'Beach-Buchungen',   perm: 'beach' },
         { divider: true },
-        { href: 'mitglieder.html',    icon: 'fa-id-card',        label: 'Mitglieder',        perm: 'members' },
+        // Mitgliederverwaltung läuft über WISO MeinVerein — Seite mitglieder.html bleibt erreichbar, ist aber aus der Navigation raus
         { href: 'registrations.html', icon: 'fa-clipboard-list', label: 'Anmeldungen',       perm: ['registrations', 'events'] },
         { href: 'anfragen.html',      icon: 'fa-inbox',          label: 'Anfragen',          perm: 'anfragen' },
         { href: 'dokumente.html',     icon: 'fa-file-arrow-down', label: 'Formulare',        perm: 'dokumente' },

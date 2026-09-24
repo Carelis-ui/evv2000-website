@@ -20,6 +20,25 @@ const PERM_LABEL = {
     members: 'Mitglieder'
 };
 
+// Kategorien, die in der Verwaltung pro Admin einzeln abonniert werden (admins.notify_topics)
+const TOPIC_LABEL = {
+    kontakt_probetraining: 'Probetraining',
+    kontakt_mitgliedschaft: 'Frage Mitgliedschaft',
+    kontakt_mannschaften: 'Frage Mannschaften',
+    kontakt_beachanlage: 'Frage Beachanlage',
+    kontakt_sponsoring: 'Sponsoring',
+    kontakt_turniere: 'Frage Turniere/Events',
+    kontakt_sonstiges: 'Sonstige Anfragen',
+    antrag_mitglied: 'Mitgliedsanträge',
+    anmeldung_turnier: 'Turnieranmeldungen',
+    buchung_beach: 'Beach-Buchungen'
+};
+
+function contactTopic(subject) {
+    var key = 'kontakt_' + String(subject || '').toLowerCase().trim();
+    return TOPIC_LABEL[key] ? key : 'kontakt_sonstiges';
+}
+
 function esc(v) {
     return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -41,6 +60,7 @@ function describe(table, r) {
             var probe = r.subject === 'probetraining';
             return {
                 perm: 'anfragen',
+                topic: contactTopic(r.subject),
                 subject: probe ? 'Neue Probetraining-Anfrage: ' + r.name : 'Neue Kontaktanfrage (' + (r.subject || 'Allgemein') + '): ' + r.name,
                 intro: probe ? 'Jemand möchte zum Probetraining kommen.' : 'Über das Kontaktformular ist eine neue Nachricht eingegangen.',
                 rows: [['Name', r.name], ['E-Mail', r.email], ['Betreff', r.subject], ['Nachricht', r.message]],
@@ -50,6 +70,7 @@ function describe(table, r) {
         case 'membership_applications':
             return {
                 perm: 'anfragen',
+                topic: 'antrag_mitglied',
                 subject: 'Neuer Mitgliedsantrag: ' + [r.vorname, r.nachname].filter(Boolean).join(' '),
                 intro: 'Ein neuer Mitgliedsantrag wurde über die Website gestellt.',
                 rows: [['Name', [r.vorname, r.nachname].filter(Boolean).join(' ')], ['Geburtsdatum', fmtDate(r.geburtsdatum)], ['E-Mail', r.email],
@@ -59,6 +80,7 @@ function describe(table, r) {
         case 'tournament_registrations':
             return {
                 perm: 'registrations',
+                topic: 'anmeldung_turnier',
                 subject: 'Neue Turnieranmeldung: ' + r.team_name,
                 intro: 'Ein Team hat sich für ein Turnier angemeldet.',
                 rows: [['Team', r.team_name], ['Kontakt', r.contact_name], ['E-Mail', r.contact_email], ['Telefon', r.contact_phone], ['Spieler', r.player_count], ['Anmerkungen', r.notes]],
@@ -67,6 +89,7 @@ function describe(table, r) {
         case 'beach_bookings':
             return {
                 perm: 'beach',
+                topic: 'buchung_beach',
                 subject: 'Neue Beach-Anfrage: ' + (r.name || r.contact_name || ''),
                 intro: 'Es gibt eine neue Anfrage für die Beachanlage.',
                 rows: [['Name', r.name || r.contact_name], ['E-Mail', r.email || r.contact_email], ['Datum', fmtDate(r.date)], ['Zeit', r.time_start ? r.time_start + (r.time_end ? '–' + r.time_end : '') : ''], ['Nachricht', r.message || r.notes]],
@@ -99,27 +122,34 @@ module.exports = async function (req, res) {
     var info = describe(body.table, body.record);
     if (!info) { res.status(200).json({ skipped: 'Tabelle nicht abonniert: ' + body.table }); return; }
 
-    // Empfänger: aktive Admins mit passender Berechtigung (Superadmins immer)
-    var url = process.env.SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/admins?select=email,name,role,permissions,is_active';
-    var aRes = await fetch(url, { headers: { apikey: process.env.SUPABASE_SERVICE_ROLE_KEY, Authorization: 'Bearer ' + process.env.SUPABASE_SERVICE_ROLE_KEY } });
+    // Empfänger: aktive Admins, die diese Kategorie abonniert haben (admins.notify_topics).
+    // Konten ohne gepflegtes Abo fallen auf die alte Logik zurück: passende Berechtigung bzw. Superadmin.
+    var base = process.env.SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/admins?select=';
+    var auth = { apikey: process.env.SUPABASE_SERVICE_ROLE_KEY, Authorization: 'Bearer ' + process.env.SUPABASE_SERVICE_ROLE_KEY };
+    var aRes = await fetch(base + 'email,name,role,permissions,is_active,notify_topics', { headers: auth });
+    if (aRes.status === 400) {
+        // Migration V10 noch nicht gelaufen – ohne die neue Spalte laden
+        aRes = await fetch(base + 'email,name,role,permissions,is_active', { headers: auth });
+    }
     if (!aRes.ok) { res.status(502).json({ error: 'Admins konnten nicht geladen werden (' + aRes.status + ')' }); return; }
     var admins = await aRes.json();
     var recipients = admins.filter(function (a) {
         if (a.is_active === false || !a.email) return false;
+        if (Array.isArray(a.notify_topics)) return a.notify_topics.indexOf(info.topic) !== -1;
         if (a.role === 'superadmin') return true;
         return Array.isArray(a.permissions) && a.permissions.indexOf(info.perm) !== -1;
     }).map(function (a) { return a.email; });
     recipients = recipients.filter(function (e, i) { return recipients.indexOf(e) === i; });
-    if (!recipients.length) { res.status(200).json({ sent: 0, reason: 'keine Empfänger mit Berechtigung ' + info.perm }); return; }
+    if (!recipients.length) { res.status(200).json({ sent: 0, reason: 'keine Empfänger für Kategorie ' + info.topic }); return; }
 
     var html =
         '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#0f172a;max-width:560px">' +
-        '<p style="margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#3b82f6">EVV 2000 · Admin-Benachrichtigung · ' + esc(PERM_LABEL[info.perm] || info.perm) + '</p>' +
+        '<p style="margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#3b82f6">EVV 2000 · Admin-Benachrichtigung · ' + esc(TOPIC_LABEL[info.topic] || PERM_LABEL[info.perm] || info.perm) + '</p>' +
         '<h2 style="margin:0 0 12px;font-size:20px">' + esc(info.subject) + '</h2>' +
         '<p style="margin:0 0 14px;color:#334155">' + esc(info.intro) + '</p>' +
         '<table style="border-collapse:collapse;font-size:14px">' + info.rows.map(function (r) { return line(r[0], r[1]); }).join('') + '</table>' +
         '<p style="margin:18px 0 0"><a href="' + info.link + '" style="display:inline-block;padding:10px 16px;background:#101e38;color:#fff;text-decoration:none;border-radius:8px">Im Admin-Panel öffnen</a></p>' +
-        '<p style="margin:18px 0 0;font-size:12px;color:#94a3b8">Du bekommst diese Mail, weil dein Admin-Konto die Berechtigung „' + esc(PERM_LABEL[info.perm] || info.perm) + '“ hat.</p>' +
+        '<p style="margin:18px 0 0;font-size:12px;color:#94a3b8">Du bekommst diese Mail, weil für dein Admin-Konto die Kategorie „' + esc(TOPIC_LABEL[info.topic] || info.topic) + '“ aktiviert ist. Ändern lässt sich das im Admin-Panel unter Verwaltung.</p>' +
         '</div>';
     var text = info.subject + '\n\n' + info.intro + '\n\n' + info.rows.filter(function (r) { return r[1]; }).map(function (r) { return r[0] + ': ' + r[1]; }).join('\n') + '\n\n' + info.link;
 

@@ -89,6 +89,11 @@
                         <div class="form-hint">Superadmins haben automatisch alle Rechte inkl. Verwaltung.</div>
                     </div>
                     <div class="form-group full">
+                        <label>E-Mail-Benachrichtigungen</label>
+                        <div class="perm-grid" id="notifyGrid"></div>
+                        <div class="form-hint" id="notifyHint">Für jede angehakte Kategorie geht bei einem neuen Eintrag eine Mail an dieses Konto. Ohne Haken keine Mail.</div>
+                    </div>
+                    <div class="form-group full">
                         <label class="form-check"><input type="checkbox" id="fActive" checked> Konto aktiv</label>
                     </div>
                 </div>
@@ -125,6 +130,29 @@
             return '<label class="perm-item"><input type="checkbox" class="permCb" value="' + p.key + '">' +
                 '<i class="fas ' + p.icon + '"></i> ' + p.label + '</label>';
         }).join('');
+
+        var notifyGrid = document.getElementById('notifyGrid');
+        notifyGrid.innerHTML = AdminCore.NOTIFY_TOPICS.map(function (t) {
+            return '<label class="perm-item"><input type="checkbox" class="notifyCb" value="' + t.key + '">' +
+                '<i class="fas ' + t.icon + '"></i> ' + t.label + '</label>';
+        }).join('');
+
+        function setNotify(topics) {
+            topics = topics || [];
+            document.querySelectorAll('.notifyCb').forEach(function (cb) {
+                cb.checked = topics.indexOf(cb.value) !== -1;
+            });
+        }
+
+        function getNotify() {
+            return Array.prototype.slice.call(document.querySelectorAll('.notifyCb:checked'))
+                .map(function (cb) { return cb.value; });
+        }
+
+        /* Speichert erneut ohne notify_topics, falls Migration V10 noch nicht gelaufen ist */
+        function missingColumn(err) {
+            return /notify_topics|column|schema cache/i.test(err && (err.message || err.hint || '') || '');
+        }
 
         function setPerms(perms) {
             document.querySelectorAll('.permCb').forEach(function (cb) {
@@ -167,6 +195,7 @@
             document.getElementById('fPassword').value = '';
             roleSel.value = item ? (item.role || 'admin') : 'trainer';
             setPerms(item ? (item.permissions || []) : AdminCore.ROLES[roleSel.value].perms);
+            setNotify(item ? item.notify_topics : []);
             updatePermGridState();
             document.getElementById('fActive').checked = item ? item.is_active !== false : true;
             AdminCore.openModal('editModal');
@@ -178,6 +207,7 @@
             var password = document.getElementById('fPassword').value;
             var role = roleSel.value;
             var perms = role === 'superadmin' ? [] : getPerms();
+            var notifyTopics = getNotify();
             var isActive = document.getElementById('fActive').checked;
 
             if (!name || !email) {
@@ -198,8 +228,14 @@
                         return;
                     }
                     var up = await sb.from('admins').update({
-                        name: name, role: role, permissions: perms, is_active: isActive
+                        name: name, role: role, permissions: perms, is_active: isActive, notify_topics: notifyTopics
                     }).eq('id', editingId);
+                    if (up.error && missingColumn(up.error)) {
+                        up = await sb.from('admins').update({
+                            name: name, role: role, permissions: perms, is_active: isActive
+                        }).eq('id', editingId);
+                        if (!up.error) AdminCore.toast('Gespeichert – die Benachrichtigungs-Häkchen brauchen noch Migration V10 in Supabase.', 'warning');
+                    }
                     if (up.error) throw up.error;
                     await AdminCore.audit('update', 'admin', editingId, name + ' (' + email + ')',
                         { role: role, permissions: perms, is_active: isActive });
@@ -235,14 +271,19 @@
                         throw new Error('Für diese E-Mail existiert bereits ein Login-Konto.');
                     }
 
-                    var ins = await sb.from('admins').insert({
+                    var base = {
                         user_id: newUser.id,
                         email: email,
                         name: name,
                         role: role,
                         permissions: perms,
                         is_active: isActive
-                    }).select().single();
+                    };
+                    var ins = await sb.from('admins').insert(Object.assign({ notify_topics: notifyTopics }, base)).select().single();
+                    if (ins.error && missingColumn(ins.error)) {
+                        ins = await sb.from('admins').insert(base).select().single();
+                        if (!ins.error) AdminCore.toast('Angelegt – die Benachrichtigungs-Häkchen brauchen noch Migration V10 in Supabase.', 'warning');
+                    }
                     if (ins.error) throw ins.error;
 
                     await AdminCore.audit('create', 'admin', ins.data.id, name + ' (' + email + ')',

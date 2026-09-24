@@ -26,6 +26,21 @@
         { key: 'log',           label: 'Aktivitätslog',      icon: 'fa-history' }
     ];
 
+    // E-Mail-Benachrichtigungen: pro Kategorie einzeln abonnierbar (Spalte admins.notify_topics).
+    // Leere Liste = keine Mails. Wird die Spalte nicht gepflegt, greift die alte Logik über PERMISSIONS.
+    var NOTIFY_TOPICS = [
+        { key: 'kontakt_probetraining', label: 'Probetraining',        icon: 'fa-person-running' },
+        { key: 'kontakt_mitgliedschaft', label: 'Frage Mitgliedschaft', icon: 'fa-id-card' },
+        { key: 'kontakt_mannschaften',  label: 'Frage Mannschaften',   icon: 'fa-users' },
+        { key: 'kontakt_beachanlage',   label: 'Frage Beachanlage',    icon: 'fa-umbrella-beach' },
+        { key: 'kontakt_sponsoring',    label: 'Sponsoring',           icon: 'fa-handshake' },
+        { key: 'kontakt_turniere',      label: 'Frage Turniere/Events', icon: 'fa-trophy' },
+        { key: 'kontakt_sonstiges',     label: 'Sonstige Anfragen',    icon: 'fa-comment-dots' },
+        { key: 'antrag_mitglied',       label: 'Mitgliedsanträge',     icon: 'fa-file-signature' },
+        { key: 'anmeldung_turnier',     label: 'Turnieranmeldungen',   icon: 'fa-clipboard-list' },
+        { key: 'buchung_beach',         label: 'Beach-Buchungen',      icon: 'fa-calendar-check' }
+    ];
+
     // Rollen-Vorlagen: befüllen die Permission-Checkboxen in der Verwaltung
     var ROLES = {
         superadmin:   { label: 'Superadmin',    perms: PERMISSIONS.map(function (p) { return p.key; }) },
@@ -61,6 +76,7 @@
 
     var AdminCore = {
         PERMISSIONS: PERMISSIONS,
+        NOTIFY_TOPICS: NOTIFY_TOPICS,
         ROLES: ROLES,
         user: null,   // Supabase auth user
         admin: null,  // Zeile aus "admins" (role, permissions, name, ...)

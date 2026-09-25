@@ -1,0 +1,52 @@
+name: Staging per FTPS zu ALL-INKL deployen
+
+# Die Website ist reines HTML/CSS/JS ohne Build-Schritt — es wird direkt der
+# Repository-Inhalt übertragen. main bleibt für Vercel (Produktion) reserviert,
+# nach ALL-INKL (staging.evv2000.de) geht nur der Branch "staging" oder ein
+# manueller Start über Actions → Run workflow.
+
+on:
+  push:
+    branches:
+      - staging
+
+  workflow_dispatch:
+
+concurrency:
+  group: allinkl-staging
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Website übertragen
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v6
+
+      - name: Per FTPS zu ALL-INKL übertragen
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.ALLINKL_FTPS_SERVER }}
+          username: ${{ secrets.ALLINKL_FTPS_USERNAME }}
+          password: ${{ secrets.ALLINKL_FTPS_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./
+          server-dir: ${{ secrets.ALLINKL_FTPS_SERVER_DIR }}
+          # Nichts hochladen, was nicht ins Web-Verzeichnis gehört
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/_originals/**
+            **/_test/**
+            **/api/**
+            **/*.sql
+            **/*.md
+            action.yaml.txt

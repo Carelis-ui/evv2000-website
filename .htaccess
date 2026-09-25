@@ -4,9 +4,10 @@
     RewriteEngine On
 
     # Die Website ruft /api/config und /api/calendar.ics auf. Auf Vercel erledigen das
-    # Node-Funktionen, hier die PHP-Gegenstücke.
-    RewriteRule ^api/config/?$        api/config.php        [L]
-    RewriteRule ^api/calendar\.ics$   api/calendar.ics.php  [L]
+    # Node-Funktionen, hier die PHP-Gegenstücke aus dem Ordner php/.
+    # (Sie liegen nicht in api/, weil Vercel dort keine zwei gleichnamigen Dateien erlaubt.)
+    RewriteRule ^api/config/?$        php/config.php        [L]
+    RewriteRule ^api/calendar\.ics$   php/calendar.ics.php  [L]
 
     # Adressen ohne .html (wie auf Vercel): /kalender → kalender.html
     RewriteCond %{REQUEST_FILENAME} !-f

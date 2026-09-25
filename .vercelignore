@@ -1,0 +1,11 @@
+# Wird nur auf dem PHP-Hoster (ALL-INKL) gebraucht, nicht auf Vercel
+php/
+.htaccess
+
+# Nicht ins Deployment
+_originals/
+_test/
+.github/
+action.yaml.txt
+*.sql
+SETUP.md

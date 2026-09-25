@@ -2,7 +2,6 @@
 // Wird von Google Calendar / Apple Calendar / Outlook / Thunderbird per URL abonniert.
 // Datenquelle: Supabase-View public_calendar. Zugang: Anon-Key (bereits öffentlich per RLS).
 
-const CONFIG_URL = 'https://erka-beach.vercel.app/api/config';
 const CAL_NAME = 'EVV 2000 - Vereinskalender';
 const CAL_DOMAIN = 'evv2000.de';
 
@@ -124,15 +123,14 @@ function berlinTz() {
 
 module.exports = async function handler(req, res) {
     try {
-        var cfgRes = await fetch(CONFIG_URL);
-        if (!cfgRes.ok) throw new Error('Config-Endpoint HTTP ' + cfgRes.status);
-        var cfg = await cfgRes.json();
-        if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) throw new Error('Supabase nicht konfiguriert');
+        var supabaseUrl = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
+        var anonKey = process.env.SUPABASE_ANON_KEY || '';
+        if (!supabaseUrl || !anonKey) throw new Error('Supabase nicht konfiguriert (SUPABASE_URL / SUPABASE_ANON_KEY fehlen)');
 
-        var evRes = await fetch(cfg.supabaseUrl + '/rest/v1/public_calendar?select=*&order=date.asc', {
+        var evRes = await fetch(supabaseUrl + '/rest/v1/public_calendar?select=*&order=date.asc', {
             headers: {
-                apikey: cfg.supabaseAnonKey,
-                Authorization: 'Bearer ' + cfg.supabaseAnonKey,
+                apikey: anonKey,
+                Authorization: 'Bearer ' + anonKey,
                 Accept: 'application/json'
             }
         });

@@ -1,0 +1,38 @@
+# Konfiguration für Apache-Hoster (ALL-INKL). Auf Vercel wird diese Datei ignoriert.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Die Website ruft /api/config und /api/calendar.ics auf. Auf Vercel erledigen das
+    # Node-Funktionen, hier die PHP-Gegenstücke.
+    RewriteRule ^api/config/?$        api/config.php        [L]
+    RewriteRule ^api/calendar\.ics$   api/calendar.ics.php  [L]
+
+    # Adressen ohne .html (wie auf Vercel): /kalender → kalender.html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+    RewriteRule ^([^.]+)/?$ $1.html [L]
+</IfModule>
+
+# Interne Dateien nicht ausliefern
+<FilesMatch "^(_supabase\.php|.*\.sql|.*\.md)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml text/calendar
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+</IfModule>

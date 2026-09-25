@@ -38,7 +38,8 @@ jobs:
           port: 21
           local-dir: ./
           server-dir: ${{ secrets.ALLINKL_FTPS_SERVER_DIR }}
-          # Nichts hochladen, was nicht ins Web-Verzeichnis gehört
+          # Nichts hochladen, was nicht ins Web-Verzeichnis gehört.
+          # api/*.php bleibt drin — das sind die Gegenstücke zu den Vercel-Funktionen.
           exclude: |
             **/.git*
             **/.git*/**
@@ -46,7 +47,7 @@ jobs:
             **/node_modules/**
             **/_originals/**
             **/_test/**
-            **/api/**
+            api/*.js
             **/*.sql
             **/*.md
             action.yaml.txt

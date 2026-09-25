@@ -1,13 +1,14 @@
 name: Staging per FTPS zu ALL-INKL deployen
 
 # Die Website ist reines HTML/CSS/JS ohne Build-Schritt — es wird direkt der
-# Repository-Inhalt übertragen. main bleibt für Vercel (Produktion) reserviert,
-# nach ALL-INKL (staging.evv2000.de) geht nur der Branch "staging" oder ein
-# manueller Start über Actions → Run workflow.
+# Repository-Inhalt übertragen. Jeder Push nach main geht an beide Ziele:
+# Vercel deployt selbst, dieser Workflow schiebt denselben Stand nach ALL-INKL
+# (staging.evv2000.de). So bleibt Staging automatisch aktuell.
 
 on:
   push:
     branches:
+      - main
       - staging
 
   workflow_dispatch:

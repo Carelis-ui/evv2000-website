@@ -970,3 +970,22 @@ a.up:hover .up-title { color: var(--blue); }
 .benefit-tier { display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: center; padding: 9px 12px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); border-radius: 10px; }
 .benefit-tier b { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--white); }
 .benefit-tier span { font-size: 13px; color: var(--muted); line-height: 1.35; }
+
+/* ===== Instagram-Vorschau in Aktuelles-Artikeln (lädt erst auf Klick) ===== */
+.ig-embed { margin-top: 18px; max-width: 400px; }
+.ig-embed .ig-load {
+    width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+    padding: 18px 20px; text-align: left; cursor: pointer;
+    background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 14px; color: var(--muted); font: inherit; transition: border-color .2s, background .2s;
+}
+.ig-embed .ig-load:hover { background: rgba(59, 130, 246, .08); border-color: var(--blue); }
+.ig-embed .ig-load svg { width: 26px; height: 26px; color: var(--blue); }
+.ig-embed .ig-load b { color: var(--white); font-family: var(--font-display); font-size: 18px; letter-spacing: .01em; }
+.ig-embed .ig-load span { font-size: 13px; line-height: 1.4; }
+.ig-embed.is-loaded { border-radius: 14px; overflow: hidden; background: #000; }
+.ig-embed iframe { display: block; width: 100%; height: 640px; border: 0; }
+@media (max-width: 480px) {
+    .ig-embed { max-width: 100%; }
+    .ig-embed iframe { height: 580px; }
+}

@@ -77,11 +77,17 @@
                     <div class="td-photo" id="tdImage" data-reveal="2"><img id="tdImg" src="" alt=""></div>
                     <div class="panel" id="tdContact" data-reveal="2">
                         <h3>Probe<span>training</span></h3>
-                        <p>Lust, bei uns mitzutrainieren? Melde dich beim Mannschaftsverantwortlichen – ein Probetraining ist jederzeit möglich.</p>
-                        <div class="contact-lines">
-                            <span id="tdMvName"></span>
-                            <span id="tdMvPhone"></span>
-                            <span id="tdMvEmail"></span>
+                        <p>Lust, bei uns mitzutrainieren? Melde dich über unser Anmeldeformular – ein Probetraining ist jederzeit möglich.</p>
+                        <div class="form-actions" style="margin:16px 0 0">
+                            <a class="btn btn-solid" href="https://forms.cloud.microsoft/e/CAFE93fXXm" target="_blank" rel="noopener">Zur Probetraining-Anmeldung</a>
+                        </div>
+                        <div id="tdMv" style="display:none;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)">
+                            <p class="kicker" style="margin-bottom:8px">Fragen zur Mannschaft</p>
+                            <div class="contact-lines">
+                                <span id="tdMvName"></span>
+                                <span id="tdMvPhone"></span>
+                                <span id="tdMvEmail"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -235,14 +241,15 @@
             tdResults.style.display = 'none';
         }
 
+        /* Probetraining läuft über das Formular, der Kasten bleibt immer sichtbar;
+           der Mannschaftsverantwortliche erscheint nur als Ansprechpartner für Rückfragen. */
         if (team.mv) {
+            document.getElementById('tdMv').style.display = '';
             document.getElementById('tdMvName').innerHTML = '<b>' + esc(team.mv.name) + '</b>';
             document.getElementById('tdMvPhone').innerHTML = team.mv.phone
                 ? '<a href="tel:' + esc(team.mv.phone.replace(/\s/g, '')) + '">' + esc(team.mv.phone) + '</a>' : '';
             document.getElementById('tdMvEmail').innerHTML = team.mv.email
                 ? '<a href="mailto:' + esc(team.mv.email) + '">' + esc(team.mv.email) + '</a>' : '';
-        } else {
-            document.getElementById('tdContact').style.display = 'none';
         }
 
         var imgEl = document.getElementById('tdImg');

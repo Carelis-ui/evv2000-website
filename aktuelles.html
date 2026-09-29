@@ -138,10 +138,26 @@
             var d = new Date(iso);
             return d.getUTCDate() + '. ' + MONTHS[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
         }
+        /* Macht aus getipptem "https://…" oder "www.…" einen echten Link.
+           Es wird weiterhin alles escaped — nur http/https/www werden verlinkt,
+           damit über den Text kein Code eingeschleust werden kann. */
+        function linkify(raw) {
+            var re = /((?:https?:\/\/|www\.)[^\s<]+)/gi;
+            var out = '', last = 0, m;
+            while ((m = re.exec(raw)) !== null) {
+                out += esc(raw.slice(last, m.index));
+                var url = m[1].replace(/[.,;:!?)\]]+$/, '');        // Satzzeichen am Ende nicht mitverlinken
+                var tail = m[1].slice(url.length);
+                var href = /^www\./i.test(url) ? 'https://' + url : url;
+                out += '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(url) + '</a>' + esc(tail);
+                last = m.index + m[1].length;
+            }
+            return out + esc(raw.slice(last));
+        }
         function paragraphs(text) {
             var t = String(text || '').replace(/<[^>]+>/g, '').trim();
             if (!t) return '';
-            return t.split(/\n{2,}/).map(function (p) { return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>'; }).join('');
+            return t.split(/\n{2,}/).map(function (p) { return '<p>' + linkify(p).replace(/\n/g, '<br>') + '</p>'; }).join('');
         }
         function label(n) { return n.tag_label || (n.tag === 'success' ? 'Neuigkeit' : 'Info'); }
 

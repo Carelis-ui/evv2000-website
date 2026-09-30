@@ -132,7 +132,9 @@
             document.getElementById('fContent').value = item ? item.content : '';
             document.getElementById('fTag').value = item ? (item.tag || 'info') : 'info';
             document.getElementById('fTagLabel').value = item ? (item.tag_label || '') : '';
-            document.getElementById('fDate').value = item ? (item.published_at || '') : AdminCore.dateStr(new Date());
+            // published_at ist ein Zeitstempel; ein Datumsfeld nimmt nur YYYY-MM-DD an,
+            // sonst bleibt es leer und das Datum würde beim Speichern auf heute springen.
+            document.getElementById('fDate').value = item ? String(item.published_at || '').slice(0, 10) : AdminCore.dateStr(new Date());
             document.getElementById('fPublished').checked = item ? item.is_published !== false : true;
             picker.setUrl(item ? item.image_url : '');
             document.getElementById('fImageFit').value = (item && item.image_fit) || 'cover';
@@ -157,13 +159,15 @@
                 AdminCore.toast('Bitte Titel und Inhalt ausfüllen.', 'error');
                 return;
             }
+            var bestehend = editingId ? itemsCache.find(function (n) { return n.id === editingId; }) : null;
 
             var payload = {
                 title: title,
                 content: content,
                 tag: document.getElementById('fTag').value,
                 tag_label: document.getElementById('fTagLabel').value.trim() || null,
-                published_at: document.getElementById('fDate').value || AdminCore.dateStr(new Date()),
+                published_at: document.getElementById('fDate').value ||
+                    (editingId && bestehend ? bestehend.published_at : AdminCore.dateStr(new Date())),
                 is_published: document.getElementById('fPublished').checked,
                 image_url: picker.getUrl() || null,
                 image_fit: document.getElementById('fImageFit').value,

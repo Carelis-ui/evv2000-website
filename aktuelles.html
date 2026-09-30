@@ -149,7 +149,10 @@
                 var url = m[1].replace(/[.,;:!?)\]]+$/, '');        // Satzzeichen am Ende nicht mitverlinken
                 var tail = m[1].slice(url.length);
                 var href = /^www\./i.test(url) ? 'https://' + url : url;
-                out += '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(url) + '</a>' + esc(tail);
+                // Lange Adressen gekürzt anzeigen, sonst sprengen sie auf dem Handy das Layout
+                var text = url.replace(/^https?:\/\//i, '');
+                if (text.length > 42) text = text.slice(0, 40) + '…';
+                out += '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(text) + '</a>' + esc(tail);
                 last = m.index + m[1].length;
             }
             return out + esc(raw.slice(last));

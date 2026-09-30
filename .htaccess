@@ -23,6 +23,13 @@
 
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
+
+    # CSS/JS tragen keine Versionsnummer im Dateinamen. Würde der Browser sie
+    # zwischenspeichern, bekäme er nach einem Deploy neues HTML mit altem CSS
+    # (passiert am 29.09.2026) — deshalb bei jedem Aufruf nachfragen lassen.
+    <FilesMatch "\.(css|js|html)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
 </IfModule>
 
 <IfModule mod_deflate.c>
@@ -31,8 +38,6 @@
 
 <IfModule mod_expires.c>
     ExpiresActive On
-    ExpiresByType text/css "access plus 7 days"
-    ExpiresByType application/javascript "access plus 7 days"
     ExpiresByType image/jpeg "access plus 30 days"
     ExpiresByType image/png "access plus 30 days"
     ExpiresByType image/svg+xml "access plus 30 days"

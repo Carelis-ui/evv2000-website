@@ -986,3 +986,7 @@ a.up:hover .up-title { color: var(--blue); }
 .ig-card-text span { color: var(--muted); font-size: 13px; }
 .ig-card-arrow { flex: none; width: 20px; height: 20px; margin-left: auto; color: var(--blue); }
 @media (max-width: 480px) { .ig-card { max-width: 100%; } }
+
+/* Lange Adressen dürfen Artikel und Karten nicht sprengen (Handy) */
+.prose { overflow-wrap: anywhere; }
+.ig-card-text { overflow-wrap: anywhere; }

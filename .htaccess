@@ -18,7 +18,7 @@
 </IfModule>
 
 # Interne Dateien nicht ausliefern
-<FilesMatch "^(_supabase\.php|notify-secret.*\.php|.*\.sql|.*\.md)$">
+<FilesMatch "^(_supabase\.php|notify-secret.*\.php|.*\.sql|.*\.md|.*\.log)$">
     Require all denied
 </FilesMatch>
 

@@ -10,3 +10,6 @@ _originals/
 
 # lokale Test-Harnesse
 _test/
+
+# Geheimnis für den Mailversand (nur auf dem Server, GitHub ist öffentlich)
+php/notify-secret.php

@@ -8,6 +8,7 @@
     # (Sie liegen nicht in api/, weil Vercel dort keine zwei gleichnamigen Dateien erlaubt.)
     RewriteRule ^api/config/?$        php/config.php        [L]
     RewriteRule ^api/calendar\.ics$   php/calendar.ics.php  [L]
+    RewriteRule ^api/notify/?$        php/notify.php        [L]
 
     # Adressen ohne .html (wie auf Vercel): /kalender → kalender.html
     RewriteCond %{REQUEST_FILENAME} !-f
@@ -17,7 +18,7 @@
 </IfModule>
 
 # Interne Dateien nicht ausliefern
-<FilesMatch "^(_supabase\.php|.*\.sql|.*\.md)$">
+<FilesMatch "^(_supabase\.php|notify-secret.*\.php|.*\.sql|.*\.md)$">
     Require all denied
 </FilesMatch>
 

@@ -14,8 +14,20 @@ const MAIL_FROM   = 'no-reply@evv2000.de';
 const SITE_URL    = 'https://www.evv2000.de';
 const MAX_EMPFAENGER = 25;
 
+// Kurzes Protokoll zur Fehlersuche: nur Zeitpunkt, Kategorie und Ergebnis,
+// keine Nachrichtentexte. Liegt in php/notify.log, per .htaccess gesperrt.
+function protokoll(string $zeile): void
+{
+    @file_put_contents(
+        __DIR__ . '/notify.log',
+        date('Y-m-d H:i:s') . ' ' . $zeile . "\n",
+        FILE_APPEND | LOCK_EX
+    );
+}
+
 function fail(int $code, string $text): void
 {
+    protokoll('ABBRUCH ' . $code . ' — ' . $text);
     http_response_code($code);
     header('Content-Type: text/plain; charset=utf-8');
     echo $text;
@@ -243,9 +255,13 @@ $inhalt = implode("\r\n", [
 ]);
 
 $ok = 0;
+$ergebnisse = [];
 foreach ($empfaenger as $mail) {
-    if (mail($mail, $betreffKodiert, $inhalt, $headers)) $ok++;
+    $erfolg = mail($mail, $betreffKodiert, $inhalt, $headers);
+    $ergebnisse[] = $mail . ($erfolg ? ' OK' : ' FEHLGESCHLAGEN');
+    if ($erfolg) $ok++;
 }
+protokoll('VERSAND topic=' . $topic . ' tabelle=' . $table . ' → ' . implode(', ', $ergebnisse));
 
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode(['sent' => $ok, 'of' => count($empfaenger), 'topic' => $topic]);

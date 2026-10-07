@@ -13,3 +13,4 @@ _test/
 
 # Geheimnis für den Mailversand (nur auf dem Server, GitHub ist öffentlich)
 php/notify-secret.php
+php/notify.log

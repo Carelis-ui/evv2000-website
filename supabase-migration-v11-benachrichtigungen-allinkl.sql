@@ -83,25 +83,25 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$;
 
--- Trigger (idempotent)
-DROP TRIGGER IF EXISTS trg_notify_contact      ON public.contact_messages;
-DROP TRIGGER IF EXISTS trg_notify_membership   ON public.membership_applications;
-DROP TRIGGER IF EXISTS trg_notify_registration ON public.tournament_registrations;
-DROP TRIGGER IF EXISTS trg_notify_beach        ON public.beach_bookings;
-
-CREATE TRIGGER trg_notify_contact      AFTER INSERT ON public.contact_messages
-    FOR EACH ROW EXECUTE FUNCTION public.notify_admins();
-CREATE TRIGGER trg_notify_membership   AFTER INSERT ON public.membership_applications
-    FOR EACH ROW EXECUTE FUNCTION public.notify_admins();
-CREATE TRIGGER trg_notify_registration AFTER INSERT ON public.tournament_registrations
-    FOR EACH ROW EXECUTE FUNCTION public.notify_admins();
-
+-- Trigger (idempotent). Nur für Tabellen, die es wirklich gibt — "DROP TRIGGER
+-- IF EXISTS ... ON tabelle" bricht nämlich ab, wenn die TABELLE fehlt, und riss
+-- am 07.10.2026 das ganze Skript mit (beach_bookings gibt es hier nicht, die
+-- Beach-Buchungen liegen in "bookings").
 DO $$
+DECLARE
+    t TEXT;
 BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables
-               WHERE table_schema = 'public' AND table_name = 'beach_bookings') THEN
-        EXECUTE 'CREATE TRIGGER trg_notify_beach AFTER INSERT ON public.beach_bookings
-                 FOR EACH ROW EXECUTE FUNCTION public.notify_admins()';
-    END IF;
+    FOREACH t IN ARRAY ARRAY['contact_messages', 'membership_applications', 'tournament_registrations'] LOOP
+        IF EXISTS (SELECT 1 FROM information_schema.tables
+                   WHERE table_schema = 'public' AND table_name = t) THEN
+            EXECUTE format('DROP TRIGGER IF EXISTS %I ON public.%I', 'trg_notify_' || t, t);
+            EXECUTE format('CREATE TRIGGER %I AFTER INSERT ON public.%I
+                            FOR EACH ROW EXECUTE FUNCTION public.notify_admins()', 'trg_notify_' || t, t);
+        END IF;
+    END LOOP;
 END;
 $$;
+
+-- Kontrolle: sollte drei Zeilen zeigen
+SELECT tgname AS trigger, tgrelid::regclass::text AS tabelle
+FROM pg_trigger WHERE tgname LIKE 'trg_notify%' ORDER BY 2;

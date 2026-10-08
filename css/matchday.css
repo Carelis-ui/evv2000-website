@@ -990,3 +990,6 @@ a.up:hover .up-title { color: var(--blue); }
 /* Lange Adressen dürfen Artikel und Karten nicht sprengen (Handy) */
 .prose { overflow-wrap: anywhere; }
 .ig-card-text { overflow-wrap: anywhere; }
+
+/* Aufmacher ohne Bild: kein Abstand, wo sonst das Bild säße */
+.news-feature:not(:has(.news-media)) .news-body { padding-top: 0; }

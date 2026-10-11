@@ -114,6 +114,15 @@
                         <input type="url" class="form-input" id="fResultsUrl" placeholder="https://... (z.B. Verbands-/Ligaseite mit Tabelle)">
                         <div class="form-hint">Erscheint als Button „Ergebnisse &amp; Tabelle" auf der Team-Seite.</div>
                     </div>
+                    <div class="form-group full">
+                        <label>Ergebnisdienst – bis zu drei Bilder</label>
+                        <div class="results-pickers">
+                            <div><div class="form-hint" style="margin-bottom:6px">Bild 1</div><div id="imgRes1"></div></div>
+                            <div><div class="form-hint" style="margin-bottom:6px">Bild 2</div><div id="imgRes2"></div></div>
+                            <div><div class="form-hint" style="margin-bottom:6px">Bild 3</div><div id="imgRes3"></div></div>
+                        </div>
+                        <div class="form-hint">Tabelle, Spielplan oder Ergebnisse als Bild. Sobald mindestens ein Bild hinterlegt ist, wird die Liga auf der Mannschaftsseite zum Link auf die Ergebnisseite. Zum Austauschen einfach ein neues Bild hochladen.</div>
+                    </div>
                     <div class="form-group">
                         <label>Badge-Text (optional)</label>
                         <input type="text" class="form-input" id="fBadgeText" placeholder="z.B. Aufstieg 2026!">
@@ -184,6 +193,10 @@
         var itemsCache = [];
         var activeCat = 'all';
         var picker = AdminCore.imagePicker(document.getElementById('imgPicker'), 'teams', '', { crop: { aspect: 16 / 10, title: 'Teambild zuschneiden', presets: [{ label: '16:10 (Karte)', value: 1.6 }, { label: '4:3', value: 4 / 3 }, { label: '3:2', value: 1.5 }] } });
+        // Ergebnisdienst: Screenshots von Tabelle/Spielplan — nicht zuschneiden, sonst fehlen Zeilen
+        var resPickers = [1, 2, 3].map(function (n) {
+            return AdminCore.imagePicker(document.getElementById('imgRes' + n), 'ergebnisse', '', { crop: false });
+        });
         // Kader-Editor: Fotos landen im Storage unter spieler/<team-slug>/
         var roster = AdminCore.rosterEditor(document.getElementById('rosterEditor'), {
             folder: function () {
@@ -241,6 +254,8 @@
             roster.set(item ? item.players : []);
             document.getElementById('fPublished').checked = item ? item.is_published !== false : true;
             picker.setUrl(item ? item.image_url : '');
+            var resBilder = (item && item.results_images) || [];
+            resPickers.forEach(function (p, i) { p.setUrl(resBilder[i] || ''); });
             AdminCore.openModal('editModal');
         }
 
@@ -268,15 +283,28 @@
                 sort_order: parseInt(val('fSort'), 10) || 0,
                 players: roster.get(),
                 is_published: document.getElementById('fPublished').checked,
-                image_url: picker.getUrl() || null
+                image_url: picker.getUrl() || null,
+                results_images: resPickers.map(function (p) { return p.getUrl() || null; }).filter(Boolean)
             };
 
             var btn = this;
             btn.disabled = true;
 
+            // Solange Migration V13 nicht gelaufen ist, gibt es results_images noch nicht —
+            // dann ohne dieses Feld speichern, statt die ganze Mannschaft nicht sichern zu können.
+            function ohneErgebnisbilder(fehler) {
+                return /results_images|column|schema cache/i.test((fehler && fehler.message) || '');
+            }
+            var payloadOhne = Object.assign({}, payload);
+            delete payloadOhne.results_images;
+
             try {
                 if (editingId) {
                     var up = await sb.from('teams').update(payload).eq('id', editingId);
+                    if (up.error && ohneErgebnisbilder(up.error)) {
+                        up = await sb.from('teams').update(payloadOhne).eq('id', editingId);
+                        if (!up.error) AdminCore.toast('Gespeichert – die Ergebnisbilder brauchen noch Migration V13 in Supabase.', 'warning');
+                    }
                     if (up.error) throw up.error;
                     await AdminCore.audit('update', 'team', editingId, name, null);
                     AdminCore.toast('Mannschaft aktualisiert.', 'success');
@@ -286,6 +314,11 @@
                     var exists = itemsCache.some(function (t) { return t.slug === payload.slug; });
                     if (exists) payload.slug += '-' + Math.random().toString(36).slice(2, 5);
                     var ins = await sb.from('teams').insert(payload).select().single();
+                    if (ins.error && ohneErgebnisbilder(ins.error)) {
+                        payloadOhne.slug = payload.slug;
+                        ins = await sb.from('teams').insert(payloadOhne).select().single();
+                        if (!ins.error) AdminCore.toast('Angelegt – die Ergebnisbilder brauchen noch Migration V13 in Supabase.', 'warning');
+                    }
                     if (ins.error) throw ins.error;
                     await AdminCore.audit('create', 'team', ins.data.id, name, null);
                     AdminCore.toast('Mannschaft erstellt.', 'success');

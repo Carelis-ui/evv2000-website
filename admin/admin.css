@@ -1120,3 +1120,7 @@ button { font-family: var(--font-body); }
 .crop-tools { display: flex; align-items: center; gap: 10px; margin-top: 12px; color: var(--text-muted); flex-wrap: wrap; }
 .crop-tools input[type=range] { flex: 1; min-width: 140px; max-width: 280px; accent-color: var(--primary); }
 .crop-hint { font-size: 0.78rem; margin-left: auto; }
+
+/* Ergebnisdienst: drei Bildfelder nebeneinander */
+.results-pickers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 760px) { .results-pickers { grid-template-columns: 1fr; } }

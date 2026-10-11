@@ -207,7 +207,8 @@
             description: dbTeam.description || '',
             mv: dbTeam.mv_name ? { name: dbTeam.mv_name, phone: dbTeam.mv_phone || '', email: dbTeam.mv_email || '' } : null,
             players: (dbTeam.players || []).filter(Boolean),
-            results_url: dbTeam.results_url || null
+            results_url: dbTeam.results_url || null,
+            results_images: (dbTeam.results_images || []).filter(Boolean)
         };
 
         document.title = team.name + ' | EVV 2000';
@@ -220,7 +221,14 @@
             document.getElementById('tdBadgeWrap').innerHTML = '<span class="tag">' + esc(team.badge.text) + '</span>';
         }
 
-        document.getElementById('tdFactLeague').textContent = team.league || '–';
+        // Sind Ergebnisbilder hinterlegt, führt die Liga zum Ergebnisdienst
+        var ligaFeld = document.getElementById('tdFactLeague');
+        if (team.league && team.results_images.length) {
+            ligaFeld.innerHTML = '<a class="fact-link" href="ergebnisse.html?team=' + encodeURIComponent(teamSlug) +
+                '">' + esc(team.league) + ' <span style="white-space:nowrap">→ Ergebnisse</span></a>';
+        } else {
+            ligaFeld.textContent = team.league || '–';
+        }
         document.getElementById('tdFactTrainer').textContent = team.trainer;
         document.getElementById('tdFactTraining').textContent = team.training;
         document.getElementById('tdFactHalle').textContent = team.halle;

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ergebnisse und Tabellen der Mannschaften des EVV 2000.">
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <title>Ergebnisse | EVV 2000</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/matchday.css">
+</head>
+<body data-page="mannschaften" data-mode="halle">
+
+<!-- @chrome:header -->
+    <header class="site-nav" id="siteNav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="index.html" aria-label="EVV 2000 Startseite">
+                <img src="img/logo-evv.png" alt="">
+                <span>EVV 2000<small>Erkelenzer - Volleyball - Verein</small></span>
+            </a>
+            <div class="mode-switch" role="group" aria-label="Bereich wählen">
+                <a class="mode-btn" data-mode="halle" href="index.html" aria-label="Halle" title="Halle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 9.5c3 1 6 1 9-1M6 18.5c2-3 5-5 9-5.5M14.5 3.5c-1 3-1 6 1 9"/></svg>Halle</a>
+                <a class="mode-btn" data-mode="beach" href="beachanlage.html" aria-label="Beach" title="Beach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0H3z"/><path d="M12 13v8M9 21h6"/></svg>Beach</a>
+            </div>
+            <nav class="nav-links" id="navLinks" aria-label="Hauptnavigation">
+                <a href="mannschaften.html" data-nav="mannschaften">Mannschaften</a>
+                <a href="kalender.html" data-nav="kalender">Termine</a>
+                <a href="aktuelles.html" data-nav="aktuelles">Aktuelles</a>
+                <a href="benefits.html" data-nav="benefits">Benefits</a>
+                <a href="sponsoren.html" data-nav="sponsoren">Partner</a>
+                <a href="kontakt.html" data-nav="kontakt">Kontakt</a>
+            </nav>
+            <a class="btn btn-ghost nav-cta nav-cta--probe" href="kontakt.html?betreff=probetraining">Probetraining</a>
+            <a class="btn btn-solid nav-cta" href="mitgliedschaft.html">Mitglied werden</a>
+            <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+<!-- @chrome:/header -->
+    <section class="page-hero">
+        <div class="wrap">
+            <p class="kicker" data-reveal><a href="mannschaften.html" style="color:var(--blue)">← Alle Mannschaften</a></p>
+            <h1 id="erTitle" data-reveal="2">Ergebnisse</h1>
+            <p class="lead" id="erLead" data-reveal="3">Wird geladen…</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="wrap">
+            <div id="erEmpty" class="empty-note" style="display:none">
+                Für diese Mannschaft sind gerade keine Ergebnisse hinterlegt.
+            </div>
+            <div class="results-sheets" id="erSheets"></div>
+            <div class="form-actions" id="erActions" style="margin-top:28px;display:none">
+                <a class="btn btn-ghost" id="erTeamLink" href="mannschaften.html">Zur Mannschaft</a>
+                <a class="btn btn-ghost" id="erExtern" href="#" target="_blank" rel="noopener" style="display:none">Ergebnisse &amp; Tabelle beim Verband</a>
+            </div>
+        </div>
+    </section>
+
+<!-- @chrome:footer -->
+    <footer class="footer">
+        <div class="wrap">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="img/logo-evv.png" alt="EVV 2000">
+                    <p>Erkelenzer Volleyball-Verein 2000 e.V.<br>Volleyball für alle – seit über 25 Jahren.</p>
+                    <a class="social" href="https://www.instagram.com/evv_2000/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        @evv_2000
+                    </a>
+                </div>
+                <div>
+                    <h4>Verein</h4>
+                    <ul>
+                        <li><a href="mannschaften.html">Mannschaften</a></li>
+                        <li><a href="aktuelles.html">Aktuelles</a></li>
+                        <li><a href="kalender.html">Termine &amp; Kalender</a></li>
+                        <li><a href="kalender.html#events">Events &amp; Turniere</a></li>
+                        <li><a href="vorstand.html">Vorstand &amp; Trainer</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Mitmachen</h4>
+                    <ul>
+                        <li><a href="mitgliedschaft.html">Mitglied werden</a></li>
+                        <li><a href="benefits.html">Mitglieder-Benefits</a></li>
+                        <li><a href="beachanlage.html">ERKA Beach</a></li>
+                        <li><a href="sponsoren.html">Sponsoring</a></li>
+                        <li><a href="formulare.html">Formulare &amp; Downloads</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontakt</h4>
+                    <ul>
+                        <li><a href="mailto:kontakt@evv2000.de">kontakt@evv2000.de</a></li>
+                        <li><a href="kontakt.html">Karl-Fischer-Halle, Erkelenz</a></li>
+                        <li><a href="impressum.html">Impressum</a></li>
+                        <li><a href="datenschutz.html">Datenschutz</a></li>
+                        <li><a href="agb.html">AGB Beachanlage</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© <span data-year>2026</span> Erkelenzer Volleyball-Verein 2000 e.V.</span>
+                <a href="admin/login.html">Login</a>
+            </div>
+        </div>
+    </footer>
+<!-- @chrome:/footer -->
+
+    <script>window.ERKA_API_BASE = '';</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/evv-common.js"></script>
+    <script src="js/matchday.js"></script>
+    <script>
+    (async function () {
+        function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+        var slug = new URLSearchParams(location.search).get('team') || '';
+        var titleEl = document.getElementById('erTitle');
+        var leadEl = document.getElementById('erLead');
+
+        function leer(text) {
+            leadEl.textContent = '';
+            document.getElementById('erEmpty').style.display = '';
+            document.getElementById('erEmpty').textContent = text;
+        }
+
+        try {
+            await ErkaSupabase.init();
+            if (!ErkaSupabase.client || !slug) throw new Error('offline');
+            var res = await ErkaSupabase.client.from('public_teams').select('*').eq('slug', slug).limit(1);
+            if (res.error) throw res.error;
+            var team = res.data && res.data[0];
+            if (!team) { titleEl.textContent = 'Mannschaft nicht gefunden'; leer('Diese Mannschaft gibt es nicht oder sie ist nicht öffentlich.'); return; }
+
+            var name = EVV && EVV.teamLabel ? EVV.teamLabel(team.name) : team.name;
+            document.title = 'Ergebnisse ' + name + ' | EVV 2000';
+            titleEl.textContent = 'Ergebnisse ' + name;
+            leadEl.textContent = team.league ? team.league : '';
+
+            var bilder = (team.results_images || []).filter(Boolean);
+            var host = document.getElementById('erSheets');
+            if (bilder.length) {
+                host.innerHTML = bilder.map(function (url, i) {
+                    return '<figure class="results-sheet" data-reveal="' + Math.min(i + 1, 3) + '">' +
+                        '<a href="' + esc(url) + '" target="_blank" rel="noopener">' +
+                        '<img src="' + esc(url) + '" alt="Ergebnisse ' + esc(name) + ' – Bild ' + (i + 1) + '" loading="lazy">' +
+                        '</a></figure>';
+                }).join('');
+            } else {
+                leer('Für diese Mannschaft sind gerade keine Ergebnisse hinterlegt.');
+            }
+
+            var actions = document.getElementById('erActions');
+            actions.style.display = '';
+            document.getElementById('erTeamLink').href = 'mannschaft.html?team=' + encodeURIComponent(slug);
+            if (team.results_url) {
+                var ex = document.getElementById('erExtern');
+                var u = String(team.results_url);
+                ex.href = /^https?:\/\//i.test(u) ? u : 'https://' + u;
+                ex.style.display = '';
+            }
+        } catch (e) {
+            console.warn(e);
+            titleEl.textContent = 'Ergebnisse';
+            leer('Die Ergebnisse konnten gerade nicht geladen werden. Bitte später erneut versuchen.');
+        }
+    })();
+    </script>
+</body>
+</html>

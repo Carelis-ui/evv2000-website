@@ -993,3 +993,12 @@ a.up:hover .up-title { color: var(--blue); }
 
 /* Aufmacher ohne Bild: kein Abstand, wo sonst das Bild säße */
 .news-feature:not(:has(.news-media)) .news-body { padding-top: 0; }
+
+/* ===== Ergebnisdienst: hochgeladene Tabellen-/Ergebnisbilder ===== */
+.results-sheets { display: grid; gap: 22px; max-width: 900px; }
+.results-sheet { margin: 0; border-radius: var(--radius); overflow: hidden; background: var(--navy); border: 1px solid rgba(255, 255, 255, .12); }
+.results-sheet img { display: block; width: 100%; height: auto; }
+.results-sheet a { display: block; }
+.results-sheet a:hover { opacity: .92; }
+.fact-value a.fact-link { color: var(--blue); text-decoration: none; border-bottom: 1px solid rgba(59, 130, 246, .45); }
+.fact-value a.fact-link:hover { border-bottom-color: var(--blue); }

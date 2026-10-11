@@ -124,7 +124,9 @@
         var leadEl = document.getElementById('erLead');
 
         function leer(text) {
-            leadEl.textContent = '';
+            // Unterzeile nur leeren, wenn dort noch der Ladehinweis steht —
+            // sonst verschwände die Liga, sobald keine Bilder hinterlegt sind.
+            if (leadEl.textContent === 'Wird geladen…') leadEl.textContent = '';
             document.getElementById('erEmpty').style.display = '';
             document.getElementById('erEmpty').textContent = text;
         }

@@ -140,15 +140,20 @@
             if (!team) { titleEl.textContent = 'Mannschaft nicht gefunden'; leer('Diese Mannschaft gibt es nicht oder sie ist nicht öffentlich.'); return; }
 
             var name = EVV && EVV.teamLabel ? EVV.teamLabel(team.name) : team.name;
-            document.title = 'Ergebnisse ' + name + ' | EVV 2000';
-            titleEl.textContent = 'Ergebnisse ' + name;
-            leadEl.textContent = team.league ? team.league : '';
+            // Überschrift nach der Liga, nicht nach der Mannschaft: Der Ergebnisdienst
+            // deckt die ganze Liga ab, nicht nur das eigene Team.
+            var ueberschrift = team.league || name;
+            document.title = 'Ergebnisse ' + ueberschrift + ' | EVV 2000';
+            titleEl.textContent = 'Ergebnisse ' + ueberschrift;
+            leadEl.textContent = name;
 
             var bilder = (team.results_images || []).filter(Boolean);
             var host = document.getElementById('erSheets');
             if (bilder.length) {
                 host.innerHTML = bilder.map(function (url, i) {
-                    return '<figure class="results-sheet" data-reveal="' + Math.min(i + 1, 3) + '">' +
+                    // "in" muss mit: Die Einblend-Animation erfasst nur Elemente, die beim
+                    // Seitenaufbau schon da waren — nachgeladene blieben sonst unsichtbar.
+                    return '<figure class="results-sheet in" data-reveal="' + Math.min(i + 1, 3) + '">' +
                         '<a href="' + esc(url) + '" target="_blank" rel="noopener">' +
                         '<img src="' + esc(url) + '" alt="Ergebnisse ' + esc(name) + ' – Bild ' + (i + 1) + '" loading="lazy">' +
                         '</a></figure>';

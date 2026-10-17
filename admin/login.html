@@ -172,7 +172,19 @@
         }
 
         // Passwort-Recovery-Link? (Supabase hängt #type=recovery an die URL)
-        var isRecovery = (window.location.hash || '').indexOf('type=recovery') !== -1;
+        var hash = window.location.hash || '';
+        var isRecovery = hash.indexOf('type=recovery') !== -1;
+
+        // Abgelaufener oder schon benutzter Link: Supabase hängt den Fehler an die
+        // Adresse. Ohne Hinweis sieht man nur eine Seite ohne Reaktion.
+        if (hash.indexOf('error=') !== -1) {
+            var hp = new URLSearchParams(hash.replace(/^#/, ''));
+            var code = hp.get('error_code') || '';
+            showError(/expired|invalid/i.test(code + hp.get('error_description'))
+                ? 'Der Link ist abgelaufen oder wurde schon verwendet. Fordere unten einen neuen an und öffne ihn möglichst gleich nach Erhalt.'
+                : 'Der Link konnte nicht verwendet werden: ' + (hp.get('error_description') || code));
+            history.replaceState(null, '', window.location.pathname);
+        }
 
         if (isRecovery) {
             loginForm.style.display = 'none';
